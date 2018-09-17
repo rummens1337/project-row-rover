@@ -1,0 +1,57 @@
+@startuml
+
+class Motor {
+    - int speedLeft
+    - int speedRight
+    bool left(int v)
+    bool right(int v)
+    dict status()
+    bool start()
+    bool stop()
+    int getSpeed()
+}
+
+class Camera {
+    Stream getStream()
+    Stream getFaces(Stream s)
+    bool start()
+    bool stop()
+    Stream draw(rect, stream)
+    img getFrame()
+    status()
+    write(Stream source, string dir)
+}
+
+enum Request {
+    SET_MOTOR_LEFT
+    SET_MOTOR_RIGHT
+    GET_STREAM
+}
+
+enum Response {
+    SUCCESS
+    REQUEST_NOT_FOUND
+    ACTION_NOT_ALLOWED
+    UNKNOWN_ERROR
+}
+
+Request <|-- API
+Response <|-- API
+Server -> API
+Server -> webServer
+
+class Server {
+    listen(int port)
+    - handleConnection()
+
+}
+class API {
+    - API_KEY
+    handleRequest()
+}
+
+class webServer {
+    + serveWeb()
+}
+
+@enduml
