@@ -4,11 +4,11 @@ Robot On Wheels (ROW) rover, geschreven in Python door Noeël Moeskops, Robin de
 
 # Install
 
-run `make install` op een unix systeem om een virtuale python omgeving te maken en de requirements te downloaden.
+Je hebt [docker](https://docs.docker.com/install/#supported-platforms) nodig om het programma uittevoeren.
 
-`make run` om het programma uittevoeren.
+run `docker build -t rover .` om een docker omgeving te maken en de requirements te downloaden.
 
-`make shell` om doormiddel van bpython een ROW-rover shell te openen
+`docker run rover` om het programma uittevoeren.
 
 # Config
 
