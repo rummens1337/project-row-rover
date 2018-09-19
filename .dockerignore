@@ -1,0 +1,6 @@
+.idea
+docs
+.git*
+Makefile
+*.md
+Requirements.txt
