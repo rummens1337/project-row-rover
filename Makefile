@@ -1,5 +1,8 @@
 run:
-	docker run rover
+	docker run --device /dev/gpiomem rover
+
+run-amd64:
+	docker run -v $(PWD)/config.amd64.ini:/app/config.ini rover
 
 install:
 	docker run --rm --privileged multiarch/qemu-user-static:register
@@ -7,10 +10,7 @@ install:
 build:
 	docker build -t rover . --force-rm
 
-build-amd64:
-	docker build -t rover . --force-rm --target amd64
-
 tag = latest
 push: build
-	docker manifest create noeel/rover:$(tag) --os linux --arch arm ; \
-	manifest push noeel/rover:$(tag)
+	docker tag rover noeel/rover:$(tag) \
+	docker push noeel/rover:$(tag)

@@ -126,10 +126,3 @@ env
 
 # mypy
 .mypy_cache/
-
-
-# docker dingen
-Dockerfile.amd64
-Dockerfile.arm32v6
-
-qemu-*
