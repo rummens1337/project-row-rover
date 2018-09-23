@@ -1,17 +1,16 @@
-.PHONY: install shell run 
-
 run:
-	source env/bin/activate; \
-	python3.6 src/main.py;
+	docker run --device /dev/gpiomem rover
 
-shell:
-	source env/bin/activate; \
-	bpython;
-
+run-amd64:
+	docker run -v $(PWD)/config.amd64.ini:/app/config.ini rover
 
 install:
-	python3 -m venv --prompt "env" --system-site-packages env
-	source env/bin/activate; \
-	pip3 install -r Requirements.txt;
+	docker run --rm --privileged multiarch/qemu-user-static:register
 
+build:
+	docker build -t rover . --force-rm
 
+tag = latest
+push: build
+	docker tag rover noeel/rover:$(tag) \
+	docker push noeel/rover:$(tag)
