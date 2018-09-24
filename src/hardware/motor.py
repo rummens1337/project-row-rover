@@ -47,7 +47,7 @@ class Motor:
                 self.speedl = -speed
                 self.richtingl = 2
         else:
-            return False
+            raise ValueError("{0} is not in the range of -255 to 255".format(speed))
         self._send_data()
         return True
 
@@ -68,7 +68,7 @@ class Motor:
                 self.speedr = -speed
                 self.richtingr = 2
         else:
-            return False
+            raise ValueError("{0} is not in the range of -255 to 255".format(speed))
         self._send_data()
         return True
 
@@ -83,6 +83,10 @@ class Motor:
         generate an array of data for the motorcontroller and send it over the I2C bus
         :return: returns a bool based on success
         """
-        motor_data = [7, 3, self.speedl, self.richtingl, 3, self.speedr, self.richtingr]
-        self.bus.write_i2c_block_data(self.ADDRESS, self.OFFSET, motor_data)
+        try:
+            motor_data = [7, 3, self.speedl, self.richtingl, 3, self.speedr, self.richtingr]
+            self.bus.write_i2c_block_data(self.ADDRESS, self.OFFSET, motor_data)
+        except IOError as e:
+            print("I/O error({0}): {1}".format(e.errno, e.strerror))
+            return False
         return True
