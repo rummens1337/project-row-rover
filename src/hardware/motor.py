@@ -1,4 +1,4 @@
-import smbus2
+from smbus2 import *
 
 
 class Motor:
@@ -16,7 +16,7 @@ class Motor:
         """
         Create a bus connection over I2C and sets the speed at 0
         """
-        self.bus = smbus2.SMBus(1)  # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1) <- found on internet, hope it makes sense to you
+        self.bus = SMBus(1)  # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1) <- found on internet, hope it makes sense to you
         self.left(0)
         self.right(0)
 
@@ -36,7 +36,7 @@ class Motor:
         :param speed: Range from -255 to 255
         :return: returns a bool based on success
         """
-        if 256 < speed > -256:
+        if speed > -256 and speed < 256:
             if speed == 0:
                 self.speedl = 0
                 self.richtingl = 0
@@ -57,7 +57,7 @@ class Motor:
         :param speed: Range from -255 to 255
         :return: returns a bool based on success
         """
-        if 256 < speed > -256:
+        if speed > -256 and speed < 256:
             if speed == 0:
                 self.speedr = 0
                 self.richtingr = 0
