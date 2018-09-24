@@ -16,7 +16,7 @@ class Motor:
         """
         Create a bus connection over I2C and sets the speed at 0
         """
-        self.bus = smbus.SMBus(1)  # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1) <- found on internet, hope it makes sense to you
+        self.bus = smbus2.SMBus(1)  # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1) <- found on internet, hope it makes sense to you
         self.left(0)
         self.right(0)
 
