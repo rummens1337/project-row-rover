@@ -12,7 +12,8 @@ WORKDIR /app
 
 ADD /src /app/src
 ADD /web /app/web
-ADD config.ini /app
+ADD /haarCascades /app/haarCascades
+ADD settings.conf /app
 ADD Requirements.txt /app
 ADD main.py /app
 

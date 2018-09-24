@@ -2,7 +2,7 @@ run:
 	docker run --device /dev/gpiomem rover
 
 run-amd64:
-	docker run -v $(PWD)/config.amd64.ini:/app/config.ini rover
+	docker run -v $(PWD)/settings.amd64.conf:/app/settings.conf rover
 
 install:
 	docker run --rm --privileged multiarch/qemu-user-static:register

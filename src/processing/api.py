@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class Api:
-    # TODO api key uit /config.ini halen
+    # TODO api key uit /settings.conf halen
     API_KEY = 0
 
     class Request(Enum):
