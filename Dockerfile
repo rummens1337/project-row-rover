@@ -1,4 +1,4 @@
-# TODO dit heeft alleen maar python 3.4, we moeten zelf een image maken met 3.7
+# TODO dit heeft alleen maar python 3.5, we moeten zelf een image maken met 3.7
 FROM sgtwilko/rpi-raspbian-opencv:stretch-latest
 
 
@@ -17,7 +17,9 @@ ADD Requirements.txt /app
 ADD main.py /app
 
 # Install any needed packages specified in requirements.txt
-#RUN pip install --trusted-host pypi.python.org -r Requirements.txt
+RUN pip3 install --trusted-host pypi.python.org -r Requirements.txt
+
+EXPOSE 80
 
 # Define environment variable
 ENV NAME rover
