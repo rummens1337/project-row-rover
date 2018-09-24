@@ -1,4 +1,4 @@
-import smbus
+import smbus2 as smbus
 
 
 class Motor:
@@ -35,6 +35,7 @@ class Motor:
         Speed and direction of the left wheels
         :param speed: Range from -255 to 255
         :return: returns a bool based on success
+        :raises: Value error when speed is out of the range
         """
         if speed > -256 and speed < 256:
             if speed == 0:
@@ -51,11 +52,12 @@ class Motor:
         self._send_data()
         return True
 
-    def right(self, speed: int) -> bool:
+    def right(self, speed: object) -> object:
         """
         Speed and direction of the right wheels
         :param speed: Range from -255 to 255
         :return: returns a bool based on success
+        :raises: Value error when speed is out of the range
         """
         if speed > -256 and speed < 256:
             if speed == 0:
