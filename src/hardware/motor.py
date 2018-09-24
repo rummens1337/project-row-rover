@@ -1,4 +1,4 @@
-import smbus
+import smbus2
 
 
 class Motor:
