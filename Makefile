@@ -1,5 +1,5 @@
 run:
-	docker run --device /dev/i2c-1 rover
+	docker run --device /dev/i2c-1 --device /dev/vchiq rover
 
 run-amd64:
 	docker run -v $(PWD)/config.amd64.ini:/app/config.ini rover
