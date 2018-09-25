@@ -1,5 +1,5 @@
-from smbus2 import *
 from src.common.log import *
+import smbus2 as smbus
 
 
 class Motor:
@@ -11,16 +11,18 @@ class Motor:
     # 0 = stilstaan 1 = vooruit 2 = achteruit
     richtingl = 0
     richtingr = 0
+    # bus
 
     def __init__(self):
         """
         Create a bus connection over I2C and sets the speed at 0
         """
         try:
-            self.bus = SMBus(
+            self.bus = smbus.SMBus(
                 1)  # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1) <- found on internet, hope it makes sense to you
         except FileNotFoundError as er:
             log.error("%s, normal if in fake env.", er)
+
         self.left(0)
         self.right(0)
 
@@ -46,6 +48,7 @@ class Motor:
         Speed and direction of the left wheels
         :param speed: Range from -255 to 255
         :return: returns a bool based on success
+        :raises: Value error when speed is out of the range
         """
         if speed > -256 and speed < 256:
             if speed == 0:
@@ -63,11 +66,12 @@ class Motor:
         self._send_data()
         return True
 
-    def right(self, speed: int) -> bool:
+    def right(self, speed: object) -> object:
         """
         Speed and direction of the right wheels
         :param speed: Range from -255 to 255
         :return: returns a bool based on success
+        :raises: Value error when speed is out of the range
         """
         if speed > -256 and speed < 256:
             if speed == 0:
@@ -100,7 +104,6 @@ class Motor:
         Get left speed value
         :return (int): value
         """
-        # TODO documentatie
         return self.speedl
 
     def get_value_right(self):
