@@ -18,7 +18,7 @@ logging.basicConfig(
 # https://docs.python.org/3/library/logging.html#logging-levels
 # 0 = debug
 # 20 = info en erger
-logger.setLevel(config["Default"].getint("log_level"))
+logger.setLevel(config["General"].getint("log_level"))
 
 log = logger
 

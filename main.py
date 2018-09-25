@@ -1,13 +1,13 @@
 import cv2
 import platform
 from src.common.log import *
-
+from src.processing.server import Server
 
 def main():
-    log.info("hello, world!")
     log.debug("python version: %s", platform.python_version())
     log.debug("OpenCV version: %s", cv2.__version__)
 
+    server = Server()
 
 if __name__ == "__main__":
     main()

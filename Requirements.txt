@@ -1,3 +1,4 @@
 Flask-RESTful==0.3.6
 Flask==1.0.2
 smbus2
+http_status==1.0.0
