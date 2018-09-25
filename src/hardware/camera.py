@@ -26,9 +26,13 @@ class Camera:
         #     photo = pickle.load(input)
         #     return photo
 
-
+        # TODO config moet hij vanaf log lezen. Dit is langzaam
         config = configparser.ConfigParser()
         config.read('settings.conf')
+
+        if config["Camera"].getboolean("simulate_camera"):
+            return cv2.imread("cam_emulate.jpg", 0)
+
 
         width = config['Camera'].getint('CAMERA_RESOLUTION_H')
         height = config['Camera'].getint('CAMERA_RESOLUTION_V')
@@ -62,14 +66,18 @@ class Camera:
         """
         Start de camera
         """
+        config = configparser.ConfigParser()
+        config.read('settings.conf')
+
+        if config["Camera"].getboolean("simulate_camera"):
+            log.warn("simulate_camera: %s", True)
+            return
         try:
             try:
                 self.camera = PiCamera()
 
                 # self.rawCapture = PiRGBArray(self.camera)  # dit is redundant volgens mij
 
-                config = configparser.ConfigParser()
-                config.read('settings.conf')
 
                 width = config['Camera'].getint('CAMERA_RESOLUTION_H')
                 height = config['Camera'].getint('CAMERA_RESOLUTION_V')
@@ -90,9 +98,10 @@ class Camera:
 
 
 if __name__ == "__main__":
-    print("test")
+    print("test camera")
 
     cam = Camera()
     img = cam.get_frame()
-    cv2.imshow("photo", img)
-    cv2.waitKey()
+    cv2.imwrite("./out/camFrame.jpg", img)
+    # cv2.imshow("photo", img)
+    # cv2.waitKey()
