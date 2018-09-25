@@ -8,7 +8,7 @@ import cv2
 
 def draw_rectangle(frame, rect, texts=("")):
 
-    height, width, _ = frame.shape
+    height, width = frame.shape
     x, y, w, h = rect
     letter_size_px = 25
     text_margin_px = 2

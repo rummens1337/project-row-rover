@@ -4,7 +4,6 @@ from typing import List
 import numpy as np
 
 from src.common.log import *
-from src.processing import spel
 from src.common.tools import *
 from src.processing.photo_data import PhotoData, Photo, RangeSensor
 
@@ -52,7 +51,7 @@ class Faces:
         yield self.faces
 
 
-def get_faces(photos_with_data: PhotoData, game_type: spel.Games) -> List[np.array]:
+def get_faces(photos_with_data: PhotoData, game_type) -> List[np.array]:
     """
     Returned de uniek gezichten uit meerdere fotos die voldoen aan een bepaalde drempelwaarde.
 
@@ -223,7 +222,9 @@ def _opencv_get_faces(photo: np.array):
     if DEBUG >= 2:
         log.debug("Opencv Input image size:" + str(photo.shape))
 
-    img_gray = cv2.cvtColor(photo, cv2.COLOR_BGR2GRAY)
+    # TODO cv2 crashed als je dit doet.
+    # img_gray = cv2.cvtColor(photo, cv2.COLOR_BGR2GRAY)
+    img_gray = photo
 
     face_cascade = cv2.CascadeClassifier(config['FaceDetection']['HAAR_CASCADE_PATH'])
 
@@ -233,7 +234,6 @@ def _opencv_get_faces(photo: np.array):
         raise FileNotFoundError(message)
 
     opencv_min_face_size = config['FaceDetection'].getint('OPENCV_MIN_FACE_SIZE')
-
     faces, _, confidences = face_cascade.detectMultiScale3(
         img_gray,
         scaleFactor=config['FaceDetection'].getfloat('OPENCV_SCALE_FACTOR'),
@@ -334,3 +334,11 @@ def _location_to_angle(photo_angle: float, position: int) -> float:
     global_angle = photo_angle + angle
 
     return global_angle
+
+if __name__ == "__main__":
+    import src.common.tools
+    frame = cv2.imread("cam_emulate.jpg", 0)
+    for face, conf in _opencv_get_faces(frame):
+        log.debug("conf: %s", conf)
+        frame = draw_rectangle(frame, face)
+    cv2.imwrite("./out/FaceFrame.jpg", frame)
