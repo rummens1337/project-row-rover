@@ -1,0 +1,113 @@
+html, body , body > div{
+	overflow: hidden;
+	height: 100%;
+	width: 100%;
+}
+
+.streamWrapper {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	pointer-events: none;
+	background: rgba(128, 128, 128, 128);
+}
+
+.streamWrapper > img{
+	position: absolute;
+	height: 100%;
+	width: 100%;
+}
+
+.uiWrapper {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+}
+
+.uiWrapper > div {
+	position: absolute;
+}
+
+.topMiddleInfo {
+	top:0;
+	left:0;
+	right:0;
+	text-align: center;
+
+  	text-shadow:
+   		-1px -1px 0 #FFF,  
+    	1px -1px 0 #FFF,
+    	-1px 1px 0 #FFF,
+    	1px 1px 0 #FFF;
+}
+
+.navTopLeft {
+	top: 15px;
+	left: 15px;
+	width: 40px;
+	height: 40px;
+	border: 1px solid rgb(128, 128, 128, .5);
+}
+
+.navTopLeft > .button {
+	padding: 5px;
+	background-color: white;
+}
+
+.navTopRight {
+	top: 15px;
+	right: 15px;
+	width: 75px;
+	height: 30px;
+	background: green;
+}
+
+.buttonsBottomLeft {
+	bottom: 15px;
+	left: 15px;
+	width: 200px;
+}
+
+.buttonsBottomLeft .button {
+	height: 60px;
+	width: 60px;
+	margin-left: 10px;
+	margin-bottom: 10px;
+	background-color: rgba(192, 192, 192, .5);
+	border: 1px solid rgba(128, 128, 128, 1);
+	border-radius: 500px;
+	-webkit-tap-highlight-color: transparent;
+}
+
+.buttonsBottomLeft .button.active,
+.button:active,
+.joystick.active {
+	background-color: rgba(64, 64, 64, .5);
+	border: 1px solid rgba(64, 64, 64, 1);
+}
+
+.button.buttonEmpty{
+	margin-left: 45px;
+}
+
+.joystickBottomRight {
+	bottom: 15px;
+	right: 15px;
+	width: 150px;
+	height: 150px;
+}
+
+.joystick {
+	width: 150px;
+	height: 150px;
+	background-color: rgba(192, 192, 192, .5);
+	border: 1px solid rgba(128, 128, 128, 1);
+	border-radius: 500px;
+}
+
+
+
+
+
+
+
