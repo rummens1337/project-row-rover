@@ -11,7 +11,6 @@ class Motor:
     # 0 = stilstaan 1 = vooruit 2 = achteruit
     richtingl = 0
     richtingr = 0
-    # bus
 
     def __init__(self):
         """
