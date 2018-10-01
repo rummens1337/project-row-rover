@@ -11,7 +11,6 @@ class Motor:
     # 0 = stilstaan 1 = vooruit 2 = achteruit
     richtingl = 0
     richtingr = 0
-    # bus
 
     def __init__(self):
         """
@@ -65,11 +64,13 @@ class Motor:
                 self.richtingl = 2
         else:
             raise ValueError("{0} is not in the range of -255 to 255".format(speed))
-        # TODO functie checkt niet of send_data() succesvol is. @robin1
-        self._send_data()
-        return True
 
-    def right(self, speed: object) -> object:
+        if self._send_data() :
+            return True
+        else:
+            return False
+
+    def right(self, speed: int) -> bool:
         """
         Speed and direction of the right wheels
         :param speed: Range from -255 to 255
@@ -88,19 +89,32 @@ class Motor:
                 self.richtingr = 2
         else:
             raise ValueError("{0} is not in the range of -255 to 255".format(speed))
-        # TODO functie checkt niet of send_data() succesvol is. @robin1
-        self._send_data()
-        return True
+
+        if self._send_data():
+            return True
+        else:
+            return False
 
     def status(self) -> dict:
-        # TODO implementeren @robin1
-        # wat is dit eigenlijk?
-        pass
+        """
+        Generates the current state of the motor
+        :return: returns a dictionary with the status
+        """
+        return {
+            "speedl": self.speedl,
+            "richtingl": self.richtingl,
+            "speedr": self.speedr,
+            "richtingr": self.richtingr
+        }
 
-    def get_speed(self) -> int:
-
-        # TODO implementeren @robin1
-        pass
+    def get_speed(self) -> dict:
+        """
+        :return: returns a dictionary with the speeds
+        """
+        return {
+            "speedl": self.speedl,
+            "speedr": self.speedr
+        }
 
     def get_value_left(self) -> int:
         """
@@ -109,7 +123,7 @@ class Motor:
         """
         return self.speedl
 
-    def get_value_right(self):
+    def get_value_right(self) -> int:
         """
         Get right speed value
         :return (int): value
@@ -118,7 +132,7 @@ class Motor:
 
     def _send_data(self) -> bool:
         """
-        generate an array of data for the motorcontroller and send it over the I2C bus
+        generate an array of data for the motorcontroller and sends it over the I2C bus
         :return: returns a bool based on success
         """
         if config["Motor"].getboolean("simulate_motor") == False:
