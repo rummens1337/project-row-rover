@@ -5,12 +5,13 @@ window.requestAnimationFrame = window.requestAnimationFrame
 
 function callLoop(delta){
 	$.ajax({
-	    url: '/rover/motor',
+	    url: '/api/motor',
 	    method: 'PUT',
 	    data: {
+		key: 1234,
 	    	left: l,
-	    	right: r;
-	    }
+	    	right: r
+	    },
 	    contentType: 'application/json'
 	});
 	requestAnimationFrame(callLoop);
@@ -70,5 +71,5 @@ $( ".toggle" ).click(function() {
 	$(this).toggleClass("active");
 });
 
-
+callLoop();
 
