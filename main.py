@@ -2,7 +2,6 @@ import cv2
 import platform
 from src.common.log import *
 from src.processing.server import Server
-from src.hardware.camWebServer.appCam import *
 
 
 def main():
