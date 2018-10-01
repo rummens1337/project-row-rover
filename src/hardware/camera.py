@@ -5,7 +5,7 @@ import numpy as np
 import pickle
 
 from src.common.log import log
-
+# TODO camera of camera_pi verwijderen.
 try:
     from picamera import PiCamera
 except ImportError as error:

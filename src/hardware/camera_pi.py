@@ -8,8 +8,9 @@
 import time
 import io
 import threading
-import picamera
+import picamera, cv2
 
+from src.common.log import *
 
 class Camera(object):
     thread = None  # background thread that reads frames from camera
@@ -27,6 +28,8 @@ class Camera(object):
                 time.sleep(0)
 
     def get_frame(self):
+        if config["Camera"].getboolean("simulate_camera"):
+            return cv2.imread("cam_emulate.jpg", 0)
         Camera.last_access = time.time()
         self.initialize()
         return self.frame
@@ -35,7 +38,7 @@ class Camera(object):
     def _thread(cls):
         with picamera.PiCamera() as camera:
             # camera setup
-            camera.resolution = (1920, 1080)
+            camera.resolution = (320, 140)
             camera.hflip = False
             camera.vflip = False
 
