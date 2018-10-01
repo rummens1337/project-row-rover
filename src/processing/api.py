@@ -87,12 +87,14 @@ class Api:
                     {
                         "side": "left",
                         "value": Api.motor.get_value_left(),
-                        "speed": Api.motor.get_speed()
+                        "speed": Api.motor.get_speed(),
+                        "direction": Api.motor.richtingl
                     },
                     {
                         "side": "right",
                         "value": Api.motor.get_value_right(),
-                        "speed": Api.motor.get_speed()
+                        "speed": Api.motor.get_speed(),
+                        "direction": Api.motor.richtingr
                     }
                 ]
             }
@@ -123,9 +125,9 @@ class Api:
             if args["key"] != Api.API_KEY:
                 return Api.print(401), 401
             try:
-                if args["left"]:
+                if type(args["left"]) is int:
                     Api.motor.left(args["left"])
-                if args["right"]:
+                if type(args["right"]) is int:
                     Api.motor.right(args["right"])
             except ValueError as error:
                 return Api.print(422, {

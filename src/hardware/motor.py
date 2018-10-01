@@ -107,14 +107,12 @@ class Motor:
             "richtingr": self.richtingr
         }
 
-    def get_speed(self) -> dict:
+    def get_speed(self) -> int:
         """
         :return: returns a dictionary with the speeds
         """
-        return {
-            "speedl": self.speedl,
-            "speedr": self.speedr
-        }
+        # TODO return speed gemeten door sensor @robin1
+        return 0
 
     def get_value_left(self) -> int:
         """
