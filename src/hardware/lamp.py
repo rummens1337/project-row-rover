@@ -3,6 +3,7 @@ import RPi.GPIO as GPIO
 
 class Lamp:
     LAMPPIN1 = 7
+    status = 0
 
     def __init__(self):
         """
@@ -18,6 +19,8 @@ class Lamp:
         :return: returns a bool based on success
         """
         GPIO.output(self.LAMPPIN1, 1)
+        status = 1
+        # TODO vind een manier om te checken of hij echt aan staat
         return True
 
     def lampoff(self) -> bool:
@@ -26,6 +29,8 @@ class Lamp:
         :return: returns a bool based on success
         """
         GPIO.output(self.LAMPPIN1, 0)
+        status = 0
+        # TODO vind een manier om te checken of hij echt uit staat
         return True
 
     def status(self) -> dict:
@@ -33,4 +38,7 @@ class Lamp:
         Generates the current state of the lamp
         :return: returns a dictionary with the status
         """
-        pass
+        return {
+            "lampmode": self.status,
+            "lamppin": self.LAMPPIN1
+        }
