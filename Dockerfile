@@ -1,5 +1,5 @@
 # TODO dit heeft alleen maar python 3.5, we moeten zelf een image maken met 3.7
-FROM sgtwilko/rpi-raspbian-opencv:stretch-latest
+FROM sgtwilko/rpi-raspbian-opencv:stretch-3.4.3
 
 COPY --from=nginx:latest /etc/nginx/nginx.conf /nginx.conf
 
