@@ -1,18 +1,16 @@
-from flask import Flask, render_template
-from flask_socketio import SocketIO
+from flask_sockets import Sockets
 from src.common.log import *
 
 
 class Socket:
     def __init__(self, server):
-        self.socket = SocketIO(server)
-        self.socket.run(server)
+        socket = Sockets(server)
 
-        self.socket.on_event('test', self.handle_test)
+        @socket.route('/')
+        def handle_test(ws):
+            # log.debug("test!")
+            ws.send("hello world!")
 
     def __del__(self):
         # TODO
         pass
-
-    def handle_test(self):
-        log.debug("test!")

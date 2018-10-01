@@ -21,7 +21,6 @@ class Api:
         :param api_key: key to access the api. Defaults to config>server>api_key
         """
         Api.API_KEY = api_key
-        log.info("starting API, api key = %s", Api.API_KEY)
 
         self.api = fapi(server)
 

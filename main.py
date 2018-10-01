@@ -5,15 +5,8 @@ from src.processing.server import Server
 
 
 def main():
-    log.debug("python version: %s", platform.python_version())
-    log.debug("OpenCV version: %s", cv2.__version__)
-
-    server = Server()
-
-
-#    mot = Motor()
-#    mot.left(0)
-
+    log.info("David de ROW-rover! Version: %s", config["General"]["version"])
+    Server()
 
 if __name__ == "__main__":
     main()
