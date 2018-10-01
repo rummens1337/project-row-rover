@@ -8,7 +8,7 @@ class WebServer:
 
     def __init__(self, server):
         self.server = server
-
+        self.camera = Camera()
         server.add_url_rule('/', 'index', self.index)
         server.add_url_rule('/video_feed', 'video_feed', self.video_feed)
 
@@ -18,12 +18,12 @@ class WebServer:
 
     def video_feed(self):
         """Video streaming route. Put this in the src attribute of an img tag."""
-        return Response(self.gen(Camera()), mimetype='multipart/x-mixed-replace; boundary=frame')
+        return Response(self.gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-    def gen(self, camera):
+    def gen(self):
         """Video streaming generator function."""
         while True:
-            frame = camera.get_frame()
+            frame = self.camera.get_frame()
             yield (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
