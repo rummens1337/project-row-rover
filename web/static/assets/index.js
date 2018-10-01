@@ -1,4 +1,22 @@
-var x, y;
+window.requestAnimationFrame = window.requestAnimationFrame
+	|| window.webkitRequestAnimationFrame
+	|| window.mozRequestAnimationFrame
+	|| function(callback) { window.setTimeout(callback, 1000 / 60);};
+
+function callLoop(delta){
+	$.ajax({
+	    url: '/rover/motor',
+	    method: 'PUT',
+	    data: {
+	    	left: l,
+	    	right: r;
+	    }
+	    contentType: 'application/json'
+	});
+	requestAnimationFrame(callLoop);
+}
+
+var x, y, l, r;
 var multiplier = 3.5;
 
 function clamp(num, min, max) {
@@ -6,8 +24,8 @@ function clamp(num, min, max) {
 }
 
 function move(movedX, movedY){
-	var r = movedY;
-	var l = movedY;
+	r = movedY;
+	l = movedY;
 
 	if(movedX < 0){
 		r -= movedX;
