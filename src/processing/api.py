@@ -106,7 +106,7 @@ class Api:
             """
             args = Api.parser.parse_args()
             if args["key"] != Api.API_KEY:
-                return Api.print(401, {args["key"]: Api.API_KEY}), 401
+                return Api.print(401), 401
             try:
                 motor_status = self.get_motor_status()
             except Exception as err:
