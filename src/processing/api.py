@@ -82,19 +82,28 @@ class Api:
             get the motor status (speed value and actual speed)
             :return: json object
             """
+            lv, rv, s = 0, 0, 0
+            s = Api.motor.get_speed()
+            # invert value if negative
+            if Api.motor.richtingl == 2:
+                lv -= Api.motor.get_value_left()
+            else:
+                lv = Api.motor.get_value_left()
+            if Api.motor.richtingr == 2:
+                rv -= Api.motor.get_value_right()
+            else:
+                rv = Api.motor.get_value_right()
             return {
                 "motor": [
                     {
                         "side": "left",
-                        "value": Api.motor.get_value_left(),
-                        "speed": Api.motor.get_speed(),
-                        "direction": Api.motor.richtingl
+                        "value": lv,
+                        "speed": s
                     },
                     {
                         "side": "right",
-                        "value": Api.motor.get_value_right(),
-                        "speed": Api.motor.get_speed(),
-                        "direction": Api.motor.richtingr
+                        "value": rv,
+                        "speed": s
                     }
                 ]
             }
