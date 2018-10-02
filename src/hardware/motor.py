@@ -9,12 +9,13 @@ speedr = 0
 # 0 = stilstaan 1 = vooruit 2 = achteruit
 richtingl = 0
 richtingr = 0
+global bus
 
-
-def __init__():
+def start():
     """
     Create a bus connection over I2C and sets the speed at 0
     """
+    global bus
     log.debug("init motor")
     if config["Motor"].getboolean("simulate_motor") == False:
         bus = smbus.SMBus(
@@ -146,6 +147,7 @@ def _send_data() -> bool:
     generate an array of data for the motorcontroller and sends it over the I2C bus
     :return: returns a bool based on success
     """
+    global bus
     if config["Motor"].getboolean("simulate_motor") == False:
         try:
             motor_data = [7, 3, speedl, richtingl, 3, speedr, richtingr]
