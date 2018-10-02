@@ -28,7 +28,7 @@ class Server:
         # Start servers
         Api(self.server, api_key)
         WebServer(self.server)
-        Socket(self.server)
+        Socket(self.server, api_key)
         self.server = pywsgi.WSGIServer(('', self.PORT), self.server, handler_class=WebSocketHandler)
         # TODO dit grapje moet in een thread, anders houd het de main op.
         self.server.serve_forever()
