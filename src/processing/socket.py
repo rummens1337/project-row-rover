@@ -25,7 +25,7 @@ class Socket:
                     recieved = json.loads(ws.receive())
                     if recieved["key"] != self.api_key:
                         msg = Api.print(401)
-                        ws.send(json.dumps(msg))
+                        ws.send(json.dumps(msg) + json.dumps(recieved))
                         ws.close()
                     if recieved["request"] == Socket.Request.motor.name:
                         if "left" in recieved["data"]:
