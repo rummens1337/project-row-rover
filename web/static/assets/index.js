@@ -34,6 +34,7 @@ var up = new Input.Input(inputObject.up, controllerIndex);
 var down = new Input.Input(inputObject.down, controllerIndex);
 var left = new Input.Input(inputObject.left, controllerIndex);
 var right = new Input.Input(inputObject.right, controllerIndex);
+var webSocket = new WebSocket("ws://localhost:8080");
 
 // up
 up.press = function() {
@@ -95,19 +96,30 @@ right.release = function() {
     else down.press();
 };
 
-function callLoop(delta){
-	var le = l.toFixed(0);
-	var ri = r.toFixed(0);
-	$.ajax({
-	    url: '/api/motor',
-	    method: 'PUT',
-	    data: {
-			key: 1234,
-	    	left: le,
-	    	right: ri
-	    }
-	});
-	window.setTimeout(callLoop, 500);
+webSocket.onopen = function (){
+    callLoop();
+};
+
+webSocket.onmessage = function (event) {
+    console.log(event.data);
+};
+
+function callLoop(){
+
+    var le = l.toFixed(0);
+    var ri = r.toFixed(0);
+    var msg =
+        {
+            'request': 'motor',
+            'key': "1234",
+            'data': {
+                left: le,
+                right: ri
+            }
+        };
+
+    webSocket.send(JSON.stringify(msg));
+    window.setTimeout(callLoop, 500);
 }
 
 function updateRL(){
@@ -164,6 +176,4 @@ $(".joystick").on('touchend touchcancel', function() {
 $( ".toggle" ).click(function() {
 	$(this).toggleClass("active");
 });
-
-callLoop();
 
