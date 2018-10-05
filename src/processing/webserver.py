@@ -2,6 +2,7 @@ from flask import Flask, render_template, Response
 
 # Raspberry Pi camera module (requires picamera package, developed by Miguel Grinberg)
 from src.hardware.camera_pi import Camera
+import time
 
 class WebServer:
     ###"""Not sure if this works properly, complains about type"""###

@@ -5,7 +5,7 @@ from json import JSONDecodeError
 from src.processing.api import Api
 from enum import Enum
 import src.hardware.motor as motor
-import src.hardware.lamp as lamp
+#import src.hardware.lamp as lamp
 
 
 class Socket:
@@ -38,14 +38,14 @@ class Socket:
                         # version = {"version": config["General"]["version"]}
                         ws.send(json.dumps(Api.print(200, Api.Motor.get_motor_status())))
 
-                    elif recieved["request"] == Socket.Request.lamp.name:
-                        if recieved["data"] == 1:
-                            lamp.lampon()
-                            ws.send(json.dumps(Api.print()))
-                        elif recieved["data"] == 0:
-                            lamp.lampoff()
-                            ws.send(json.dumps(Api.print()))
-                        ws.send(json.dumps(Api.print()))
+ #                   elif recieved["request"] == Socket.Request.lamp.name:
+ #                       if recieved["data"] == 1:
+ #                           lamp.lampon()
+ #                           ws.send(json.dumps(Api.print()))
+ #                       elif recieved["data"] == 0:
+ #                           lamp.lampoff()
+ #                           ws.send(json.dumps(Api.print()))
+ #                       ws.send(json.dumps(Api.print()))
 
                     else:
                         raise AttributeError("Request not found")
