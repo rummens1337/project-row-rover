@@ -82,17 +82,28 @@ class Api:
             get the motor status (speed value and actual speed)
             :return: json object
             """
+            lv, rv, s = 0, 0, 0
+            s = Api.motor.get_speed()
+            # invert value if negative
+            if Api.motor.richtingl == 2:
+                lv -= Api.motor.get_value_left()
+            else:
+                lv = Api.motor.get_value_left()
+            if Api.motor.richtingr == 2:
+                rv -= Api.motor.get_value_right()
+            else:
+                rv = Api.motor.get_value_right()
             return {
                 "motor": [
                     {
                         "side": "left",
-                        "value": Api.motor.get_value_left(),
-                        "speed": Api.motor.get_speed()
+                        "value": lv,
+                        "speed": s
                     },
                     {
                         "side": "right",
-                        "value": Api.motor.get_value_right(),
-                        "speed": Api.motor.get_speed()
+                        "value": rv,
+                        "speed": s
                     }
                 ]
             }
@@ -104,7 +115,7 @@ class Api:
             """
             args = Api.parser.parse_args()
             if args["key"] != Api.API_KEY:
-                return Api.print(401, {args["key"]: Api.API_KEY}), 401
+                return Api.print(401), 401
             try:
                 motor_status = self.get_motor_status()
             except Exception as err:
@@ -123,9 +134,9 @@ class Api:
             if args["key"] != Api.API_KEY:
                 return Api.print(401), 401
             try:
-                if args["left"]:
+                if type(args["left"]) is int:
                     Api.motor.left(args["left"])
-                if args["right"]:
+                if type(args["right"]) is int:
                     Api.motor.right(args["right"])
             except ValueError as error:
                 return Api.print(422, {

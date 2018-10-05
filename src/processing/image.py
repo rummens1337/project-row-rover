@@ -1,5 +1,6 @@
 import numpy as np
 from src.common.log import *
+import cv2
 
 DEBUG = config['General'].getint('DEBUG')
 
@@ -81,7 +82,7 @@ def crop_image(img: np.array, rect: list, padding: int) -> np.array:
     return img[y:(y + h), x:(x + w)]
 
 
-def cut_out_head(face: Face, photo: np.array, cut_out_paddign: float) -> np.array:
+def cut_out_head(face, photo: np.array, cut_out_paddign: float) -> np.array:
     """
     Haalt een gezicht uit de foto en geeft die weer terug als een aparte foto
 
