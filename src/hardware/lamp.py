@@ -17,7 +17,7 @@ class Lamp:
     def lampon(self) -> bool:
         """
         Turns the lamp on
-        :return: returns a bool based on success
+        @return returns a bool based on success
         """
         if config["Lamp"].getboolean("simulate_lamp") == False:
             GPIO.output(self.LAMPPIN1, 1)
@@ -28,7 +28,7 @@ class Lamp:
     def lampoff(self) -> bool:
         """
         Turns the lamp off
-        :return: returns a bool based on success
+        @return returns a bool based on success
         """
         if config["Lamp"].getboolean("simulate_lamp") == False:
             GPIO.output(self.LAMPPIN1, 0)
@@ -39,7 +39,7 @@ class Lamp:
     def status(self) -> dict:
         """
         Generates the current state of the lamp
-        :return: returns a dictionary with the status
+        @return returns a dictionary with the status
         """
         return {
             "lampmode": self.status,

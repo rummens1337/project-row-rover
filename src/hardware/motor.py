@@ -34,7 +34,7 @@ class Motor:
     def stop(self) -> bool:
         """
         Stop the motors and stop the I2c bus connection
-        :return: returns a bool based on success
+        @return returns a bool based on success
         """
         self.left(0)
         self.right(0)
@@ -48,8 +48,8 @@ class Motor:
     def left(self, speed: int) -> bool:
         """
         Speed and direction of the left wheels
-        :param speed: Range from -255 to 255
-        :return: returns a bool based on success
+        @param speed: Range from -255 to 255
+        @return returns a bool based on success
         :raises: Value error when speed is out of the range
         """
         if speed > -256 and speed < 256:
@@ -73,8 +73,8 @@ class Motor:
     def right(self, speed: int) -> bool:
         """
         Speed and direction of the right wheels
-        :param speed: Range from -255 to 255
-        :return: returns a bool based on success
+        @param speed: Range from -255 to 255
+        @return returns a bool based on success
         :raises: Value error when speed is out of the range
         """
         if speed > -256 and speed < 256:
@@ -98,7 +98,7 @@ class Motor:
     def status(self) -> dict:
         """
         Generates the current state of the motor
-        :return: returns a dictionary with the status
+        @return returns a dictionary with the status
         """
         return {
             "speedl": self.speedl,
@@ -109,7 +109,7 @@ class Motor:
 
     def get_speed(self) -> int:
         """
-        :return: returns a dictionary with the speeds
+        @return returns a dictionary with the speeds
         """
         # TODO return speed gemeten door sensor @robin1
         return 0
@@ -131,7 +131,7 @@ class Motor:
     def _send_data(self) -> bool:
         """
         generate an array of data for the motorcontroller and sends it over the I2C bus
-        :return: returns a bool based on success
+        @return returns a bool based on success
         """
         if config["Motor"].getboolean("simulate_motor") == False:
             try:

@@ -18,8 +18,8 @@ class Server:
     def __init__(self, port=config["Server"].getint("port"), api_key=str(config["Server"]["api_key"])):
         """
         Start flask server. And API server.
-        :param port: port to run the server on. Defaults to config>server>port.
-        :param api_key: key to access the api. Defaults to config>server>api_key
+        @param port: port to run the server on. Defaults to config>server>port.
+        @param api_key: key to access the api. Defaults to config>server>api_key
         """
         self.PORT = port
         self.api = Api(self.server, api_key)
