@@ -10,16 +10,18 @@ class Lamp:
         Set the pi to use the BCM numbers for GPIO pins
         Configure pins to their required modes
         """
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.LAMPPIN1, GPIO.OUT)
+        if config["Lamp"].getboolean("simulate_lamp") == False:
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(self.LAMPPIN1, GPIO.OUT)
 
     def lampon(self) -> bool:
         """
         Turns the lamp on
         :return: returns a bool based on success
         """
-        GPIO.output(self.LAMPPIN1, 1)
-        status = 1
+        if config["Lamp"].getboolean("simulate_lamp") == False:
+            GPIO.output(self.LAMPPIN1, 1)
+        self.status = 1
         # TODO vind een manier om te checken of hij echt aan staat
         return True
 
@@ -28,8 +30,9 @@ class Lamp:
         Turns the lamp off
         :return: returns a bool based on success
         """
-        GPIO.output(self.LAMPPIN1, 0)
-        status = 0
+        if config["Lamp"].getboolean("simulate_lamp") == False:
+            GPIO.output(self.LAMPPIN1, 0)
+        self.status = 0
         # TODO vind een manier om te checken of hij echt uit staat
         return True
 

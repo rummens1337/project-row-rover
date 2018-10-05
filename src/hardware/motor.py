@@ -53,13 +53,13 @@ class Motor:
         :raises: Value error when speed is out of the range
         """
         if speed > -256 and speed < 256:
-            if speed == 0:
+            if speed > -4 and speed < 4:
                 self.speedl = 0
                 self.richtingl = 0
-            if speed > 0:
+            elif speed > 0:
                 self.speedl = speed
                 self.richtingl = 1
-            if speed < 0:
+            elif speed < 0:
                 self.speedl = -speed
                 self.richtingl = 2
         else:
@@ -78,13 +78,13 @@ class Motor:
         :raises: Value error when speed is out of the range
         """
         if speed > -256 and speed < 256:
-            if speed == 0:
+            if speed > -4 and speed < 4:
                 self.speedr = 0
                 self.richtingr = 0
-            if speed > 0:
+            elif speed > 4:
                 self.speedr = speed
                 self.richtingr = 1
-            if speed < 0:
+            elif speed < -4:
                 self.speedr = -speed
                 self.richtingr = 2
         else:
