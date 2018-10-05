@@ -1,5 +1,6 @@
 import numpy as np
 from src.common.log import *
+import cv2
 
 DEBUG = config['General'].getint('DEBUG')
 
@@ -81,7 +82,7 @@ def crop_image(img: np.array, rect: list, padding: int) -> np.array:
     return img[y:(y + h), x:(x + w)]
 
 
-def cut_out_head(face: Face, photo: np.array, cut_out_paddign: float) -> np.array:
+def cut_out_head(face, photo: np.array, cut_out_paddign: float) -> np.array:
     """
     Haalt een gezicht uit de foto en geeft die weer terug als een aparte foto
 
@@ -103,10 +104,10 @@ def cut_out_head(face: Face, photo: np.array, cut_out_paddign: float) -> np.arra
 def draw_rectangle(frame, rect, texts=("")):
     """
     draws a rectangle at rect (x, y, w, h) position
-    :param frame: image to draw on
-    :param rect: x,y,w,h
-    :param texts: text to display
-    :return: frame with rectangle
+    @param frame: image to draw on
+    @param rect: x,y,w,h
+    @param texts: text to display
+    @return frame with rectangle
     """
 
     height, width = frame.shape
@@ -140,8 +141,7 @@ def draw_image(img) -> None:
     """
     Laat het plaatje zien.
 
-    Args:
-       Plaatje
+    @param Plaatje
     """
     cv2.imshow("FYS", img)
     cv2.waitKey()
@@ -150,11 +150,11 @@ def draw_image(img) -> None:
 def draw_text(img, text, pos, size=1):
     """
     draw text on an image
-    :param img: image to draw on
-    :param text: text to display
-    :param pos: position
-    :param size: size of the text. Default 1
-    :return: image with text
+    @param img: image to draw on
+    @param text: text to display
+    @param pos: position
+    @param size: size of the text. Default 1
+    @return image with text
     """
     font = cv2.FONT_HERSHEY_DUPLEX
     thickness = 1

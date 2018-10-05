@@ -70,12 +70,10 @@ def left(speed: int) -> bool:
             richtingl = 2
     else:
         raise ValueError("{0} is not in the range of -255 to 255".format(speed))
-
     if _send_data():
         return True
     else:
         return False
-
 
 def right(speed: int) -> bool:
     """
@@ -98,7 +96,6 @@ def right(speed: int) -> bool:
             richtingr = 2
     else:
         raise ValueError("{0} is not in the range of -255 to 255".format(speed))
-
     if _send_data():
         return True
     else:
@@ -124,7 +121,6 @@ def get_speed() -> int:
     """
     # TODO return speed gemeten door sensor @robin1
     return 0
-
 
 def get_value_left() -> int:
     """

@@ -119,7 +119,6 @@ function callLoop(){
                 right: ri
             }
         };
-
     webSocket.send(JSON.stringify(msg));
 }
 
