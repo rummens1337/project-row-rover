@@ -56,12 +56,12 @@ class Motor:
             if speed > -4 and speed < 4:
                 self.speedl = 0
                 self.richtingl = 0
-            elif speed > 0:
+            elif speed > 4:
                 self.speedl = speed
-                self.richtingl = 1
-            elif speed < 0:
-                self.speedl = -speed
                 self.richtingl = 2
+            elif speed < -4:
+                self.speedl = -speed
+                self.richtingl = 1
         else:
             raise ValueError("{0} is not in the range of -255 to 255".format(speed))
 
@@ -83,10 +83,10 @@ class Motor:
                 self.richtingr = 0
             elif speed > 4:
                 self.speedr = speed
-                self.richtingr = 1
+                self.richtingr = 2
             elif speed < -4:
                 self.speedr = -speed
-                self.richtingr = 2
+                self.richtingr = 1
         else:
             raise ValueError("{0} is not in the range of -255 to 255".format(speed))
 
