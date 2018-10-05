@@ -98,6 +98,12 @@ right.release = function() {
 function callLoop(delta){
 	var le = l.toFixed(0);
 	var ri = r.toFixed(0);
+	if(le == 0){
+		le = 1;
+	}
+	if(ri == 0){
+		ri = 1;
+	}
 	$.ajax({
 	    url: '/api/motor',
 	    method: 'PUT',
