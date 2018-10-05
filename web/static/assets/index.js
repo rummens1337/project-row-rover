@@ -34,13 +34,14 @@ var up = new Input.Input(inputObject.up, controllerIndex);
 var down = new Input.Input(inputObject.down, controllerIndex);
 var left = new Input.Input(inputObject.left, controllerIndex);
 var right = new Input.Input(inputObject.right, controllerIndex);
-var webSocket = new WebSocket("ws://localhost:8080");
+var webSocket = new WebSocket("ws://"+window.location.hostname+":8080");
 
 // up
 up.press = function() {
 	l = topSpeed * this.value;
 	r = topSpeed * this.value;
 	updateRL();
+
 };
 up.release = function() {
     if (down.isUp) {
@@ -104,6 +105,7 @@ webSocket.onmessage = function (event) {
     console.log(event.data);
 };
 
+
 function callLoop(){
 
     var le = l.toFixed(0);
@@ -119,12 +121,12 @@ function callLoop(){
         };
 
     webSocket.send(JSON.stringify(msg));
-    window.setTimeout(callLoop, 500);
 }
 
 function updateRL(){
     $("#l")[0].innerHTML = l.toFixed(1);
     $("#r")[0].innerHTML = r.toFixed(1);
+    callLoop();
 }
 
 function clamp(num, min, max) {
