@@ -178,3 +178,20 @@ $( ".toggle" ).click(function() {
 	$(this).toggleClass("active");
 });
 
+$( ".buttonFlashlight" ).click(function() {
+    var msg = {
+        "key": "1234",
+        "request": "lamp",
+        "data": 0
+    };
+
+    if($(this).toggleClass("active")) {
+        msg.data = 1;
+        webSocket.send(JSON.stringify(msg));
+    } else{
+        msg.data = 0;
+        webSocket.send(JSON.stringify(msg));
+    }
+
+});
+
