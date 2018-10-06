@@ -7,6 +7,7 @@ import os
 from gevent import pywsgi
 from geventwebsocket.handler import WebSocketHandler
 from threading import Thread
+from src.hardware.lamp import Lamp
 
 
 class Server:
@@ -28,6 +29,9 @@ class Server:
 
         # Start classes depending on servers, giving this instance as parameter.
         Api(self.server, api_key)
+        _lamp = Lamp()
+        _lamp.start()
+        _lamp.lampoff()
         _webServer = WebServer(self.server)
         _webServer.start()
         Socket(self.server, api_key)

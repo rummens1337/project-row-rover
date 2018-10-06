@@ -6,3 +6,4 @@ uwsgi==2.0.17
 flask_sockets==0.2.1
 gevent==1.3.6 # TODO kan ook eventlet zijn, uitzoeken welke beter is
 gevent-websocket==0.10.1
+RPi.GPIO==0.6.3
