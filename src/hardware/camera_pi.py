@@ -13,11 +13,18 @@ import picamera, cv2
 from src.common.log import *
 
 class Camera(object):
+    """
+    Declares variables to be used later on.
+    """
     thread = None  # background thread that reads frames from camera
     frame = None  # current frame is stored here by background thread
     last_access = 0  # time of last client access to the camera
 
+
     def initialize(self):
+        """
+        Checks if there is a thread, if not creates and starts one.
+        """
         if Camera.thread is None:
             # start background frame thread
             Camera.thread = threading.Thread(target=self._thread)
@@ -27,16 +34,26 @@ class Camera(object):
             while self.frame is None:
                 time.sleep(0)
 
-
+    # TODO Check how to implement this functionality (class) better, maybe via the singleton pattern??
     def get_frame(self):
+        """
+        Is called to get frames
+        @return frame as jpeg
+        """
         if config["Camera"].getboolean("simulate_camera"):
             return cv2.imread("cam_emulate.jpg", 0)
         Camera.last_access = time.time()
         self.initialize()
         return self.frame
 
+    # TODO merge this function's output (currently jpegs, should be something else in the future)
+    # with Noeël's OpenCV project.
     @classmethod
     def _thread(cls):
+        """
+        Initializes and starts camera, then keeps putting jpeg's in frames.
+        Frames get caught by get_frame function.
+        """
         with picamera.PiCamera() as camera:
             # camera setup
             camera.resolution = (320, 140)

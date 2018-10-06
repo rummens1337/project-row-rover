@@ -18,6 +18,10 @@ class WebServer(threading.Thread):
         return render_template('index.html')
 
     def video_feed(self):
+        """
+
+        @returns frame -
+        """
         time.sleep(0.03)
         """Video streaming route. Put this in the src attribute of an img tag."""
         return Response(self.gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
