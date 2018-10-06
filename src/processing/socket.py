@@ -6,6 +6,7 @@ from src.processing.api import Api
 from enum import Enum
 import src.hardware.motor as motor
 from src.hardware.lamp import Lamp
+from src.hardware.display import lcd
 from threading import Thread
 
 
@@ -13,14 +14,18 @@ class Socket:
     class Request(Enum):
         motor = 0,
         status = 1,
-        lamp = 2
+        lamp = 2,
+        displayMsg = 3
 
     def __init__(self, server, api_key):
         socket = Sockets(server)
         self.api_key = api_key
-        lamp = Lamp()
-        lamp.start()
-        lamp.lampoff()
+        self.lcdInstance = lcd()
+        self.lcdInstance.lcd_display_string("Team: David",1)
+        self.lcdInstance.lcd_display_string("\"RescueDavid\"",2)
+        self.lamp = Lamp()
+        self.lamp.start()
+        self.lamp.lampoff()
 
         @socket.route('/')
         def handle(ws):
@@ -31,12 +36,16 @@ class Socket:
                         msg = Api.print(401)
                         ws.send(json.dumps(msg) + json.dumps(recieved))
                         ws.close()
+
                     if recieved["request"] == Socket.Request.motor.name:
                         if "left" in recieved["data"]:
                             motor.left(int(recieved["data"]["left"]))
                         if "right" in recieved["data"]:
                             motor.right(int(recieved["data"]["right"]))
+                        if "message" in recieved["data"]:
+                            self.lcdInstance.lcd_display_string("Werkt hier :)",1)
                         ws.send(json.dumps(Api.print()))
+
 
                     elif recieved["request"] == Socket.Request.status.name:
                         # TODO versie moet ook meegestuurd worden.
@@ -45,12 +54,20 @@ class Socket:
 
                     elif recieved["request"] == Socket.Request.lamp.name:
                         if recieved["data"] == 1:
-                            lamp.lampon()
+                            self.lamp.lampon()
                             ws.send(json.dumps(Api.print()))
                         elif recieved["data"] == 0:
-                            lamp.lampoff()
+                            self.lamp.lampoff()
                             ws.send(json.dumps(Api.print()))
                         ws.send(json.dumps(Api.print()))
+
+                    elif recieved["request"] == Socket.Request.displayMsg.name:
+                        self.lcdInstance.lcd_display_string(recieved("Worksyeah"),1)
+                        # if "message" in recieved ["data"]:
+                        #     # recieved(["data"]["message"])
+                        #     self.lcdInstance.lcd_display_string(recieved("Worksyeah"),1)
+                        #     ws.send(json.dumps(Api.print()))
+
 
                     else:
                         raise AttributeError("Request not found")

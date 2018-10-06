@@ -21,7 +21,7 @@ I2CBUS = 1
 # LCD Address
 ADDRESS = 0x3f
 
-import smbus
+import smbus2 as smbus
 from time import sleep
 
 class i2c_device:
@@ -169,10 +169,3 @@ class lcd:
             self.lcd_device.write_cmd(LCD_BACKLIGHT)
         elif state == 0:
             self.lcd_device.write_cmd(LCD_NOBACKLIGHT)
-
-    # add custom characters (0 - 7)
-    def lcd_load_custom_chars(self, fontdata):
-        self.lcd_write(0x40);
-        for char in fontdata:
-            for line in char:
-                self.lcd_write_char(line)
