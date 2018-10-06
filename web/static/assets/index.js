@@ -185,13 +185,12 @@ $( ".buttonFlashlight" ).click(function() {
         "data": 0
     };
 
-    if($(this).toggleClass("active")) {
+    if($(this).hasClass("active")) {
         msg.data = 1;
         webSocket.send(JSON.stringify(msg));
     } else{
         msg.data = 0;
         webSocket.send(JSON.stringify(msg));
     }
-
 });
 
