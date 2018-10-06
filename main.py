@@ -7,7 +7,7 @@ import src.hardware.motor as motor
 
 def main():
     log.info("David de ROW-rover! Version: %s", config["General"]["version"])
-    motor.start()
+    motor.start() #motor in api class.
     Server()
 
 if __name__ == "__main__":

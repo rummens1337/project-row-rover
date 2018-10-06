@@ -6,6 +6,7 @@ from src.common.log import *
 import os
 from gevent import pywsgi
 from geventwebsocket.handler import WebSocketHandler
+from threading import Thread
 
 
 class Server:
@@ -25,9 +26,10 @@ class Server:
         """
         self.PORT = port
 
-        # Start servers
+        # Start classes depending on servers, giving this instance as parameter.
         Api(self.server, api_key)
-        WebServer(self.server)
+        _webServer = WebServer(self.server)
+        _webServer.start()
         Socket(self.server, api_key)
         self.server = pywsgi.WSGIServer(('', self.PORT), self.server, handler_class=WebSocketHandler)
         # TODO dit grapje moet in een thread, anders houd het de main op.

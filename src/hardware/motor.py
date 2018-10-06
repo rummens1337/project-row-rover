@@ -64,10 +64,10 @@ def left(speed: int) -> bool:
             richtingl = 0
         if speed > 0:
             speedl = speed
-            richtingl = 1
+            richtingl = 2
         if speed < 0:
             speedl = -speed
-            richtingl = 2
+            richtingl = 1
     else:
         raise ValueError("{0} is not in the range of -255 to 255".format(speed))
     if _send_data():
@@ -90,10 +90,10 @@ def right(speed: int) -> bool:
             richtingr = 0
         if speed > 0:
             speedr = speed
-            richtingr = 1
+            richtingr = 2
         if speed < 0:
             speedr = -speed
-            richtingr = 2
+            richtingr = 1
     else:
         raise ValueError("{0} is not in the range of -255 to 255".format(speed))
     if _send_data():
