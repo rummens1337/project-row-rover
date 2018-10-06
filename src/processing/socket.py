@@ -18,9 +18,9 @@ class Socket:
     def __init__(self, server, api_key):
         socket = Sockets(server)
         self.api_key = api_key
-        _lamp = Lamp()
-        _lamp.start()
-        _lamp.lampoff()
+        lamp = Lamp()
+        lamp.start()
+        lamp.lampoff()
 
         @socket.route('/')
         def handle(ws):
@@ -45,10 +45,10 @@ class Socket:
 
                     elif recieved["request"] == Socket.Request.lamp.name:
                         if recieved["data"] == 1:
-                            _lamp.lampon()
+                            lamp.lampon()
                             ws.send(json.dumps(Api.print()))
                         elif recieved["data"] == 0:
-                            _lamp.lampoff()
+                            lamp.lampoff()
                             ws.send(json.dumps(Api.print()))
                         ws.send(json.dumps(Api.print()))
 

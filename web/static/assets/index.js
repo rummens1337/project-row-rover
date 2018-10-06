@@ -128,6 +128,12 @@ function updateRL(){
     callLoop();
 }
 
+/**
+ * @param num - entered number
+ * @param min - what is considered minimum
+ * @param max - what is considered maximum
+ * @returns min or max - Checks if num is closer to max or to min, returns accordingly.
+ */
 function clamp(num, min, max) {
   return num <= min ? min : num >= max ? max : num;
 }

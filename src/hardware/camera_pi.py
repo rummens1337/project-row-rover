@@ -27,6 +27,7 @@ class Camera(object):
             while self.frame is None:
                 time.sleep(0)
 
+
     def get_frame(self):
         if config["Camera"].getboolean("simulate_camera"):
             return cv2.imread("cam_emulate.jpg", 0)

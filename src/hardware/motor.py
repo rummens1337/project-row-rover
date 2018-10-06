@@ -37,7 +37,7 @@ def __del__():
 def stop() -> bool:
     """
     Stop the motors and stop the I2c bus connection
-    :return: returns a bool based on success
+    @return: returns a bool based on success
     """
     left(0)
     right(0)
@@ -52,9 +52,9 @@ def stop() -> bool:
 def left(speed: int) -> bool:
     """
     Speed and direction of the left wheels
-    :param speed: Range from -255 to 255
-    :return: returns a bool based on success
-    :raises: Value error when speed is out of the range
+    @param speed: Range from -255 to 255
+    @return: returns a bool based on success
+    @raises: Value error when speed is out of the range
     """
     global speedl
     global richtingl
@@ -78,9 +78,9 @@ def left(speed: int) -> bool:
 def right(speed: int) -> bool:
     """
     Speed and direction of the right wheels
-    :param speed: Range from -255 to 255
-    :return: returns a bool based on success
-    :raises: Value error when speed is out of the range
+    @param speed: Range from -255 to 255
+    @return: returns a bool based on success
+    @raises: Value error when speed is out of the range
     """
     global speedr
     global richtingr
@@ -105,7 +105,7 @@ def right(speed: int) -> bool:
 def status() -> dict:
     """
     Generates the current state of the motor
-    :return: returns a dictionary with the status
+    @return: returns a dictionary with the status
     """
     return {
         "speedl": speedl,
@@ -117,7 +117,7 @@ def status() -> dict:
 
 def get_speed() -> int:
     """
-    :return: returns a dictionary with the speeds
+    @return: returns a dictionary with the speeds
     """
     # TODO return speed gemeten door sensor @robin1
     return 0
@@ -125,7 +125,7 @@ def get_speed() -> int:
 def get_value_left() -> int:
     """
     Get left speed value
-    :return (int): value
+    @return (int): value
     """
     return speedl
 
@@ -133,7 +133,7 @@ def get_value_left() -> int:
 def get_value_right() -> int:
     """
     Get right speed value
-    :return (int): value
+    @return (int): value
     """
     return speedr
 
@@ -141,7 +141,7 @@ def get_value_right() -> int:
 def _send_data() -> bool:
     """
     generate an array of data for the motorcontroller and sends it over the I2C bus
-    :return: returns a bool based on success
+    @return: returns a bool based on success
     """
     global bus
     if config["Motor"].getboolean("simulate_motor") == False:
