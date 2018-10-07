@@ -1,13 +1,16 @@
 from src.processing.api import Api
+from src.processing.socket import Socket
 from src.processing.webserver import WebServer
 from flask import Flask
 from src.common.log import *
 import os
+from gevent import pywsgi
+from geventwebsocket.handler import WebSocketHandler
+from threading import Thread
 
 
 class Server:
     path = os.path.dirname(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
-    # log.debug(template_dir)
     path = os.path.join(path, 'web')
     template_dir = os.path.join(path, 'templates')
     static_dir = os.path.join(path, 'static')
@@ -22,15 +25,21 @@ class Server:
         @param api_key: key to access the api. Defaults to config>server>api_key
         """
         self.PORT = port
-        self.api = Api(self.server, api_key)
-        # Added statement below
-        self.webServer = WebServer(self.server)
-        # TODO fixen dat de server normaal afsluit.
-        self.server.run(debug=config["General"].getint("DEBUG"), port=self.PORT, host='0.0.0.0')
+
+        # Start classes depending on servers, giving this instance as parameter.
+        Api(self.server, api_key)
+        webServer = WebServer(self.server)
+        webServer.start()
+        Socket(self.server, api_key)
+        self.server = pywsgi.WSGIServer(('', self.PORT), self.server, handler_class=WebSocketHandler)
+        # TODO dit grapje moet in een thread, anders houd het de main op.
+        log.info("Started server on port: %s, api_key: %s", self.PORT, api_key)
+        self.server.serve_forever()
 
     def __del__(self):
         """
-        Destroys the server and api.
+        Destroys the server.
         """
-        self.api = 0
-        self.server = 0
+        self.server.stop()
+
+# TODO moeten nog een serve(), en stop() functie bij komen zodat het nog een beetje bestuurbaar is.

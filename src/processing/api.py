@@ -3,7 +3,7 @@ from flask import Flask, request
 from flask_restful import Resource, reqparse, Api as fapi
 import json
 from http_status import Status
-from src.hardware.motor import Motor
+import src.hardware.motor as motor
 
 
 class Api:
@@ -12,7 +12,6 @@ class Api:
     api = 0
 
     parser = reqparse.RequestParser()
-    motor = Motor()
 
     def __init__(self, server, api_key=str(config["Server"]["api_key"])):
         """
@@ -21,7 +20,6 @@ class Api:
         @param api_key: key to access the api. Defaults to config>server>api_key
         """
         Api.API_KEY = api_key
-        log.info("starting API, api key = %s", Api.API_KEY)
 
         self.api = fapi(server)
 
@@ -83,16 +81,16 @@ class Api:
             @return json object
             """
             lv, rv, s = 0, 0, 0
-            s = Api.motor.get_speed()
+            s = motor.get_speed()
             # invert value if negative
-            if Api.motor.richtingl == 2:
-                lv -= Api.motor.get_value_left()
+            if motor.richtingl == 2:
+                lv -= motor.get_value_left()
             else:
-                lv = Api.motor.get_value_left()
-            if Api.motor.richtingr == 2:
-                rv -= Api.motor.get_value_right()
+                lv = motor.get_value_left()
+            if motor.richtingr == 2:
+                rv -= motor.get_value_right()
             else:
-                rv = Api.motor.get_value_right()
+                rv = motor.get_value_right()
             return {
                 "motor": [
                     {
@@ -135,9 +133,9 @@ class Api:
                 return Api.print(401), 401
             try:
                 if type(args["left"]) is int:
-                    Api.motor.left(args["left"])
+                    motor.left(args["left"])
                 if type(args["right"]) is int:
-                    Api.motor.right(args["right"])
+                    motor.right(args["right"])
             except ValueError as error:
                 return Api.print(422, {
                     "message": str(error)

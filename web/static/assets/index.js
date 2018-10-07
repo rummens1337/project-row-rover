@@ -1,3 +1,4 @@
+// TODO deze javascript is echt een tering zooi, nergens documentatie en alles in een bestand gesmeten. Dit moet effe iemand opruimen.
 var x, y, l = 0.0, r = 0.0;
 var multiplier = 3.5;
 
@@ -34,12 +35,14 @@ var up = new Input.Input(inputObject.up, controllerIndex);
 var down = new Input.Input(inputObject.down, controllerIndex);
 var left = new Input.Input(inputObject.left, controllerIndex);
 var right = new Input.Input(inputObject.right, controllerIndex);
+var webSocket = new WebSocket("ws://"+window.location.hostname+":8080");
 
 // up
 up.press = function() {
 	l = topSpeed * this.value;
 	r = topSpeed * this.value;
 	updateRL();
+
 };
 up.release = function() {
     if (down.isUp) {
@@ -95,32 +98,43 @@ right.release = function() {
     else down.press();
 };
 
-function callLoop(delta){
-	var le = l.toFixed(0);
-	var ri = r.toFixed(0);
-	if(le == 0){
-		le = 1;
-	}
-	if(ri == 0){
-		ri = 1;
-	}
-	$.ajax({
-	    url: '/api/motor',
-	    method: 'PUT',
-	    data: {
-			key: 1234,
-	    	left: le,
-	    	right: ri
-	    }
-	});
-	window.setTimeout(callLoop, 500);
+webSocket.onopen = function (){
+    callLoop();
+};
+
+webSocket.onmessage = function (event) {
+    console.log(event.data);
+};
+
+
+function callLoop(){
+
+    var le = l.toFixed(0);
+    var ri = r.toFixed(0);
+    var msg =
+        {
+            'request': 'motor',
+            'key': "1234",
+            'data': {
+                left: le,
+                right: ri
+            }
+        };
+    webSocket.send(JSON.stringify(msg));
 }
 
 function updateRL(){
     $("#l")[0].innerHTML = l.toFixed(1);
     $("#r")[0].innerHTML = r.toFixed(1);
+    callLoop();
 }
 
+/**
+ * @param num - entered number
+ * @param min - what is considered minimum
+ * @param max - what is considered maximum
+ * @returns min or max - Checks if num is closer to max or to min, returns accordingly.
+ */
 function clamp(num, min, max) {
   return num <= min ? min : num >= max ? max : num;
 }
@@ -171,5 +185,19 @@ $( ".toggle" ).click(function() {
 	$(this).toggleClass("active");
 });
 
-callLoop();
+$( ".buttonFlashlight" ).click(function() {
+    var msg = {
+        "key": "1234",
+        "request": "lamp",
+        "data": 0
+    };
+
+    if($(this).hasClass("active")) {
+        msg.data = 1;
+        webSocket.send(JSON.stringify(msg));
+    } else{
+        msg.data = 0;
+        webSocket.send(JSON.stringify(msg));
+    }
+});
 

@@ -2,17 +2,14 @@ import cv2
 import platform
 from src.common.log import *
 from src.processing.server import Server
+import src.hardware.motor as motor
+import time
 
 
 def main():
-    log.debug("python version: %s", platform.python_version())
-    log.debug("OpenCV version: %s", cv2.__version__)
-
-    server = Server()
-
-
-#    mot = Motor()
-#    mot.left(0)
+    log.info("David de ROW-rover! Version: %s", config["General"]["version"])
+    motor.start() #motor in api class.
+    Server()
 
 
 if __name__ == "__main__":
