@@ -24,6 +24,7 @@ Omdat dit project is gemaakt voor een raspberry Pi 3 met een ARM processor en GP
 
 4) Run `make run-amd64` om het de docker image uittevoeren (`make run` op een apparaat met GPIO pins). Wanneer je de applictie wilt updaten met je aanpassingen in deze map kan je ook alleen `make run-current(-amd64)` zodat je niet altijd docker opnieuw hoeft te bouwen. Wanneer je een ander bestand dan `main.py` wilt uitvoeren kan je dat doormiddel van de `target` parameter doen (`make run-current-amd64 target=src/hardware/camera.py`).
 
+* Met de `p` parameter kan je de poort instellen in een `run*` command. Bijvoorbeeld: `make run-amd64 p=80`. Default is 8080.
 # Config
 
 in `./settings.conf` staat alle confugiratie voor productie (ARM RPi), in `./settings.amd64.conf` kan je je instellingen aanpassen voor de dev builds.

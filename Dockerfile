@@ -6,20 +6,21 @@ COPY --from=nginx:latest /etc/nginx/nginx.conf /nginx.conf
 # compile cross-platform
 COPY qemu-arm-static /usr/bin/
 
+COPY Requirements.txt /app/Requirements.txt
+
 LABEL maintainer "Noeël Moeskops <noeel.moeskops@hva.nl>"
 
 # Set the working directory to /app
 WORKDIR /app
 
+# Install any needed packages specified in requirements.txt
+RUN pip3 install --trusted-host pypi.python.org -r Requirements.txt
+
 ADD /src /app/src
 ADD /web /app/web
 ADD /haarCascades /app/haarCascades
 ADD settings.conf /app
-ADD Requirements.txt /app
 ADD main.py /app
-
-# Install any needed packages specified in requirements.txt
-RUN pip3 install --trusted-host pypi.python.org -r Requirements.txt
 
 EXPOSE 80
 
