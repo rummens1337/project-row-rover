@@ -46,10 +46,8 @@ class Socket:
                     elif recieved["request"] == Socket.Request.lamp.name:
                         if recieved["data"] == 1:
                             lamp.lampon()
-                            ws.send(json.dumps(Api.print()))
                         elif recieved["data"] == 0:
                             lamp.lampoff()
-                            ws.send(json.dumps(Api.print()))
                         ws.send(json.dumps(Api.print()))
 
                     else:
@@ -59,6 +57,7 @@ class Socket:
                     ws.send(json.dumps(msg))
                     ws.close()
                 except Exception as err:
+                    # TODO wanneer de client de verbinding sluit crashed hij hieromdat hij een gesloten verbinding nog een keer wilt sluiten.
                     ws.send(json.dumps(Api.print(500, str(err))))
                     ws.close()
 

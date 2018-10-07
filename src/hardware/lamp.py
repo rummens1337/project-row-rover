@@ -1,7 +1,12 @@
-import RPi.GPIO as GPIO
+from src.common.log import *
+
+if config["Lamp"].getboolean("simulate_lamp") is False:
+    import RPi.GPIO as GPIO
 import threading
 
+
 class Lamp(threading.Thread):
+    # TODO van lamp (net als alles in hardware) mogen geen meerdere instances van bestaan, het moet dus een module worden en geen class.
     LAMPPIN1 = 7
     status = 0
 
@@ -10,18 +15,18 @@ class Lamp(threading.Thread):
         Set the pi to use the BCM numbers for GPIO pins
         Configure pins to their required modes
         """
-        # if config["Lamp"].getboolean("simulate_lamp") == False:
         threading.Thread.__init__(self)
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(self.LAMPPIN1, GPIO.OUT)
+        if config["Lamp"].getboolean("simulate_lamp") is False:
+            GPIO.setmode(GPIO.BOARD)
+            GPIO.setup(self.LAMPPIN1, GPIO.OUT)
 
     def lampon(self) -> bool:
         """
         Turns the lamp on
         @return returns a bool based on success
         """
-        # if config["Lamp"].getboolean("simulate_lamp") == False:
-        GPIO.output(self.LAMPPIN1, GPIO.HIGH)
+        if config["Lamp"].getboolean("simulate_lamp") is False:
+            GPIO.output(self.LAMPPIN1, GPIO.HIGH)
         self.status = 1
         # TODO vind een manier om te checken of hij echt aan staat
         return True
@@ -31,8 +36,8 @@ class Lamp(threading.Thread):
         Turns the lamp off
         @return returns a bool based on success
         """
-        # if config["Lamp"].getboolean("simulate_lamp") == False:
-        GPIO.output(self.LAMPPIN1, GPIO.LOW)
+        if config["Lamp"].getboolean("simulate_lamp") is False:
+            GPIO.output(self.LAMPPIN1, GPIO.LOW)
         self.status = 0
         # TODO vind een manier om te checken of hij echt uit staat
         return True

@@ -33,8 +33,8 @@ class Server:
         Socket(self.server, api_key)
         self.server = pywsgi.WSGIServer(('', self.PORT), self.server, handler_class=WebSocketHandler)
         # TODO dit grapje moet in een thread, anders houd het de main op.
-        self.server.serve_forever()
         log.info("Started server on port: %s, api_key: %s", self.PORT, api_key)
+        self.server.serve_forever()
 
     def __del__(self):
         """
