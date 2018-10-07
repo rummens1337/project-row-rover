@@ -11,17 +11,16 @@ class Motor:
     # 0 = stilstaan 1 = vooruit 2 = achteruit
     richtingl = 0
     richtingr = 0
-    # bus
 
     def __init__(self):
         """
         Create a bus connection over I2C and sets the speed at 0
         """
-        try:
+        if config["Motor"].getboolean("simulate_motor") == False:
             self.bus = smbus.SMBus(
                 1)  # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1) <- found on internet, hope it makes sense to you
-        except FileNotFoundError as er:
-            log.error("%s, normal if in fake env.", er)
+        else:
+            self.bus = 0
 
         self.left(0)
         self.right(0)
@@ -35,69 +34,85 @@ class Motor:
     def stop(self) -> bool:
         """
         Stop the motors and stop the I2c bus connection
-        :return: returns a bool based on success
+        @return returns a bool based on success
         """
         self.left(0)
         self.right(0)
-        self.bus.close()
+        try:
+            self.bus.close()
+        except AttributeError as er:
+            log.error("failed to access bus %s, normal if in fake env", er)
         # TODO dit returnt altijd true, moet natuurlijk op basis van de uitkomst. @robin1
         return True
 
     def left(self, speed: int) -> bool:
         """
         Speed and direction of the left wheels
-        :param speed: Range from -255 to 255
-        :return: returns a bool based on success
+        @param speed: Range from -255 to 255
+        @return returns a bool based on success
         :raises: Value error when speed is out of the range
         """
         if speed > -256 and speed < 256:
-            if speed == 0:
+            if speed > -4 and speed < 4:
                 self.speedl = 0
                 self.richtingl = 0
-            if speed > 0:
+            elif speed > 4:
                 self.speedl = speed
-                self.richtingl = 1
-            if speed < 0:
-                self.speedl = -speed
                 self.richtingl = 2
+            elif speed < -4:
+                self.speedl = -speed
+                self.richtingl = 1
         else:
             raise ValueError("{0} is not in the range of -255 to 255".format(speed))
-        # TODO functie checkt niet of send_data() succesvol is. @robin1
-        self._send_data()
-        return True
 
-    def right(self, speed: object) -> object:
+        if self._send_data() :
+            return True
+        else:
+            return False
+
+    def right(self, speed: int) -> bool:
         """
         Speed and direction of the right wheels
-        :param speed: Range from -255 to 255
-        :return: returns a bool based on success
+        @param speed: Range from -255 to 255
+        @return returns a bool based on success
         :raises: Value error when speed is out of the range
         """
         if speed > -256 and speed < 256:
-            if speed == 0:
+            if speed > -4 and speed < 4:
                 self.speedr = 0
                 self.richtingr = 0
-            if speed > 0:
+            elif speed > 4:
                 self.speedr = speed
-                self.richtingr = 1
-            if speed < 0:
-                self.speedr = -speed
                 self.richtingr = 2
+            elif speed < -4:
+                self.speedr = -speed
+                self.richtingr = 1
         else:
             raise ValueError("{0} is not in the range of -255 to 255".format(speed))
-        # TODO functie checkt niet of send_data() succesvol is. @robin1
-        self._send_data()
-        return True
+
+        if self._send_data():
+            return True
+        else:
+            return False
 
     def status(self) -> dict:
-        # TODO implementeren @robin1
-        # wat is dit eigenlijk?
-        pass
+        """
+        Generates the current state of the motor
+        @return returns a dictionary with the status
+        """
+        return {
+            "speedl": self.speedl,
+            "richtingl": self.richtingl,
+            "speedr": self.speedr,
+            "richtingr": self.richtingr
+        }
 
     def get_speed(self) -> int:
-
-        # TODO implementeren @robin1
-        pass
+        """
+        @return returns a dictionary with the speeds
+        """
+        # TODO return speed gemeten door sensor @robin1
+        return 0
 
     def get_value_left(self) -> int:
         """
@@ -106,7 +121,7 @@ class Motor:
         """
         return self.speedl
 
-    def get_value_right(self):
+    def get_value_right(self) -> int:
         """
         Get right speed value
         :return (int): value
@@ -115,8 +130,8 @@ class Motor:
 
     def _send_data(self) -> bool:
         """
-        generate an array of data for the motorcontroller and send it over the I2C bus
-        :return: returns a bool based on success
+        generate an array of data for the motorcontroller and sends it over the I2C bus
+        @return returns a bool based on success
         """
         if config["Motor"].getboolean("simulate_motor") == False:
             try:

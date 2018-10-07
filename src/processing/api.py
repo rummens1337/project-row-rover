@@ -17,8 +17,8 @@ class Api:
     def __init__(self, server, api_key=str(config["Server"]["api_key"])):
         """
         Api class, create an api endpoint to controll the motors of the rover. Accesable from "./api/".
-        :param server: Flask server object to attach to.
-        :param api_key: key to access the api. Defaults to config>server>api_key
+        @param server: Flask server object to attach to.
+        @param api_key: key to access the api. Defaults to config>server>api_key
         """
         Api.API_KEY = api_key
         log.info("starting API, api key = %s", Api.API_KEY)
@@ -44,16 +44,16 @@ class Api:
     def print(status: int = 200, data: str = "") -> json:
         """
         Makes a json object to return to send.
-        :param status (int): HTTP status code: https://nl.wikipedia.org/wiki/Lijst_van_HTTP-statuscodes. Default = 200
-        :param data (json): object what has to be send back. Default = ""
-        :return: formatted json.
+        @param status (int): HTTP status code: https://nl.wikipedia.org/wiki/Lijst_van_HTTP-statuscodes. Default = 200
+        @param data (json): object what has to be send back. Default = ""
+        @return formatted json.
 
         input:
         @code
             Api.print(200, {
                 "result": 1
             })
-        @code
+        @endcode
 
         Result:
         @code
@@ -65,7 +65,7 @@ class Api:
                 },
                 "message": "OK"
             }
-        @code
+        @endcode
 
         """
         return {
@@ -80,19 +80,30 @@ class Api:
         def get_motor_status() -> json:
             """
             get the motor status (speed value and actual speed)
-            :return: json object
+            @return json object
             """
+            lv, rv, s = 0, 0, 0
+            s = Api.motor.get_speed()
+            # invert value if negative
+            if Api.motor.richtingl == 2:
+                lv -= Api.motor.get_value_left()
+            else:
+                lv = Api.motor.get_value_left()
+            if Api.motor.richtingr == 2:
+                rv -= Api.motor.get_value_right()
+            else:
+                rv = Api.motor.get_value_right()
             return {
                 "motor": [
                     {
                         "side": "left",
-                        "value": Api.motor.get_value_left(),
-                        "speed": Api.motor.get_speed()
+                        "value": lv,
+                        "speed": s
                     },
                     {
                         "side": "right",
-                        "value": Api.motor.get_value_right(),
-                        "speed": Api.motor.get_speed()
+                        "value": rv,
+                        "speed": s
                     }
                 ]
             }
@@ -100,11 +111,11 @@ class Api:
         def get(self):
             """
             get motor information from `self.get_motor_status()`
-            :return: json to sender.
+            @return json to sender.
             """
             args = Api.parser.parse_args()
             if args["key"] != Api.API_KEY:
-                return Api.print(401, {args["key"]: Api.API_KEY}), 401
+                return Api.print(401), 401
             try:
                 motor_status = self.get_motor_status()
             except Exception as err:
@@ -115,17 +126,17 @@ class Api:
         def put(self):
             """
             Set motor left and right speed. (-255 to 255)
-            :param: left: left speed.
-            :param: right: right speed.
-            :return: json to sender
+            @param left: left speed.
+            @param right: right speed.
+            @return json to sender
             """
             args = Api.parser.parse_args()
             if args["key"] != Api.API_KEY:
                 return Api.print(401), 401
             try:
-                if args["left"]:
+                if type(args["left"]) is int:
                     Api.motor.left(args["left"])
-                if args["right"]:
+                if type(args["right"]) is int:
                     Api.motor.right(args["right"])
             except ValueError as error:
                 return Api.print(422, {
@@ -142,7 +153,7 @@ class Api:
         def get(self):
             """
             get rover version.
-            :return: json to sender
+            @return json to sender
             """
             args = Api.parser.parse_args()
             if args["key"] != Api.API_KEY:
@@ -156,7 +167,7 @@ class Api:
             """
             get video stream.
             Not implemeted.
-            :return: json to sender
+            @return json to sender
             """
             args = Api.parser.parse_args()
             if args["key"] != Api.API_KEY:
