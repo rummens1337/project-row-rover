@@ -29,5 +29,7 @@ build:
 
 
 push: build
-	docker tag rover noeel/rover:$(tag) \
+	docker tag rover noeel/rover:$(tag)
 	docker push noeel/rover:$(tag)
+
+# TODO build documentation
