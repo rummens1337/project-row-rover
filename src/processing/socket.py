@@ -62,11 +62,10 @@ class Socket:
                         ws.send(json.dumps(Api.print()))
 
                     elif recieved["request"] == Socket.Request.displayMsg.name:
-                        self.lcdInstance.lcd_display_string(recieved("Worksyeah"),1)
-                        # if "message" in recieved ["data"]:
-                        #     # recieved(["data"]["message"])
-                        #     self.lcdInstance.lcd_display_string(recieved("Worksyeah"),1)
-                        #     ws.send(json.dumps(Api.print()))
+                        # self.lcdInstance.lcd_display_string(recieved("Worksyeah"),1)
+                            # recieved(["data"]["message"])
+                        self.lcdInstance.lcd_display_string(str(recieved["data"]),1)
+                        ws.send(json.dumps(Api.print()))
 
 
                     else:
@@ -75,9 +74,9 @@ class Socket:
                     msg = Api.print(400, str(err))
                     ws.send(json.dumps(msg))
                     ws.close()
-                except Exception as err:
-                    ws.send(json.dumps(Api.print(500, str(err))))
-                    ws.close()
+                # except Exception as err:
+                #     ws.send(json.dumps(Api.print(500, str(err))))
+                #     ws.close()
 
     def __del__(self):
         # TODO
