@@ -5,8 +5,7 @@ from json import JSONDecodeError
 from src.processing.api import Api
 from enum import Enum
 import src.hardware.motor as motor
-from src.hardware.lamp import Lamp
-from threading import Thread
+import src.hardware.lamp as lamp
 
 
 class Socket:
@@ -18,8 +17,6 @@ class Socket:
     def __init__(self, server, api_key):
         socket = Sockets(server)
         self.api_key = api_key
-        lamp = Lamp()
-        lamp.start()
         lamp.lampoff()
 
         @socket.route('/')
