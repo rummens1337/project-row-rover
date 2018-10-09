@@ -2,6 +2,7 @@ stages:
   - Build
   - Run
   - Test
+  - Stop
   
 before_script:
   - docker info
