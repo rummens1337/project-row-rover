@@ -12,3 +12,11 @@ build_image:
 #    First time run only
 #    - docker run --rm --privileged multiarch/qemu-user-static:register
     - make build
+    
+run_image:
+  stage: Run
+  script:
+#    First time run only
+#    - docker run --rm --privileged multiarch/qemu-user-static:register
+    - make run-amd64
+
