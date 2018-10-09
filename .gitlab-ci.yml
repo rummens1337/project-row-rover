@@ -1,5 +1,9 @@
 image: docker:18.06.1-ce
 
+variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+    
 services:
     - docker:18.06.1-ce-dind
 
