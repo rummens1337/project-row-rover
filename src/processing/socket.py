@@ -5,8 +5,8 @@ from json import JSONDecodeError
 from src.processing.api import Api
 from enum import Enum
 import src.hardware.motor as motor
-from src.hardware.lamp import Lamp
-from threading import Thread
+from src.hardware.display import lcd
+import src.hardware.lamp as lamp
 import atexit
 
 
@@ -14,13 +14,15 @@ class Socket:
     class Request(Enum):
         motor = 0,
         status = 1,
-        lamp = 2
+        lamp = 2,
+        displayMsg = 3
 
     def __init__(self, server, api_key):
         socket = Sockets(server)
         self.api_key = api_key
-        lamp = Lamp()
-        lamp.start()
+        self.lcdInstance = lcd()
+        self.lcdInstance.lcd_display_string("Team: David",1)
+        self.lcdInstance.lcd_display_string("\"RescueDavid\"",2)
         lamp.lampoff()
         atexit.register(self.__del__)
 
@@ -33,6 +35,7 @@ class Socket:
                         msg = Api.print(401)
                         ws.send(json.dumps(msg) + json.dumps(recieved))
                         ws.close()
+
                     if recieved["request"] == Socket.Request.motor.name:
                         if "left" in recieved["data"]:
                             motor.left(int(recieved["data"]["left"]))
@@ -40,17 +43,27 @@ class Socket:
                             motor.right(int(recieved["data"]["right"]))
                         ws.send(json.dumps(Api.print()))
 
+
                     elif recieved["request"] == Socket.Request.status.name:
                         # TODO versie moet ook meegestuurd worden.
                         # version = {"version": config["General"]["version"]}
                         ws.send(json.dumps(Api.print(200, Api.Motor.get_motor_status())))
 
                     elif recieved["request"] == Socket.Request.lamp.name:
+                        # TODO lamp status opvragen
                         if recieved["data"] == 1:
                             lamp.lampon()
                         elif recieved["data"] == 0:
                             lamp.lampoff()
                         ws.send(json.dumps(Api.print()))
+
+                    elif recieved["request"] == Socket.Request.displayMsg.name:
+                        # TODO displayMsg status opvragen
+                        self.lcdInstance.lcd_clear()
+                        self.lcdInstance.lcd_display_string(str(recieved["data"][0:15]),1)
+                        self.lcdInstance.lcd_display_string(str(recieved["data"][15:31]),1)
+                        ws.send(json.dumps(Api.print()))
+
 
                     else:
                         raise AttributeError("Request not found")
@@ -58,6 +71,7 @@ class Socket:
                     msg = Api.print(400, str(err))
                     ws.send(json.dumps(msg))
                     ws.close()
+
                 except Exception as err:
                     # TODO wanneer de client de verbinding sluit crashed hij hieromdat hij een gesloten verbinding nog een keer wilt sluiten.
                     ws.send(json.dumps(Api.print(500, str(err))))
