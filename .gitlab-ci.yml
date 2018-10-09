@@ -1,7 +1,13 @@
+stages:
+  - Build
+  - Run
+  - Test
+  
 before_script:
   - docker info
 
 build_image:
+  stage: Build
   script:
 #    First time run only
 #    - docker run --rm --privileged multiarch/qemu-user-static:register
