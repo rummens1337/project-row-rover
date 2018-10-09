@@ -14,11 +14,14 @@ build_image:
 #    - docker run --rm --privileged multiarch/qemu-user-static:register
     - make build
     
-run_image:
-  stage: Run
-  script:
-    - make run-amd64
-
+#run_image:
+#  stage: Run
+#  script:
+#    - make run-amd64
+test_image:
+  - stage: Test
+  - script:
+    - make test
 stop_image:
   stage: Stop
   script:
