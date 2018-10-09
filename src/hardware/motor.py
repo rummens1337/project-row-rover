@@ -17,7 +17,7 @@ def start():
     Create a bus connection over I2C and sets the speed at 0
     """
     global bus
-    if config["Motor"].getboolean("simulate_motor") == False:
+    if config["Motor"].getboolean("simulate_motor") is False:
         bus = smbus.SMBus(
             1)  # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1) <- found on internet, hope it makes sense to you
     else:
@@ -41,10 +41,8 @@ def stop() -> bool:
     """
     left(0)
     right(0)
-    try:
+    if config["Motor"].getboolean("simulate_motor") is False:
         bus.close()
-    except (AttributeError, NameError) as er:
-        log.error("failed to access bus %s, normal if in fake env", er)
     # TODO dit returnt altijd true, moet natuurlijk op basis van de uitkomst. @robin1
     return True
 

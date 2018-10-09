@@ -25,3 +25,5 @@ push: build
 	docker push noeel/rover:$(tag)
 
 # TODO build documentation
+
+# TODO run tests

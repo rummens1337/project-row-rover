@@ -19,7 +19,6 @@ def main():
         loop()
 
 def loop():
-    server.close()
     time.sleep(1000)
 
 
