@@ -22,6 +22,7 @@ install_qemu:
         - docker
     stage: Install
     script:
+        - apk add make
         - make install
     allow_failure: true
     
