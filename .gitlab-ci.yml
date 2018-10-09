@@ -15,6 +15,7 @@ stages:
   - Stop
   
 before_script:
+    - apk add make
     - docker info
 
 install_qemu:
@@ -22,7 +23,6 @@ install_qemu:
         - docker
     stage: Install
     script:
-        - apk add make
         - make install
     allow_failure: true
     
