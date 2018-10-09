@@ -1,3 +1,4 @@
+// TODO deze javascript is echt een tering zooi, nergens documentatie en alles in een bestand gesmeten. Dit moet effe iemand opruimen.
 var x, y, l = 0.0, r = 0.0;
 var multiplier = 3.5;
 

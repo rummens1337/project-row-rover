@@ -5,9 +5,8 @@ from json import JSONDecodeError
 from src.processing.api import Api
 from enum import Enum
 import src.hardware.motor as motor
-from src.hardware.lamp import Lamp
 from src.hardware.display import lcd
-from threading import Thread
+import src.hardware.lamp as lamp
 
 
 class Socket:
@@ -23,9 +22,7 @@ class Socket:
         self.lcdInstance = lcd()
         self.lcdInstance.lcd_display_string("Team: David",1)
         self.lcdInstance.lcd_display_string("\"RescueDavid\"",2)
-        self.lamp = Lamp()
-        self.lamp.start()
-        self.lamp.lampoff()
+        lamp.lampoff()
 
         @socket.route('/')
         def handle(ws):
@@ -54,11 +51,9 @@ class Socket:
 
                     elif recieved["request"] == Socket.Request.lamp.name:
                         if recieved["data"] == 1:
-                            self.lamp.lampon()
-                            ws.send(json.dumps(Api.print()))
+                            lamp.lampon()
                         elif recieved["data"] == 0:
-                            self.lamp.lampoff()
-                            ws.send(json.dumps(Api.print()))
+                            lamp.lampoff()
                         ws.send(json.dumps(Api.print()))
 
                     elif recieved["request"] == Socket.Request.displayMsg.name:
@@ -73,9 +68,11 @@ class Socket:
                     msg = Api.print(400, str(err))
                     ws.send(json.dumps(msg))
                     ws.close()
-                # except Exception as err:
-                #     ws.send(json.dumps(Api.print(500, str(err))))
-                #     ws.close()
+
+                except Exception as err:
+                    # TODO wanneer de client de verbinding sluit crashed hij hieromdat hij een gesloten verbinding nog een keer wilt sluiten.
+                    ws.send(json.dumps(Api.print(500, str(err))))
+                    ws.close()
 
     def __del__(self):
         # TODO

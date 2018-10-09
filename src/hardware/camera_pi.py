@@ -8,9 +8,12 @@
 import time
 import io
 import threading
-import picamera, cv2
-
 from src.common.log import *
+
+import cv2
+if config["Lamp"].getboolean("simulate_camera") is False:
+    import picamera
+
 
 class Camera(object):
     """
@@ -19,7 +22,6 @@ class Camera(object):
     thread = None  # background thread that reads frames from camera
     frame = None  # current frame is stored here by background thread
     last_access = 0  # time of last client access to the camera
-
 
     def initialize(self):
         """
