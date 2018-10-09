@@ -1,5 +1,6 @@
 from src.common.log import *
 import smbus2 as smbus
+import atexit
 
 OFFSET = 0  # offset in the array
 ADDRESS = 0x32  # I2c address of the motorcontroller
@@ -32,7 +33,7 @@ def __del__():
     """
     stop()
 
-
+@atexit.register
 def stop() -> bool:
     """
     Stop the motors and stop the I2c bus connection
@@ -42,7 +43,7 @@ def stop() -> bool:
     right(0)
     try:
         bus.close()
-    except AttributeError as er:
+    except (AttributeError, NameError) as er:
         log.error("failed to access bus %s, normal if in fake env", er)
     # TODO dit returnt altijd true, moet natuurlijk op basis van de uitkomst. @robin1
     return True

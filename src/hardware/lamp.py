@@ -3,7 +3,7 @@ from src.common.log import *
 if config["Lamp"].getboolean("simulate_lamp") is False:
     import RPi.GPIO as GPIO
 import threading
-
+import atexit
 
 class Lamp(threading.Thread):
     # TODO van lamp (net als alles in hardware) mogen geen meerdere instances van bestaan, het moet dus een module worden en geen class.
@@ -16,9 +16,13 @@ class Lamp(threading.Thread):
         Configure pins to their required modes
         """
         threading.Thread.__init__(self)
+        # TODO dit is een thread object zonder `run()` dus het doet niks.
         if config["Lamp"].getboolean("simulate_lamp") is False:
             GPIO.setmode(GPIO.BOARD)
             GPIO.setup(self.LAMPPIN1, GPIO.OUT)
+
+        atexit.register(self.close)
+
 
     def lampon(self) -> bool:
         """
@@ -51,3 +55,7 @@ class Lamp(threading.Thread):
             "lampmode": self.status,
             "lamppin": self.LAMPPIN1
         }
+
+    def close(self):
+        # TODO GPIO sluiten @robin1
+        pass

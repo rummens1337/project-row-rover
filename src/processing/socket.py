@@ -7,6 +7,7 @@ from enum import Enum
 import src.hardware.motor as motor
 from src.hardware.lamp import Lamp
 from threading import Thread
+import atexit
 
 
 class Socket:
@@ -21,6 +22,7 @@ class Socket:
         lamp = Lamp()
         lamp.start()
         lamp.lampoff()
+        atexit.register(self.__del__)
 
         @socket.route('/')
         def handle(ws):

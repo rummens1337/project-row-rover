@@ -3,6 +3,7 @@ import threading
 from functools import partial
 from src.common.log import *
 import time
+import atexit
 
 DEBUG = 0
 
@@ -115,7 +116,7 @@ def _edge_callback(event, _):
         if global_time_start:
             event.set()
 
-
+@atexit.register
 def _destructor():
     """
     Destruct de range sensor

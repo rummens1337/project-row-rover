@@ -4,10 +4,13 @@ from src.hardware.camera_pi import Camera
 import time
 import threading
 
-class WebServer(threading.Thread):
+class WebServer:
 
     def __init__(self, server):
-        threading.Thread.__init__(self)
+        # TODO is het verstandig dat dit in een thread zit?
+        # TODO deze thead werkt niet eens omdat het geen `run()` functie heeft.
+        # threading.Thread.__init__(self)
+        # self.daemon = True
         self.server = server
         self.camera = Camera()
         server.add_url_rule('/', 'index', self.index)
@@ -31,4 +34,5 @@ class WebServer(threading.Thread):
         while True:
             frame = self.camera.get_frame()
             yield (b'--frame\r\n'
+                #    TODO crashed in emulated mode
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')

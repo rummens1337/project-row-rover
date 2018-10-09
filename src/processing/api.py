@@ -4,7 +4,7 @@ from flask_restful import Resource, reqparse, Api as fapi
 import json
 from http_status import Status
 import src.hardware.motor as motor
-
+import atexit
 
 class Api:
     API_KEY = 0
@@ -30,6 +30,8 @@ class Api:
         self.parser.add_argument('right', type=int, help='motor value must be between -255 and 255')
         self.parser.add_argument('left', type=int, help='motor value must be between -255 and 255')
         self.parser.add_argument('key', help='key invalid')
+
+        atexit.register(self.__del__)
 
     def __del__(self):
         """
