@@ -1,18 +1,30 @@
 stages:
+  - Install
   - Build
   - Run
   - Test
   - Stop
   
 before_script:
-  - docker info
+    tags:
+        - docker
+    script:
+        - docker info
 
+install_qemu:
+    tags:
+        - docker
+    stage: Install
+    script:
+        - make install
+    allow_failure: true
+    
 build_image:
-  stage: Build
-  script:
-#    First
-#    - docker run --rm --privileged multiarch/qemu-user-static:register
-    - make build
+    tags:
+        - docker
+    stage: Build
+    script:
+        - make build
     
 #run_image:
 #  stage: Run
@@ -25,7 +37,9 @@ build_image:
 #    - make test
 
 stop_image:
-  stage: Stop
-  script:
-    - docker stop $(docker ps -a -q)
-    - docker rm $(docker ps -a -q)
+    tags:
+        - docker
+    stage: Stop
+    script:
+        - docker stop $(docker ps -a -q)
+        - docker rm $(docker ps -a -q)
