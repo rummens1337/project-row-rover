@@ -1,0 +1,8 @@
+before_script:
+  - docker info
+
+build_image:
+  script:
+#    First time run only
+#    - docker run --rm --privileged multiarch/qemu-user-static:register
+    - docker build -t rover .
