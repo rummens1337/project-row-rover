@@ -10,7 +10,7 @@ before_script:
 build_image:
   stage: Build
   script:
-#    First time
+#    First
 #    - docker run --rm --privileged multiarch/qemu-user-static:register
     - make build
     
