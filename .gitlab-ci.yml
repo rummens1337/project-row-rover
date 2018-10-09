@@ -20,8 +20,8 @@ build_image:
 #    - make run-amd64
 
 test_image:
-  - stage: Test
-  - script:
+  stage: Test
+  script:
     - make test
 
 stop_image:
