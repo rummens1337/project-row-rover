@@ -79,20 +79,33 @@ The socket allows for an continuos connection between the server and the client.
 
 ### Requests
 
+#### Get current version
+Get the version of the application
+
+* Request: `status`
+* Data: None
+* Returns: current version as a string
+
+Example:
+```
+> {"request": "status", "key": "<KEY>"}
+< {"status": 200, "description": "Request was successful.", "data": {"version": "0.0.1-Alderaan"}, "message": "OK"} 
+```
+
 #### Get motor values 
 Get the current speed of both (left, right) motors
 
-* Request: `status`
+* Request: `motor`
 * Data: None
 * Returns: left and right motor speed values.
 
 Example:
 ```
-> {"key": "<KEY>", "request": "status"}
+> {"key": "<KEY>", "request": "motor"}
 < {"description": "Request was successful.", "status": 200, "data": {"motor": [{"side": "left", "speed": 0, "value": -10}, {"side": "right", "speed": 0, "value": 123}]}, "message": "OK"}
 ```
 
-### Set motor values
+#### Set motor values
 Set the speed of the motors.
 
 * Request: `motor`
@@ -105,7 +118,7 @@ Example:
 < {"description": "Request was successful.", "status": 200, "data": "", "message": "OK"}
 ```
 
-### Toggle flashlight
+#### Toggle flashlight
 Set the flashlight on or off.
 
 * Request: `lamp`
@@ -117,8 +130,20 @@ Example:
 > {"key": "<KEY>", "request": "lamp", "data":1}
 < {"description": "Request was successful.", "status": 200, "data": "", "message": "OK"}
 ```
+#### Get flashlight status
+see the pin that is connected to the flashlight and if its on.
 
-### Display message on display
+* Request: `lamp`
+* Data: None
+* returns: status of the flashlight (1: on, 0: off) and the pin.
+
+Example:
+```
+> {"request": "lamp", "key": "<KEY>"}
+< {"status": 200, "description": "Request was successful.", "data": {"lamppin": 7, "lampmode": 0}, "message": "OK"}
+```
+
+#### Display message on display
 Display a 16*2(32) set of characters on the display of the rover.
 
 * Request: `displayMsg`

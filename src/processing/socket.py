@@ -21,8 +21,9 @@ class Socket:
         socket = Sockets(server)
         self.api_key = api_key
         self.lcdInstance = lcd()
-        self.lcdInstance.lcd_display_string("Team: David",1)
-        self.lcdInstance.lcd_display_string("\"RescueDavid\"",2)
+        # TODO waarom als de socket aangaat word er tekst op de LCD geprint. Deze twee zijn toch onrelevant van elkaar? @michel
+        self.lcdInstance.lcd_display_string("Team: David", 1)
+        self.lcdInstance.lcd_display_string("\"RescueDavid\"", 2)
         lamp.lampoff()
         atexit.register(self.__del__)
 
@@ -37,31 +38,35 @@ class Socket:
                         ws.close()
 
                     if recieved["request"] == Socket.Request.motor.name:
-                        if "left" in recieved["data"]:
-                            motor.left(int(recieved["data"]["left"]))
-                        if "right" in recieved["data"]:
-                            motor.right(int(recieved["data"]["right"]))
-                        ws.send(json.dumps(Api.print()))
-
+                        if "data" in recieved:
+                            if "left" in recieved["data"]:
+                                motor.left(int(recieved["data"]["left"]))
+                            if "right" in recieved["data"]:
+                                motor.right(int(recieved["data"]["right"]))
+                            ws.send(json.dumps(Api.print()))
+                        else:
+                            ws.send(json.dumps(Api.print(200, Api.Motor.get_motor_status())))
 
                     elif recieved["request"] == Socket.Request.status.name:
-                        # TODO versie moet ook meegestuurd worden.
-                        # version = {"version": config["General"]["version"]}
-                        ws.send(json.dumps(Api.print(200, Api.Motor.get_motor_status())))
+                        version = {"version": config["General"]["version"]}
+                        ws.send(json.dumps(Api.print(200, version)))
 
                     elif recieved["request"] == Socket.Request.lamp.name:
-                        # TODO lamp status opvragen
-                        if recieved["data"] == 1:
+                        if "data" not in recieved:
+                            ws.send(json.dumps(Api.print(200, lamp.get_status())))
+                        elif recieved["data"] == 1:
                             lamp.lampon()
+                            ws.send(json.dumps(Api.print()))
                         elif recieved["data"] == 0:
                             lamp.lampoff()
-                        ws.send(json.dumps(Api.print()))
+                            ws.send(json.dumps(Api.print()))
+
 
                     elif recieved["request"] == Socket.Request.displayMsg.name:
                         # TODO displayMsg status opvragen
                         self.lcdInstance.lcd_clear()
-                        self.lcdInstance.lcd_display_string(str(recieved["data"][0:15]),1)
-                        self.lcdInstance.lcd_display_string(str(recieved["data"][15:31]),1)
+                        self.lcdInstance.lcd_display_string(str(recieved["data"][0:15]), 1)
+                        self.lcdInstance.lcd_display_string(str(recieved["data"][15:31]), 1)
                         ws.send(json.dumps(Api.print()))
 
 
@@ -74,9 +79,12 @@ class Socket:
 
                 except Exception as err:
                     # TODO wanneer de client de verbinding sluit crashed hij hieromdat hij een gesloten verbinding nog een keer wilt sluiten.
-                    ws.send(json.dumps(Api.print(500, str(err))))
+                    ws.send(json.dumps(Api.print(500)))
                     ws.close()
+                    log.error("Internal Server Error", exc_info=True)
 
+
+    # TODO wanneer de socket word gesloten (door de server of client) moeten de motors uitgaan en het lampje knipperen of uitgaan (om aantegeven dat er geen connectie is)
     def __del__(self):
         # TODO
         pass

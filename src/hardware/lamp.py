@@ -22,6 +22,7 @@ def lampon() -> bool:
     Turns the lamp on
     @return returns a bool based on success
     """
+    log.debug("lampon")
     if config["Lamp"].getboolean("simulate_lamp") is False:
         GPIO.output(LAMPPIN1, GPIO.HIGH)
     global status
@@ -35,6 +36,7 @@ def lampoff() -> bool:
     Turns the lamp off
     @return returns a bool based on success
     """
+    log.debug("lampoff")
     if config["Lamp"].getboolean("simulate_lamp") is False:
         GPIO.output(LAMPPIN1, GPIO.LOW)
     global status
@@ -42,7 +44,7 @@ def lampoff() -> bool:
     # TODO vind een manier om te checken of hij echt uit staat
     return True
 
-def status() -> dict:
+def get_status() -> dict:
     """
     Generates the current state of the lamp
     @return returns a dictionary with the status
