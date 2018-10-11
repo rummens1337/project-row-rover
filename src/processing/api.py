@@ -85,11 +85,11 @@ class Api:
             lv, rv, s = 0, 0, 0
             s = motor.get_speed()
             # invert value if negative
-            if motor.richtingl == 2:
+            if motor.richtingl == 1:
                 lv -= motor.get_value_left()
             else:
                 lv = motor.get_value_left()
-            if motor.richtingr == 2:
+            if motor.richtingr == 1:
                 rv -= motor.get_value_right()
             else:
                 rv = motor.get_value_right()
