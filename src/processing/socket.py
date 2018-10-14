@@ -29,6 +29,10 @@ class Socket:
 
         @socket.route('/')
         def handle(ws):
+            """
+            handle the incomming websocket connection. Do not call this function.
+            @param ws: websocket object, supplied by flask_sockets
+            """
             while not ws.closed:
                 try:
                     recieved = json.loads(ws.receive())
@@ -83,8 +87,17 @@ class Socket:
                         ws.close()
                         log.error("Internal Server Error", exc_info=True)
 
+            self.close()
 
-    # TODO wanneer de socket word gesloten (door de server of client) moeten de motors uitgaan en het lampje knipperen of uitgaan (om aantegeven dat er geen connectie is)
+    def close(self):
+        """
+        when the socket connection is closed, stop all the motors and turn the flashlight off.
+        """
+        # TODO wanneer er nog een andre connectie open is gaat alles ook uit, zou eigenlijk alleen moeten gebeuren als er 0 connecties zijn.
+        motor.left(0)
+        motor.right(0)
+        lamp.lampoff()
+
     def __del__(self):
-        # TODO
+        self.close()
         pass
