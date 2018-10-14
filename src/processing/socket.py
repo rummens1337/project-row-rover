@@ -78,10 +78,10 @@ class Socket:
                     ws.close()
 
                 except Exception as err:
-                    # TODO wanneer de client de verbinding sluit crashed hij hieromdat hij een gesloten verbinding nog een keer wilt sluiten.
-                    ws.send(json.dumps(Api.print(500)))
-                    ws.close()
-                    log.error("Internal Server Error", exc_info=True)
+                    if ws.closed is not True:
+                        ws.send(json.dumps(Api.print(500)))
+                        ws.close()
+                        log.error("Internal Server Error", exc_info=True)
 
 
     # TODO wanneer de socket word gesloten (door de server of client) moeten de motors uitgaan en het lampje knipperen of uitgaan (om aantegeven dat er geen connectie is)
