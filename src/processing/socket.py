@@ -58,8 +58,8 @@ class Socket:
 
                     elif recieved["request"] == Socket.Request.displayMsg.name:
                         self.lcdInstance.lcd_clear()
-                        self.lcdInstance.lcd_display_string(str(recieved["data"][0:15]),1)
-                        self.lcdInstance.lcd_display_string(str(recieved["data"][15:31]),1)
+                        self.lcdInstance.lcd_display_string(str(recieved["data"][0:16]),1)
+                        self.lcdInstance.lcd_display_string(str(recieved["data"][16:33]),2)
                         ws.send(json.dumps(Api.print()))
 
 

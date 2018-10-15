@@ -11,7 +11,7 @@ import threading
 from src.common.log import *
 
 import cv2
-if config["Lamp"].getboolean("simulate_camera") is False:
+if config["Camera"].getboolean("simulate_camera") is False:
     import picamera
 
 

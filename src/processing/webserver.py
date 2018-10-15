@@ -2,6 +2,7 @@ from flask import Flask, render_template, Response
 # Raspberry Pi camera module (requires picamera package, developed by Miguel Grinberg)
 from src.hardware.camera_pi import Camera
 import time
+from src.common.log import *
 import threading
 
 class WebServer(threading.Thread):
@@ -22,7 +23,7 @@ class WebServer(threading.Thread):
 
         @returns frame -
         """
-        time.sleep(0.03)
+        #time.sleep(0.03)
         """Video streaming route. Put this in the src attribute of an img tag."""
         return Response(self.gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
 

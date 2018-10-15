@@ -1,6 +1,5 @@
 from src.common.log import *
-if config["Lamp"].getboolean("simulate_lamp") is False:
-    import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 
 
 LAMPPIN1 = 7
@@ -12,9 +11,9 @@ def start():
     Set the pi to use the BCM numbers for GPIO pins
     Configure pins to their required modes
     """
-    if config["Lamp"].getboolean("simulate_lamp") is False:
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(LAMPPIN1, GPIO.OUT)
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(LAMPPIN1, GPIO.OUT)
+
 
 
 def lampon() -> bool:
@@ -22,7 +21,7 @@ def lampon() -> bool:
     Turns the lamp on
     @return returns a bool based on success
     """
-    if config["Lamp"].getboolean("simulate_lamp") is False:
+    if config["Lamp"].getboolean("simulate_lamp") == False:
         GPIO.output(LAMPPIN1, GPIO.HIGH)
     global status
     status = 1
@@ -35,7 +34,7 @@ def lampoff() -> bool:
     Turns the lamp off
     @return returns a bool based on success
     """
-    if config["Lamp"].getboolean("simulate_lamp") is False:
+    if config["Lamp"].getboolean("simulate_lamp") == False:
         GPIO.output(LAMPPIN1, GPIO.LOW)
     global status
     status = 0

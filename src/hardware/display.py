@@ -151,7 +151,7 @@ class lcd:
             if line == 1:
                 pos_new = pos
             elif line == 2:
-                pos_new = 0x16 + pos
+                pos_new = 0x40 + pos
 
             self.lcd_write(0x80 + pos_new)
 
