@@ -3,6 +3,7 @@ import time
 import cv2
 import numpy as np
 import pickle
+import atexit
 
 from src.common.log import log
 # TODO camera of camera_pi verwijderen.
@@ -90,6 +91,7 @@ class Camera:
         except NameError as error:
             log.error("NameError: %s, normal if in fake environment", error)
 
+    @atexit.register
     def close(self):
         """
         Destructor

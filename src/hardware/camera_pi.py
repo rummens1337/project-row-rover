@@ -9,9 +9,10 @@ import time
 import io
 import threading
 from src.common.log import *
+import atexit
 
 import cv2
-if config["Lamp"].getboolean("simulate_camera") is False:
+if config["Camera"].getboolean("simulate_camera") is False:
     import picamera
 
 
@@ -27,10 +28,11 @@ class Camera(object):
         """
         Checks if there is a thread, if not creates and starts one.
         """
-        if Camera.thread is None:
+        atexit.register(self.close)
+        if self.thread is None:
             # start background frame thread
-            Camera.thread = threading.Thread(target=self._thread)
-            Camera.thread.start()
+            self.thread = threading.Thread(target=self._thread)
+            self.thread.start()
 
             # wait until frames start to be available
             while self.frame is None:
@@ -44,7 +46,7 @@ class Camera(object):
         """
         if config["Camera"].getboolean("simulate_camera"):
             return cv2.imread("cam_emulate.jpg", 0)
-        Camera.last_access = time.time()
+        self.last_access = time.time()
         self.initialize()
         return self.frame
 
@@ -82,3 +84,14 @@ class Camera(object):
                 if time.time() - cls.last_access > 10:
                     break
         cls.thread = None
+
+    def __del__(self):
+        """
+        Destroys the server.
+        """
+        self.close()
+
+    def close(self):
+        # TODO kijken of dit wel werkt @michel
+        self.thread.close()
+

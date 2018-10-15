@@ -7,6 +7,7 @@ from enum import Enum
 import src.hardware.motor as motor
 from src.hardware.display import lcd
 import src.hardware.lamp as lamp
+import atexit
 
 
 class Socket:
@@ -20,12 +21,18 @@ class Socket:
         socket = Sockets(server)
         self.api_key = api_key
         self.lcdInstance = lcd()
-        self.lcdInstance.lcd_display_string("Team: David",1)
-        self.lcdInstance.lcd_display_string("\"RescueDavid\"",2)
+        # TODO waarom als de socket aangaat word er tekst op de LCD geprint. Deze twee zijn toch onrelevant van elkaar? @michel
+        self.lcdInstance.lcd_display_string("Team: David", 1)
+        self.lcdInstance.lcd_display_string("\"RescueDavid\"", 2)
         lamp.lampoff()
+        atexit.register(self.__del__)
 
         @socket.route('/')
         def handle(ws):
+            """
+            handle the incomming websocket connection. Do not call this function.
+            @param ws: websocket object, supplied by flask_sockets
+            """
             while not ws.closed:
                 try:
                     recieved = json.loads(ws.receive())
@@ -36,32 +43,35 @@ class Socket:
                         ws.close()
 
                     if recieved["request"] == Socket.Request.motor.name:
-                        if "left" in recieved["data"]:
-                            motor.left(int(recieved["data"]["left"]))
-                        if "right" in recieved["data"]:
-                            motor.right(int(recieved["data"]["right"]))
-                        if "message" in recieved["data"]:
-                            self.lcdInstance.lcd_display_string("Werkt hier :)",1)
-                        ws.send(json.dumps(Api.print()))
-
+                        if "data" in recieved:
+                            if "left" in recieved["data"]:
+                                motor.left(int(recieved["data"]["left"]))
+                            if "right" in recieved["data"]:
+                                motor.right(int(recieved["data"]["right"]))
+                            ws.send(json.dumps(Api.print()))
+                        else:
+                            ws.send(json.dumps(Api.print(200, Api.Motor.get_motor_status())))
 
                     elif recieved["request"] == Socket.Request.status.name:
-                        # TODO versie moet ook meegestuurd worden.
-                        # version = {"version": config["General"]["version"]}
-                        ws.send(json.dumps(Api.print(200, Api.Motor.get_motor_status())))
+                        version = {"version": config["General"]["version"]}
+                        ws.send(json.dumps(Api.print(200, version)))
 
                     elif recieved["request"] == Socket.Request.lamp.name:
-                        if recieved["data"] == 1:
+                        if "data" not in recieved:
+                            ws.send(json.dumps(Api.print(200, lamp.get_status())))
+                        elif recieved["data"] == 1:
                             lamp.lampon()
+                            ws.send(json.dumps(Api.print()))
                         elif recieved["data"] == 0:
                             lamp.lampoff()
-                        ws.send(json.dumps(Api.print()))
+                            ws.send(json.dumps(Api.print()))
+
 
                     elif recieved["request"] == Socket.Request.displayMsg.name:
-                        log.error("Display message received correctly")
+                        # TODO displayMsg status opvragen
                         self.lcdInstance.lcd_clear()
-                        self.lcdInstance.lcd_display_string(str(recieved["data"][0:15]),1)
-                        self.lcdInstance.lcd_display_string(str(recieved["data"][15:31]),2)
+                        self.lcdInstance.lcd_display_string(str(recieved["data"][0:16]),1)
+                        self.lcdInstance.lcd_display_string(str(recieved["data"][16:33]),2)
                         ws.send(json.dumps(Api.print()))
 
 
@@ -73,10 +83,22 @@ class Socket:
                     ws.close()
 
                 except Exception as err:
-                    # TODO wanneer de client de verbinding sluit crashed hij hieromdat hij een gesloten verbinding nog een keer wilt sluiten.
-                    ws.send(json.dumps(Api.print(500, str(err))))
-                    ws.close()
+                    if ws.closed is not True:
+                        ws.send(json.dumps(Api.print(500)))
+                        ws.close()
+                        log.error("Internal Server Error", exc_info=True)
+
+            self.close()
+
+    def close(self):
+        """
+        when the socket connection is closed, stop all the motors and turn the flashlight off.
+        """
+        # TODO wanneer er nog een andre connectie open is gaat alles ook uit, zou eigenlijk alleen moeten gebeuren als er 0 connecties zijn.
+        motor.left(0)
+        motor.right(0)
+        lamp.lampoff()
 
     def __del__(self):
-        # TODO
+        self.close()
         pass

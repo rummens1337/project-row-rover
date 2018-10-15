@@ -1,7 +1,7 @@
 from src.common.log import *
 if config["Lamp"].getboolean("simulate_lamp") is False:
     import RPi.GPIO as GPIO
-
+import atexit
 
 LAMPPIN1 = 7
 status = 0
@@ -12,9 +12,9 @@ def start():
     Set the pi to use the BCM numbers for GPIO pins
     Configure pins to their required modes
     """
-    if config["Lamp"].getboolean("simulate_lamp") is False:
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(LAMPPIN1, GPIO.OUT)
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(LAMPPIN1, GPIO.OUT)
+
 
 
 def lampon() -> bool:
@@ -42,8 +42,7 @@ def lampoff() -> bool:
     # TODO vind een manier om te checken of hij echt uit staat
     return True
 
-
-def status() -> dict:
+def get_status() -> dict:
     """
     Generates the current state of the lamp
     @return returns a dictionary with the status
@@ -52,3 +51,9 @@ def status() -> dict:
         "lampmode": status,
         "lamppin": LAMPPIN1
     }
+
+
+@atexit.register
+def close():
+    # TODO GPIO sluiten @robin1
+    pass
