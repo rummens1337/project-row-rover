@@ -31,8 +31,8 @@ class Camera(object):
         atexit.register(self.close)
         if self.thread is None:
             # start background frame thread
-            self.thread = threading.Thread(target=self._thread)
-            self.thread.start()
+            Camera.thread = threading.Thread(target=self._thread)
+            Camera.thread.start()
 
             # wait until frames start to be available
             while self.frame is None:
@@ -46,7 +46,7 @@ class Camera(object):
         """
         if config["Camera"].getboolean("simulate_camera"):
             return cv2.imread("cam_emulate.jpg", 0)
-        self.last_access = time.time()
+        Camera.last_access = time.time()
         self.initialize()
         return self.frame
 
@@ -83,7 +83,7 @@ class Camera(object):
                 # the last 10 seconds stop the thread
                 if time.time() - cls.last_access > 10:
                     break
-        cls.thread = None
+        #cls.thread = None
 
     def __del__(self):
         """
@@ -93,5 +93,6 @@ class Camera(object):
 
     def close(self):
         # TODO kijken of dit wel werkt @michel
-        self.thread.close()
+        # self.thread.close()
+        pass
 

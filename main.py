@@ -9,12 +9,11 @@ import sys
 import atexit
 
 
-server = Server()
-
 def main():
     log.info("David de ROW-rover! Version: %s", config["General"]["version"])
     motor.start()  # motor in api class.
     lamp.start()
+    server = Server()
     server.start()
     while True:
         loop()
