@@ -34,7 +34,7 @@ html, body, body > div {
     left: 0;
     right: 0;
     text-align: center;
-
+    display: none;
     text-shadow: -1px -1px 0 #FFF,
     1px -1px 0 #FFF,
     -1px 1px 0 #FFF,
@@ -42,6 +42,7 @@ html, body, body > div {
 }
 
 .navTopLeft {
+    display: none;
     top: 15px;
     left: 15px;
     width: 40px;
@@ -60,6 +61,7 @@ html, body, body > div {
     width: 75px;
     height: 30px;
     background: green;
+    display: none;
 }
 
 .buttonsBottomLeft {
@@ -88,6 +90,11 @@ html, body, body > div {
 
 .button.buttonEmpty {
     margin-left: 45px;
+}
+.button.buttonTagLocation,
+.button.buttonMic,
+.button.buttonEmpty {
+    display: none;
 }
 
 .joystickBottomRight {

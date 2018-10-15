@@ -27,5 +27,5 @@ EXPOSE 80
 # Define environment variable
 ENV NAME rover
 
-# Run app.py when the container launches
-CMD ["python3", "main.py"]
+# Run main.py when the container launches
+ENTRYPOINT ["python3", "main.py"]

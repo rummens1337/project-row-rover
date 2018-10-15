@@ -1,6 +1,7 @@
 from src.common.log import *
-import RPi.GPIO as GPIO
-
+if config["Lamp"].getboolean("simulate_lamp") is False:
+    import RPi.GPIO as GPIO
+import atexit
 
 LAMPPIN1 = 7
 status = 0
@@ -21,7 +22,7 @@ def lampon() -> bool:
     Turns the lamp on
     @return returns a bool based on success
     """
-    if config["Lamp"].getboolean("simulate_lamp") == False:
+    if config["Lamp"].getboolean("simulate_lamp") is False:
         GPIO.output(LAMPPIN1, GPIO.HIGH)
     global status
     status = 1
@@ -34,15 +35,14 @@ def lampoff() -> bool:
     Turns the lamp off
     @return returns a bool based on success
     """
-    if config["Lamp"].getboolean("simulate_lamp") == False:
+    if config["Lamp"].getboolean("simulate_lamp") is False:
         GPIO.output(LAMPPIN1, GPIO.LOW)
     global status
     status = 0
     # TODO vind een manier om te checken of hij echt uit staat
     return True
 
-
-def status() -> dict:
+def get_status() -> dict:
     """
     Generates the current state of the lamp
     @return returns a dictionary with the status
@@ -51,3 +51,9 @@ def status() -> dict:
         "lampmode": status,
         "lamppin": LAMPPIN1
     }
+
+
+@atexit.register
+def close():
+    # TODO GPIO sluiten @robin1
+    pass
