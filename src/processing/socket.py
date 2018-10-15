@@ -29,6 +29,7 @@ class Socket:
             while not ws.closed:
                 try:
                     recieved = json.loads(ws.receive())
+                    log.error("Some message is received.")
                     if recieved["key"] != self.api_key:
                         msg = Api.print(401)
                         ws.send(json.dumps(msg) + json.dumps(recieved))
@@ -57,9 +58,10 @@ class Socket:
                         ws.send(json.dumps(Api.print()))
 
                     elif recieved["request"] == Socket.Request.displayMsg.name:
+                        log.error("Display message received correctly")
                         self.lcdInstance.lcd_clear()
                         self.lcdInstance.lcd_display_string(str(recieved["data"][0:15]),1)
-                        self.lcdInstance.lcd_display_string(str(recieved["data"][15:31]),1)
+                        self.lcdInstance.lcd_display_string(str(recieved["data"][15:31]),2)
                         ws.send(json.dumps(Api.print()))
 
 

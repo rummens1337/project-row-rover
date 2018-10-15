@@ -31,82 +31,82 @@ var inputObject = {
 var controllerIndex = 0;
 var topSpeed = 255;
 // our input objects
-var up = new Input.Input(inputObject.up, controllerIndex);
-var down = new Input.Input(inputObject.down, controllerIndex);
-var left = new Input.Input(inputObject.left, controllerIndex);
-var right = new Input.Input(inputObject.right, controllerIndex);
+// var up = new Input.Input(inputObject.up, controllerIndex);
+// var down = new Input.Input(inputObject.down, controllerIndex);
+// var left = new Input.Input(inputObject.left, controllerIndex);
+// var right = new Input.Input(inputObject.right, controllerIndex);
 var webSocket = new WebSocket("ws://"+window.location.hostname+":8080");
-
-// up
-up.press = function() {
-	l = topSpeed * this.value;
-	r = topSpeed * this.value;
-	updateRL();
-
-};
-up.release = function() {
-    if (down.isUp) {
-    	l = 0;
-    	r = 0;
-        updateRL();
-    }
-    else down.press();
-};
-
-// down
-down.press = function() {
-    l = -topSpeed * this.value;
-    r = -topSpeed * this.value;
-    updateRL();
-};
-down.release = function() {
-    if (down.isUp) {
-        l = 0;
-        r = 0;
-        updateRL();
-    }
-    else down.press();
-};
-
-// left
-left.press = function() {
-    l = -topSpeed * this.value;
-    r = topSpeed * this.value;
-    updateRL();
-};
-left.release = function() {
-    if (down.isUp) {
-        l = 0;
-        r = 0;
-        updateRL();
-    }
-    else down.press();
-};
-
-// right
-right.press = function() {
-    l = topSpeed * this.value;
-    r = -topSpeed * this.value;
-    updateRL();
-};
-right.release = function() {
-    if (down.isUp) {
-        l = 0;
-        r = 0;
-        updateRL();
-    }
-    else down.press();
-};
-
-webSocket.onopen = function (){
-    callLoop();
-};
-
-webSocket.onmessage = function (event) {
-    console.log(event.data);
-};
-
-
+//
+// // up
+// up.press = function() {
+// 	l = topSpeed * this.value;
+// 	r = topSpeed * this.value;
+// 	updateRL();
+//
+// };
+// up.release = function() {
+//     if (down.isUp) {
+//     	l = 0;
+//     	r = 0;
+//         updateRL();
+//     }
+//     else down.press();
+// };
+//
+// // down
+// down.press = function() {
+//     l = -topSpeed * this.value;
+//     r = -topSpeed * this.value;
+//     updateRL();
+// };
+// down.release = function() {
+//     if (down.isUp) {
+//         l = 0;
+//         r = 0;
+//         updateRL();
+//     }
+//     else down.press();
+// };
+//
+// // left
+// left.press = function() {
+//     l = -topSpeed * this.value;
+//     r = topSpeed * this.value;
+//     updateRL();
+// };
+// left.release = function() {
+//     if (down.isUp) {
+//         l = 0;
+//         r = 0;
+//         updateRL();
+//     }
+//     else down.press();
+// };
+//
+// // right
+// right.press = function() {
+//     l = topSpeed * this.value;
+//     r = -topSpeed * this.value;
+//     updateRL();
+// };
+// right.release = function() {
+//     if (down.isUp) {
+//         l = 0;
+//         r = 0;
+//         updateRL();
+//     }
+//     else down.press();
+// };
+//
+// webSocket.onopen = function (){
+//     callLoop();
+// };
+//
+// webSocket.onmessage = function (event) {
+//     console.log(event.data);
+// };
+//
+//
 function callLoop(){
 
     var le = l.toFixed(0);
@@ -201,3 +201,12 @@ $( ".buttonFlashlight" ).click(function() {
     }
 });
 
+$( "#screenText" ).on('blur', function() {
+    var rovertext = $(this).val();
+    var msg = {
+        "key": "1234",
+        "request": "displayMsg",
+        "data": rovertext.toString()
+    };
+    webSocket.send(JSON.stringify(msg));
+});
