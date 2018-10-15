@@ -24,6 +24,16 @@ html, body, body > div {
     height: 100%;
     width: 100%;
 }
+.displayInput{
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    width: 15%;
+    margin: auto;
+    resize: none;
+    font-size: 3px;
+}
 
 .uiWrapper > div {
     position: absolute;
