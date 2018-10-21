@@ -39,7 +39,7 @@ class WebServer:
             # self.video_feed()
             # log.debug("gen loop")
             frame = camera.get_frame()
-            time.sleep(0.0001)
+            time.sleep(1.0/24.0)
             for face, conf in image.get_faces(frame):
                 # log.debug("conf: %s", conf)
                 frame = image.draw_rectangle(frame, face)

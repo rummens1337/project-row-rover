@@ -123,10 +123,18 @@ class thready_boy(threading.Thread):
 
     def run(self):
         global frame
-        while True:
-            self.camera.capture(self.rawCapture, format="bgr", use_video_port=True)
-            frame = self.rawCapture.array
-            # frame = cv2.imread("cam_emulate.jpg", 0)
-            log.debug("frame update")
-            # time.sleep(0.0001)
+        # while True:
+        #     self.camera.capture(self.rawCapture, format="bgr", use_video_port=True)
+        #     frame = self.rawCapture.array
+        #     # frame = cv2.imread("cam_emulate.jpg", 0)
+        #     log.debug("frame update")
+        #     # time.sleep(0.0001)
+        #     self.rawCapture.truncate(0)
+        for d in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True):
+            frame = d.array
             self.rawCapture.truncate(0)
+
+            # if there hasn't been any clients asking for frames in
+            # the last 10 seconds stop the thread
+            # if time.time() - last_access > 10:
+            #     break
