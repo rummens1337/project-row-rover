@@ -36,7 +36,6 @@ class Socket:
             while not ws.closed:
                 try:
                     recieved = json.loads(ws.receive())
-                    log.error("Some message is received.")
                     if recieved["key"] != self.api_key:
                         msg = Api.print(401)
                         ws.send(json.dumps(msg) + json.dumps(recieved))

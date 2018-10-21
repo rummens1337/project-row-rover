@@ -1,9 +1,11 @@
 from flask import Flask, render_template, Response
 # Raspberry Pi camera module (requires picamera package, developed by Miguel Grinberg)
-from src.hardware.camera_pi import Camera
+import src.hardware.camera_pi as camera
 import time
 from src.common.log import *
 import threading
+import src.processing.image as image
+import cv2
 
 class WebServer:
 
@@ -13,7 +15,8 @@ class WebServer:
         # threading.Thread.__init__(self)
         # self.daemon = True
         self.server = server
-        self.camera = Camera()
+        camera.initialize()
+        # self.camera = Camera()
         server.add_url_rule('/', 'index', self.index)
         server.add_url_rule('/video_feed', 'video_feed', self.video_feed)
 
@@ -33,7 +36,14 @@ class WebServer:
     def gen(self):
         """Video streaming generator function."""
         while True:
-            frame = self.camera.get_frame()
+            # self.video_feed()
+            # log.debug("gen loop")
+            frame = camera.get_frame()
+            time.sleep(0.0001)
+            for face, conf in image.get_faces(frame):
+                # log.debug("conf: %s", conf)
+                frame = image.draw_rectangle(frame, face)
+            frame = cv2.imencode('.jpg', frame)[1].tostring()
             yield (b'--frame\r\n'
-                #    TODO crashed in emulated mode
-                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                   #    TODO crashed in emulated mode
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')

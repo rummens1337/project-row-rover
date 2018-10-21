@@ -109,8 +109,11 @@ def draw_rectangle(frame, rect, texts=("")):
     @param texts: text to display
     @return frame with rectangle
     """
+    try:
+        height, width, _ = frame.shape
+    except ValueError:
+        height, width = frame.shape
 
-    height, width = frame.shape
     x, y, w, h = rect
     letter_size_px = 25
     text_margin_px = 2
