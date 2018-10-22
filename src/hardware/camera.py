@@ -1,109 +1,71 @@
-import configparser
 import time
-import cv2
-import numpy as np
-import pickle
+import io
+import threading
+from src.common.log import *
 import atexit
 
-from src.common.log import log
-# TODO camera of camera_pi verwijderen.
-try:
-    from picamera import PiCamera
-except ImportError as error:
-    log.error("ImportError: %s, normal if in fake environment", error)
+import cv2
+
+if config["Camera"].getboolean("simulate_camera") is False:
+    import picamera
+    from picamera.array import PiRGBArray
+
+"""
+Declares variables to be used later on.
+"""
+thread = None  # background thread that reads frames from camera
+frame = None  # current frame is stored here by background thread
 
 
-class Camera:
-    def get_frame(self):
-        """
-        Krijg de current frame van de camera.
+def start():
+    """
+    Checks if there is a thread, if not creates and starts one.
+    """
+    global thread, frame
+    if thread is None and config["Camera"].getboolean("simulate_camera") is False:
+        # start background frame thread
+        thread = thready_boy()
+        time.sleep(0.5)
+        thread.start()
 
-        Returns:
-           Een plaatje van de camera.
-        """
-
-
-        # with open('test-input-photo.pkl', 'rb') as input:
-        #     photo = pickle.load(input)
-        #     return photo
-
-        # TODO config moet hij vanaf log lezen. Dit is langzaam
-        config = configparser.ConfigParser()
-        config.read('settings.conf')
-
-        if config["Camera"].getboolean("simulate_camera"):
-            return cv2.imread("cam_emulate.jpg", 0)
+        # wait until frames start to be available
+        while frame is None:
+            time.sleep(0)
 
 
-        width = config['Camera'].getint('CAMERA_RESOLUTION_H')
-        height = config['Camera'].getint('CAMERA_RESOLUTION_V')
+# TODO Check how to implement this functionality (class) better, maybe via the singleton pattern??
+def get_frame():
+    """
+    Is called to get frames
+    @return frame as jpeg
+    """
+    global frame
+    if config["Camera"].getboolean("simulate_camera"):
+        # TODO webcam in simulatie.
+        return cv2.imread("cam_emulate.jpg", 0)
+    return frame
 
-        # The horizontal resolution is rounded up to the nearest multiple of 32 pixels.
-        buffer_width = int(np.math.ceil(width / 32) * 32)
-        # The vertical resolution is rounded up to the nearest multiple of 16 pixels.
-        buffer_height = int(np.math.ceil(height / 16) * 16)
 
-        # create an empty buffer, with accommodation for image resolution rounding
-        buffer = np.empty((buffer_height * buffer_width * 3,), dtype=np.uint8)
+# @atexit.register
+def close():
+    # TODO kijken of dit wel werkt @michel
+    # thread.close()
+    pass
 
-        self.camera.capture(buffer, 'bgr')
 
-        # reshape buffer to image dimensions
-        image = buffer.reshape((buffer_height, buffer_width, 3))
-
-        if image is None:
-            log.error("Failed to get feed from camera!")
-
-        # reshape buffer to requested resolution
-        image = image[:height, :width, :]
-
-        # om debug info te maken
-        # with open('test-input-photo.pkl', 'wb') as output:
-        #     pickle.dump(image, output, pickle.HIGHEST_PROTOCOL)
-
-        return image
-
+class thready_boy(threading.Thread):
     def __init__(self):
-        """
-        Start de camera
-        """
-        config = configparser.ConfigParser()
-        config.read('settings.conf')
+        threading.Thread.__init__(self)
+        self.daemon = True
+        self.camera = picamera.PiCamera()
+        self.camera.resolution = (config["Camera"].getint("CAMERA_RESOLUTION_H"), config["Camera"].getint("CAMERA_RESOLUTION_V"))
+        self.camera.framerate = config["Camera"].getint("framerate")
+        self.rawCapture = PiRGBArray(self.camera, size=self.camera.resolution)
+        self.camera.hflip = False
+        self.camera.vflip = False
 
-        if config["Camera"].getboolean("simulate_camera"):
-            log.warn("simulate_camera: %s", True)
-            return
-        try:
-            try:
-                self.camera = PiCamera()
-
-                # self.rawCapture = PiRGBArray(self.camera)  # dit is redundant volgens mij
-
-
-                width = config['Camera'].getint('CAMERA_RESOLUTION_H')
-                height = config['Camera'].getint('CAMERA_RESOLUTION_V')
-                self.camera.resolution = [width, height]
-                # allow camera to warm up
-                time.sleep(2)
-
-            except PiCameraError as err:
-                log.error('Something went wrong with the camera:', err)
-        except NameError as error:
-            log.error("NameError: %s, normal if in fake environment", error)
-
-    @atexit.register
-    def close(self):
-        """
-        Destructor
-        """
-        self.camera.close()
-
-
-if __name__ == "__main__":
-    print("test camera")
-
-    cam = Camera()
-    img = cam.get_frame()
-    cv2.imwrite("./out/camFrame.jpg", img)
-    # cv2.imshow("photo", img)
-    # cv2.waitKey()
+    def run(self):
+        global frame
+        for current in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True):
+            frame = current.array
+            self.rawCapture.truncate(0)
