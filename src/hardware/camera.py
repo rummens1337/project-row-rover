@@ -33,7 +33,6 @@ def start():
             time.sleep(0)
 
 
-# TODO Check how to implement this functionality (class) better, maybe via the singleton pattern??
 def get_frame():
     """
     Is called to get frames
@@ -48,13 +47,20 @@ def get_frame():
 
 # @atexit.register
 def close():
-    # TODO kijken of dit wel werkt @michel
+    # TODO
     # thread.close()
     pass
 
 
+# TODO deze naam zuigt, moet naar iets logicher veranderd worden.
 class thready_boy(threading.Thread):
+    """
+    Thread to push camera to frame.
+    """
     def __init__(self):
+        """
+        Initialise camera object.
+        """
         threading.Thread.__init__(self)
         self.daemon = True
         self.camera = picamera.PiCamera()
@@ -65,6 +71,9 @@ class thready_boy(threading.Thread):
         self.camera.vflip = False
 
     def run(self):
+        """
+        continuous capture the camera.
+        """
         global frame
         for current in self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True):
             frame = current.array

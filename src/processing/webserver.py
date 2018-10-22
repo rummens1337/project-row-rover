@@ -38,5 +38,4 @@ class WebServer:
                 frame = image.draw_rectangle(frame, face)
             frame = cv2.imencode('.jpg', frame)[1].tostring()
             yield (b'--frame\r\n'
-                   #    TODO crashed in emulated mode
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
