@@ -6,7 +6,7 @@ from src.processing.api import Api
 from enum import Enum
 import src.hardware.motor as motor
 from src.hardware.display import lcd
-import src.hardware.lamp as lamp
+from src.hardware.lamp import lamp
 import atexit
 
 
@@ -24,7 +24,6 @@ class Socket:
         # TODO waarom als de socket aangaat word er tekst op de LCD geprint. Deze twee zijn toch onrelevant van elkaar? @michel
         self.lcdInstance.lcd_display_string("Team: David", 1)
         self.lcdInstance.lcd_display_string("\"RescueDavid\"", 2)
-        lamp.lampoff()
         atexit.register(self.__del__)
 
         @socket.route('/')
@@ -58,20 +57,20 @@ class Socket:
 
                     elif recieved["request"] == Socket.Request.lamp.name:
                         if "data" not in recieved:
-                            ws.send(json.dumps(Api.print(200, lamp.get_status())))
+                            ws.send(json.dumps(Api.print(200, lamp.getInstance().get_status())))
                         elif recieved["data"] == 1:
-                            lamp.lampon()
+                            lamp.getInstance().lampon()
                             ws.send(json.dumps(Api.print()))
                         elif recieved["data"] == 0:
-                            lamp.lampoff()
+                            lamp.getInstance().lampoff()
                             ws.send(json.dumps(Api.print()))
 
 
                     elif recieved["request"] == Socket.Request.displayMsg.name:
                         # TODO displayMsg status opvragen
                         self.lcdInstance.lcd_clear()
-                        self.lcdInstance.lcd_display_string(str(recieved["data"][0:16]),1)
-                        self.lcdInstance.lcd_display_string(str(recieved["data"][16:33]),2)
+                        self.lcdInstance.lcd_display_string(str(recieved["data"][0:16]), 1)
+                        self.lcdInstance.lcd_display_string(str(recieved["data"][16:33]), 2)
                         ws.send(json.dumps(Api.print()))
 
 
@@ -97,7 +96,6 @@ class Socket:
         # TODO wanneer er nog een andre connectie open is gaat alles ook uit, zou eigenlijk alleen moeten gebeuren als er 0 connecties zijn.
         motor.left(0)
         motor.right(0)
-        lamp.lampoff()
 
     def __del__(self):
         self.close()
