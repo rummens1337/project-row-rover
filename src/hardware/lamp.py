@@ -2,20 +2,19 @@ from src.common.log import *
 import atexit
 if config["Lamp"].getboolean("simulate_lamp") is False:
     import RPi.GPIO as GPIO
-
+else:
+    import src.dummy.GPIOdummy as GPIO
 
 LAMPPIN1 = 7
 status = 0
-
 
 def start():
     """
     Set the pi to use the BCM numbers for GPIO pins
     Configure pins to their required modes
     """
-    if config["Lamp"].getboolean("simulate_lamp") is False:
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(LAMPPIN1, GPIO.OUT)
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(LAMPPIN1, GPIO.OUT)
 
 
 def lampon() -> bool:
@@ -23,8 +22,7 @@ def lampon() -> bool:
     Turns the lamp on
     @return returns a bool based on success
     """
-    if config["Lamp"].getboolean("simulate_lamp") is False:
-        GPIO.output(LAMPPIN1, GPIO.HIGH)
+    GPIO.output(LAMPPIN1, GPIO.HIGH)
     global status
     status = 1
     # TODO vind een manier om te checken of hij echt aan staat
@@ -36,8 +34,7 @@ def lampoff() -> bool:
     Turns the lamp off
     @return returns a bool based on success
     """
-    if config["Lamp"].getboolean("simulate_lamp") is False:
-        GPIO.output(LAMPPIN1, GPIO.LOW)
+    GPIO.output(LAMPPIN1, GPIO.LOW)
     global status
     status = 0
     # TODO vind een manier om te checken of hij echt uit staat
@@ -57,5 +54,4 @@ def get_status() -> dict:
 
 @atexit.register
 def close():
-    if config["Lamp"].getboolean("simulate_lamp") is False:
-        GPIO.cleanup()
+    GPIO.cleanup()
