@@ -99,12 +99,13 @@ def cut_out_head(face, photo: np.array, cut_out_paddign: float) -> np.array:
     return cutout
 
 
-def draw_rectangle(frame, rect, texts=("")):
+def draw_rectangle(frame, rect, texts=(""), color=(0, 0, 255)):
     """
     draws a rectangle at rect (x, y, w, h) position
     @param frame: image to draw on
     @param rect: x,y,w,h
     @param texts: text to display
+    @param color: bgr color uint8 tuple (255, 0, 0) = blue
     @return frame with rectangle
     """
     try:
@@ -113,7 +114,7 @@ def draw_rectangle(frame, rect, texts=("")):
         height, width = frame.shape
 
     x, y, w, h = rect
-    letter_size_px = 25
+    letter_size_px = 11
     text_margin_px = 2
 
     # float text left or right of rect, based on the longest text
@@ -133,7 +134,7 @@ def draw_rectangle(frame, rect, texts=("")):
         frame = draw_text(frame, text, (text_offset, int(y + (text_nr * letter_size_px))))
         text_nr += 1
 
-    cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
+    cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
 
     return frame
 

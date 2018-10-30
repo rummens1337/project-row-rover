@@ -35,21 +35,20 @@ class WebServer:
         photodata = []
         cf = 0
         while True:
-            time.sleep(1.0 / self.framerate)
+            time.sleep((1.0 / self.framerate))
             frame = camera.get_frame()
-            cf+=1
+            cf += 1
+            color = (0, 0, 255)
 
             if cf == (self.framerate / self.look_for_faces_timeout):
                 cf = 0
+                color = (0, 255, 0)
                 photodata = list(image.get_faces(frame))
 
             for face, conf in photodata:
-                frame = image.draw_rectangle(frame, face, str(conf))
-
+                frame = image.draw_rectangle(frame, face, color=color)
 
             frame = cv2.imencode('.jpg', frame)[1].tostring()
 
-
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-
