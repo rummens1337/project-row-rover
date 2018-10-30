@@ -50,6 +50,8 @@ class motor:
             GPIO.setup(self.ENCODERPIN1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.add_event_detect(self.ENCODERPIN1, GPIO.FALLING, callback=self.interruptPulse)
             self.intervalSpeed = Thread(target=self.calculateSpeed())
+            self.intervalSpeed.daemon = True
+            self.intervalSpeed.start()
             self.left(0)
             self.right(0)
 
