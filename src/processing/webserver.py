@@ -13,6 +13,8 @@ class WebServer:
     def __init__(self, server):
         self.server = server
         self.framerate = config["Camera"].getint("framerate")
+        self.look_for_faces_timeout = config["FaceDetection"].getint("look_for_faces_timeout")
+        self.photodata = zip()
         camera.start()
         server.add_url_rule('/', 'index', self.index)
         server.add_url_rule('/video_feed', 'video_feed', self.video_feed)
@@ -31,11 +33,37 @@ class WebServer:
 
     def gen(self):
         """Video streaming generator function."""
+        cf = 0
+        # face = None
+        # conf = 0.0
         while True:
-            frame = camera.get_frame()
+            log.debug(list(self.photodata))
+
             time.sleep(1.0 / self.framerate)
-            for face, conf in image.get_faces(frame):
-                frame = image.draw_rectangle(frame, face)
+
+            frame = camera.get_frame()
+            cf+=1
+
+            if cf == (self.framerate / self.look_for_faces_timeout):
+                cf = 0
+                # TODO het ouwe vierkantje van het vorige herkende gezicht zou nog zichtbaar moeten zijn in de nieuwe frame.
+                self.photodata = image.get_faces(frame)
+
+            log.debug(list(self.photodata))
+            log.debug(range(len(list(self.photodata))))
+            # for i in range(len(list(self.photodata))):
+            #     face, conf = list(self.photodata)
+            #     log.debug(conf)
+            #     log.debug("data: %s", conf[i])
+            #     frame = image.draw_rectangle(frame, face[i])
+            # else:
+            #     log.debug("failed")
+
+
             frame = cv2.imencode('.jpg', frame)[1].tostring()
+            log.debug(list(self.photodata))
+
+
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
