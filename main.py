@@ -11,7 +11,6 @@ import atexit
 
 def main():
     log.info("David de ROW-rover! Version: %s", config["General"]["version"])
-    motor.start()  # motor in api class.
     server = Server()
     server.start()
     while True:

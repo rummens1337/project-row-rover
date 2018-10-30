@@ -25,7 +25,7 @@ class lamp:
     @staticmethod
     def getInstance():
         """
-        Initializes a lamp object, but only one. To use this class, use getInstance instead.
+        Initializes a lamp object, but only one
         @return: The single only instance of this class
         """
         if lamp.__Instance is None:
