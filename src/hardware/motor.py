@@ -77,7 +77,7 @@ class motor(threading.Thread):
         while True:
             self.encoderSpeed = (self.encoderPulses*self.ENCODERHOLEDISTANCE)/self.INTERVALSPEED
             self.encoderPulses = 1
-            log.debug(str(self.encoderSpeed)+" "+str(self.encoderPulses)+" "+str(self.ENCODERHOLEDISTANCE)+" " +str(self.INTERVALSPEED))
+            #log.debug(str(self.encoderSpeed)+" "+str(self.encoderPulses)+" "+str(self.ENCODERHOLEDISTANCE)+" " +str(self.INTERVALSPEED))
             sleep(self.INTERVALSPEED)
 
     def left(self, speed: int) -> bool:
