@@ -20,10 +20,10 @@ class Socket:
     def __init__(self, server, api_key):
         socket = Sockets(server)
         self.api_key = api_key
-        self.lcdInstance = lcd()
+        #self.lcdInstance = lcd()
         # TODO waarom als de socket aangaat word er tekst op de LCD geprint. Deze twee zijn toch onrelevant van elkaar? @michel
-        self.lcdInstance.lcd_display_string("Team: David", 1)
-        self.lcdInstance.lcd_display_string("\"RescueDavid\"", 2)
+        #self.lcdInstance.lcd_display_string("Team: David", 1)
+        #self.lcdInstance.lcd_display_string("\"RescueDavid\"", 2)
         atexit.register(self.__del__)
 
         @socket.route('/')
