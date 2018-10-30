@@ -44,7 +44,7 @@ class WebServer:
                 photodata = list(image.get_faces(frame))
 
             for face, conf in photodata:
-                frame = image.draw_rectangle(frame, face)
+                frame = image.draw_rectangle(frame, face, str(conf))
 
 
             frame = cv2.imencode('.jpg', frame)[1].tostring()

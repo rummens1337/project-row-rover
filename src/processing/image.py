@@ -18,9 +18,7 @@ def get_faces(photo: np.array):
     if DEBUG >= 2:
         log.debug("Opencv Input image size:" + str(photo.shape))
 
-    # TODO cv2 crashed als je dit doet.
-    # img_gray = cv2.cvtColor(photo, cv2.COLOR_BGR2GRAY)
-    img_gray = photo
+    img_gray = cv2.cvtColor(photo, cv2.COLOR_BGR2GRAY)
 
     face_cascade = cv2.CascadeClassifier(config['FaceDetection']['HAAR_CASCADE_PATH'])
 
@@ -135,7 +133,7 @@ def draw_rectangle(frame, rect, texts=("")):
         frame = draw_text(frame, text, (text_offset, int(y + (text_nr * letter_size_px))))
         text_nr += 1
 
-    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+    cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
     return frame
 

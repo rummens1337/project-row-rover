@@ -41,7 +41,7 @@ def get_frame():
     global frame
     if config["Camera"].getboolean("simulate_camera"):
         # TODO webcam in simulatie.
-        return cv2.imread("cam_emulate.jpg", 0)
+        return cv2.imread("cam_emulate.jpg")
     return frame
 
 
