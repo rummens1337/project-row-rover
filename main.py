@@ -2,8 +2,8 @@ import cv2
 import platform
 from src.common.log import *
 from src.processing.server import Server
-import src.hardware.motor as motor
-import src.hardware.lamp as lamp
+from src.hardware.motor import motor
+from src.hardware.lamp import lamp
 import time
 import sys
 import atexit
@@ -11,12 +11,13 @@ import atexit
 
 def main():
     log.info("David de ROW-rover! Version: %s", config["General"]["version"])
-    motor.start()  # motor in api class.
-    lamp.start()
+    motor.getInstance()
+    lamp.getInstance()
     server = Server()
     server.start()
     while True:
         loop()
+
 
 def loop():
     time.sleep(1000)

@@ -3,7 +3,7 @@ tag = latest
 target=main.py
 
 run:
-	docker run -it --device /dev/i2c-1 --device /dev/gpiomem --device /dev/vchiq -p $(p):80 rover
+	docker run --privileged -it --device /dev/i2c-1 --device /dev/gpiomem --device /dev/vchiq -p $(p):80 rover
 
 run-amd64:
 	docker run -it -v $(PWD)/settings.amd64.conf:/app/settings.conf -p $(p):80 rover
