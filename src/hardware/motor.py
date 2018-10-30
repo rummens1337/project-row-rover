@@ -10,7 +10,7 @@ else:
     import src.dummy.GPIOdummy as GPIO
 
 
-class motor:
+class motor(threading.Thread):
     __Instance = None
     OFFSET = 0  # offset in the array
     ADDRESS = 0x32  # I2c address of the motorcontroller
@@ -44,14 +44,13 @@ class motor:
         if motor.__Instance is not None:
             raise Exception("Instance already exists")
         else:
+            threading.Thread.__init__(self)
+            self.start()
             motor.__Instance = self
             self.bus = smbus.SMBus(1)  # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
             GPIO.setmode(GPIO.BOARD)
             GPIO.setup(self.ENCODERPIN1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.add_event_detect(self.ENCODERPIN1, GPIO.FALLING, callback=self.interruptPulse)
-            thread = threading.Thread(target=self.calculateSpeed(), args=())
-            thread.daemon = True
-            thread.start()
             self.left(0)
             self.right(0)
 
@@ -74,11 +73,11 @@ class motor:
         self.bus.close()
         GPIO.cleanup()
 
-    def calculateSpeed(self):
+    def run(self):
         while True:
             self.encoderSpeed = (self.encoderPulses*self.ENCODERHOLEDISTANCE)/self.INTERVALSPEED
             self.encoderPulses = 1
-            og.debug(str(self.encoderSpeed)+" "+str(self.encoderPulses)+" "+str(self.ENCODERHOLEDISTANCE)+" " +str(self.INTERVALSPEED))
+            log.debug(str(self.encoderSpeed)+" "+str(self.encoderPulses)+" "+str(self.ENCODERHOLEDISTANCE)+" " +str(self.INTERVALSPEED))
             sleep(self.INTERVALSPEED)
 
     def left(self, speed: int) -> bool:
