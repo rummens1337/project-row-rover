@@ -1,6 +1,6 @@
 from time import sleep
 from src.common.log import *
-from threading import Thread
+import threading
 import math
 if config["Motor"].getboolean("simulate_motor") is False:
     import smbus2 as smbus
@@ -49,9 +49,9 @@ class motor:
             GPIO.setmode(GPIO.BOARD)
             GPIO.setup(self.ENCODERPIN1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.add_event_detect(self.ENCODERPIN1, GPIO.FALLING, callback=self.interruptPulse)
-            self.intervalSpeed = Thread(target=self.calculateSpeed())
-            self.intervalSpeed.daemon = True
-            self.intervalSpeed.start()
+            thread = threading.Thread(target=self.calculateSpeed(), args=())
+            thread.daemon = True
+            thread.start()
             self.left(0)
             self.right(0)
 
@@ -78,7 +78,7 @@ class motor:
         while True:
             self.encoderSpeed = (self.encoderPulses*self.ENCODERHOLEDISTANCE)/self.INTERVALSPEED
             self.encoderPulses = 1
-            # log.debug(str(self.encoderSpeed)+" "+str(self.encoderPulses)+" "+str(self.ENCODERHOLEDISTANCE)+" " +str(self.INTERVALSPEED))
+            og.debug(str(self.encoderSpeed)+" "+str(self.encoderPulses)+" "+str(self.ENCODERHOLEDISTANCE)+" " +str(self.INTERVALSPEED))
             sleep(self.INTERVALSPEED)
 
     def left(self, speed: int) -> bool:
