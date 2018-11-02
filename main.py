@@ -11,8 +11,6 @@ import atexit
 
 def main():
     log.info("David de ROW-rover! Version: %s", config["General"]["version"])
-    motor.getInstance()
-    lamp.getInstance()
     server = Server()
     server.start()
     while True:
