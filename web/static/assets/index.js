@@ -273,9 +273,7 @@ function videoWebsocketStart() {
             ws.send(1);
         };
     } else {
-        // TODO video_feed is nu statish, de waarde daarvan moet eigenlijk door Flask worden gezet.
-        $("#video").attr('src', "video_feed");
-        log.error("WebSocket not supported");
+        console.error("WebSocket not supported");
     }
 }
 videoWebsocketStart();
