@@ -9,9 +9,11 @@ let flashlightDOM = document.querySelector(".buttonFlashlight");
 
 // wat is dit?
 window.requestAnimationFrame = window.requestAnimationFrame
-	|| window.webkitRequestAnimationFrame
-	|| window.mozRequestAnimationFrame
-	|| function(callback) { window.setTimeout(callback, 1000 / 60);};
+    || window.webkitRequestAnimationFrame
+    || window.mozRequestAnimationFrame
+    || function (callback) {
+        window.setTimeout(callback, 1000 / 60);
+    };
 
 var inputObject = {
     "up": {
@@ -46,31 +48,31 @@ var down = new Input.Input(inputObject.down, controllerIndex);
 var left = new Input.Input(inputObject.left, controllerIndex);
 var right = new Input.Input(inputObject.right, controllerIndex);
 var flashLight = new Input.Input(inputObject.flashlight, controllerIndex, flashlightDOM);
-var webSocket = new WebSocket("ws://"+window.location.hostname+":"+window.location.port);
+var webSocket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
 
 // up
-up.press = function() {
-	l = topSpeed * this.value;
-	r = topSpeed * this.value;
-	updateRL();
+up.press = function () {
+    l = topSpeed * this.value;
+    r = topSpeed * this.value;
+    updateRL();
 
 };
-up.release = function() {
+up.release = function () {
     if (down.isUp) {
-    	l = 0;
-    	r = 0;
+        l = 0;
+        r = 0;
         updateRL();
     }
     else down.press();
 };
 
 // down
-down.press = function() {
+down.press = function () {
     l = -topSpeed * this.value;
     r = -topSpeed * this.value;
     updateRL();
 };
-down.release = function() {
+down.release = function () {
     if (down.isUp) {
         l = 0;
         r = 0;
@@ -80,12 +82,12 @@ down.release = function() {
 };
 
 // left
-left.press = function() {
+left.press = function () {
     l = -topSpeed * this.value;
     r = topSpeed * this.value;
     updateRL();
 };
-left.release = function() {
+left.release = function () {
     if (down.isUp) {
         l = 0;
         r = 0;
@@ -95,12 +97,12 @@ left.release = function() {
 };
 
 // right
-right.press = function() {
+right.press = function () {
     l = topSpeed * this.value;
     r = -topSpeed * this.value;
     updateRL();
 };
-right.release = function() {
+right.release = function () {
     if (down.isUp) {
         l = 0;
         r = 0;
@@ -111,10 +113,10 @@ right.release = function() {
 
 // flashlight
 
-flashLight.press = function() {
+flashLight.press = function () {
 //    deze is nodig omdat anders dingen gaan crashen.
 };
-flashLight.release = function() {
+flashLight.release = function () {
     // TODO documentatie
     if (flashlightStatus) {
         // TODO lampstatus moet gedefineerd worden door te vragen aan de server of hij aanstaat. En dan de output flippen zodat hij echt toggled.
@@ -128,16 +130,16 @@ flashLight.release = function() {
 };
 
 
-webSocket.onopen = function (){
+webSocket.onopen = function () {
     // waarom word deze hier aangeroepen?
     callLoop();
 };
 
-webSocket.onclose = function() {
+webSocket.onclose = function () {
 //    TODO proberen opnieuw verbinding te maken.
 };
 
-webSocket.onerror = function() {
+webSocket.onerror = function () {
 //    TODO error handeling.
 };
 
@@ -147,7 +149,7 @@ webSocket.onmessage = function (event) {
 };
 
 
-function callLoop(){
+function callLoop() {
     // TODO documentatie
     // waarom heet deze functie loop als hij niet loopt?
     var le = l.toFixed(0);
@@ -159,7 +161,7 @@ function callLoop(){
     });
 }
 
-function updateRL(){
+function updateRL() {
     // TODO is het nodig dat de gebruiker ziet welke waarde hij heeft ingevoerd?
     $("#l")[0].innerHTML = l.toFixed(1);
     $("#r")[0].innerHTML = r.toFixed(1);
@@ -173,56 +175,56 @@ function updateRL(){
  * @returns min or max - Checks if num is closer to max or to min, returns accordingly.
  */
 function clamp(num, min, max) {
-  //  TODO documentatie beschrijving, weet nog steeds niet waar het handig voor is.
-  return num <= min ? min : num >= max ? max : num;
+    //  TODO documentatie beschrijving, weet nog steeds niet waar het handig voor is.
+    return num <= min ? min : num >= max ? max : num;
 }
 
-function move(movedX, movedY){
+function move(movedX, movedY) {
     // TODO documenatie
-	r = movedY;
-	l = movedY;
+    r = movedY;
+    l = movedY;
 
-	if(movedX < 0){
-		r -= movedX;
-	}else if(movedX > 0){
-		l -= movedX;
-	}
+    if (movedX < 0) {
+        r -= movedX;
+    } else if (movedX > 0) {
+        l -= movedX;
+    }
 
-	r *= multiplier;
-	l *= multiplier;
+    r *= multiplier;
+    l *= multiplier;
 
-	r = clamp(r, -255, 255);
-	l = clamp(l, -255, 255);
+    r = clamp(r, -255, 255);
+    l = clamp(l, -255, 255);
 
-	updateRL();
+    updateRL();
 }
 
 // TODO ondersteuning voor muis, of het moet weg op desktop.
-$(".joystick")[0].addEventListener('touchstart', function(e) {
-	x = e.touches[0].clientX;
-	y = e.touches[0].clientY;
+$(".joystick")[0].addEventListener('touchstart', function (e) {
+    x = e.touches[0].clientX;
+    y = e.touches[0].clientY;
 
-	$(".joystick").addClass("active");
+    $(".joystick").addClass("active");
 }, false);
 
-$(".joystick")[0].addEventListener('touchmove', function(e) {
-	var movedX, movedY;
+$(".joystick")[0].addEventListener('touchmove', function (e) {
+    var movedX, movedY;
 
-	movedX = x - e.touches[0].clientX;
-	movedY = y - e.touches[0].clientY;
+    movedX = x - e.touches[0].clientX;
+    movedY = y - e.touches[0].clientY;
 
-	move(movedX, movedY);
+    move(movedX, movedY);
 }, false);
 
 
-$(".joystick").on('touchend touchcancel', function() {
-	move(0.0, 0.0);
+$(".joystick").on('touchend touchcancel', function () {
+    move(0.0, 0.0);
 
-	$(".joystick").removeClass("active");
+    $(".joystick").removeClass("active");
 });
 
-$( ".toggle" ).click(function() {
-	$(this).toggleClass("active");
+$(".toggle").click(function () {
+    $(this).toggleClass("active");
 });
 
 
@@ -240,7 +242,7 @@ function send(request, data) {
 //    TODO callback.
 }
 
-$( "#screenText" ).on('blur', function() {
+$("#screenText").on('blur', function () {
     var rovertext = $(this).val();
     var msg = {
         "key": "1234",
@@ -249,3 +251,31 @@ $( "#screenText" ).on('blur', function() {
     };
     webSocket.send(JSON.stringify(msg));
 });
+
+
+// videowebsocket
+
+function videoWebsocketStart() {
+    if ("WebSocket" in window) {
+        var ws_path = 'ws://' + window.location.host + window.location.pathname + 'video';
+        //alert(ws_path);
+        var ws = new WebSocket(ws_path);
+        //alert(ws);
+        ws.onopen = function () {
+            ws.send(1);
+        };
+        ws.onmessage = function (msg) {
+            $("#video").attr('src', 'data:image/jpg;base64,' + msg.data);
+            ws.send(1);
+        };
+        ws.onerror = function (e) {
+            console.log(e);
+            ws.send(1);
+        };
+    } else {
+        // TODO video_feed is nu statish, de waarde daarvan moet eigenlijk door Flask worden gezet.
+        $("#video").attr('src', "video_feed");
+        log.error("WebSocket not supported");
+    }
+}
+videoWebsocketStart();

@@ -14,7 +14,6 @@ class WebServer:
         self.server = server
         self.framerate = config["Camera"].getint("framerate")
         self.look_for_faces_timeout = config["FaceDetection"].getint("look_for_faces_timeout")
-        camera.start()
         server.add_url_rule('/', 'index', self.index)
         server.add_url_rule('/video_feed', 'video_feed', self.video_feed)
 
