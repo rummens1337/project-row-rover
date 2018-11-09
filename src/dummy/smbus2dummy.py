@@ -6,8 +6,8 @@ from src.common.log import *
 
 
 class SMBus(object):
-    lastBlockData = None
-    lastCMD = None
+    lastBlockData = 1
+    lastCMD = 1
 
     def __init__(self, bus=None, force=False):
         log.debug("I2C bus created on /dev/i2c-" + str(bus))

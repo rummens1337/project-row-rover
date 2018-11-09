@@ -1,9 +1,5 @@
-import cv2
-import platform
 from src.common.log import *
 from src.processing.server import Server
-from src.hardware.motor import motor
-from src.hardware.lamp import lamp
 import time
 import sys
 import atexit
