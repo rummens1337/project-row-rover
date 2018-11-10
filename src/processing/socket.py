@@ -43,10 +43,13 @@ class Socket:
 
                     if recieved["request"] == Socket.Request.motor.name:
                         if "data" in recieved:
-                            if "left" in recieved["data"]:
-                                motor.getInstance().left(int(recieved["data"]["left"]))
-                            if "right" in recieved["data"]:
-                                motor.getInstance().right(int(recieved["data"]["right"]))
+                            if "left" in recieved["data"] and "right" in recieved["data"]:
+                                motor.getInstance().leftright(int(recieved["data"]["left"]), int(recieved["data"]["right"]))
+                            else:
+                                if "left" in recieved["data"]:
+                                    motor.getInstance().left(int(recieved["data"]["left"]))
+                                if "right" in recieved["data"]:
+                                    motor.getInstance().right(int(recieved["data"]["right"]))
                             ws.send(json.dumps(Api.print()))
                         else:
                             ws.send(json.dumps(Api.print(200, Api.Motor.get_motor_status())))

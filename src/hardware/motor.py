@@ -51,8 +51,7 @@ class motor(threading.Thread):
             GPIO.setmode(GPIO.BOARD)
             GPIO.setup(self.ENCODERPIN1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.add_event_detect(self.ENCODERPIN1, GPIO.FALLING, callback=self.interruptPulse)
-            self.left(0)
-            self.right(0)
+            self.leftright(0, 0)
 
     @staticmethod
     def getInstance():
@@ -68,8 +67,7 @@ class motor(threading.Thread):
         """
         Closes the i2c bus.
         """
-        self.left(0)
-        self.right(0)
+        self.leftright(0, 0)
         self.bus.close()
         GPIO.cleanup()
 
@@ -79,6 +77,45 @@ class motor(threading.Thread):
             self.encoderPulses = 1
             #log.debug(str(self.encoderSpeed)+" "+str(self.encoderPulses)+" "+str(self.ENCODERHOLEDISTANCE)+" " +str(self.INTERVALSPEED))
             sleep(self.INTERVALSPEED)
+
+    def leftright(self, speedl: int, speedr: int) -> bool:
+        """
+        Combines the functionalities of left and right
+        @param speed: Range from -255 to 255
+        @return: returns a bool based on success
+        @param speedl: Speed wheels left range from -255 to 255
+        @param speedr: Speed wheels right range from -255 to 255
+        """
+        if speedl > -256 and speedl < 256:
+            if speedl == 0:
+                self.speedl = 0
+                self.richtingl = 0
+            if speedl > 0:
+                self.speedl = speedl
+                self.richtingl = 2
+            if speedl < 0:
+                self.speedl = -speedl
+                self.richtingl = 1
+        else:
+            raise ValueError("{0} is not in the range of -255 to 255".format(speedl))
+
+        if speedr > -256 and speedr < 256:
+            if speedr == 0:
+                self.speedr = 0
+                self.richtingr = 0
+            if speedr > 0:
+                self.speedr = speedr
+                self.richtingr = 2
+            if speedr < 0:
+                self.speedr = -speedr
+                self.richtingr = 1
+        else:
+            raise ValueError("{0} is not in the range of -255 to 255".format(speedr))
+
+        if self._send_data():
+            return True
+        else:
+            return False
 
     def left(self, speed: int) -> bool:
         """
