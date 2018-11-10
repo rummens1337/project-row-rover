@@ -14,6 +14,8 @@ import atexit
 import cv2
 if config["Camera"].getboolean("simulate_camera") is False:
     import picamera
+else:
+    import src.dummy.picameradummy as picamera
 
 
 class Camera(object):
@@ -44,8 +46,8 @@ class Camera(object):
         Is called to get frames
         @return frame as jpeg
         """
-        if config["Camera"].getboolean("simulate_camera"):
-            return cv2.imread("cam_emulate.jpg", 0)
+        # if config["Camera"].getboolean("simulate_camera"):
+        #     return cv2.imread("cam_emulate.jpg", 0)
         Camera.last_access = time.time()
         self.initialize()
         return self.frame
@@ -58,9 +60,8 @@ class Camera(object):
         Initializes and starts camera, then keeps putting jpeg's in frames.
         Frames get caught by get_frame function.
         """
-        with picamera.PiCamera() as camera:
+        with picamera.PiCamera(resolution=(320, 140)) as camera:
             # camera setup
-            camera.resolution = (320, 140)
             camera.hflip = False
             camera.vflip = False
 

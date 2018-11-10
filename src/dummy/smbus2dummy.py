@@ -1,9 +1,13 @@
 from src.common.log import *
 
+# 0x3f = display
+# 0x32 = 50 = motor
+# 0x1e - compass
+
 
 class SMBus(object):
-    lastBlockData = None
-    lastCMD = None
+    lastBlockData = 1
+    lastCMD = 1
 
     def __init__(self, bus=None, force=False):
         log.debug("I2C bus created on /dev/i2c-" + str(bus))
@@ -14,11 +18,15 @@ class SMBus(object):
 
     def write_byte(self, addr, cmd):
         self.lastCMD = cmd
-        log.debug("I2C send data to adres " + str(addr) + "command: " + str(cmd))
+        log.debug("I2C send data to adres " + str(addr) + " command: " + str(cmd))
 
     def write_i2c_block_data(self, addr, offset, motor_data):
         self.lastBlockData = motor_data
         log.debug("I2C send data to adres " + str(addr)+" data: "+str(motor_data)+" offset: "+str(offset))
+
+    def write_block_data(self, addr, cmd, data):
+        self.lastCMD = cmd
+        log.debug("I2C send data to adres " + str(addr)+" data: "+str(data)+" command: "+str(cmd))
 
     def read_byte(self, addres):
         log.debug("I2C read byte from "+ str(addres))
