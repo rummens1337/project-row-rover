@@ -3,7 +3,7 @@ from flask import Flask, request
 from flask_restful import Resource, reqparse, Api as fapi
 import json
 from http_status import Status
-import src.hardware.motor as motor
+from src.hardware.motor import motor
 import atexit
 
 class Api:
@@ -83,16 +83,16 @@ class Api:
             @return json object
             """
             lv, rv, s = 0, 0, 0
-            s = motor.get_speed()
+            s = motor.getInstance().get_speed()
             # invert value if negative
             if motor.richtingl == 1:
-                lv -= motor.get_value_left()
+                lv -= motor.getInstance().get_value_left()
             else:
-                lv = motor.get_value_left()
+                lv = motor.getInstance().get_value_left()
             if motor.richtingr == 1:
-                rv -= motor.get_value_right()
+                rv -= motor.getInstance().get_value_right()
             else:
-                rv = motor.get_value_right()
+                rv = motor.getInstance().get_value_right()
             return {
                 "motor": [
                     {
@@ -135,9 +135,9 @@ class Api:
                 return Api.print(401), 401
             try:
                 if type(args["left"]) is int:
-                    motor.left(args["left"])
+                    motor.getInstance().left(args["left"])
                 if type(args["right"]) is int:
-                    motor.right(args["right"])
+                    motor.getInstance().right(args["right"])
             except ValueError as error:
                 return Api.print(422, {
                     "message": str(error)

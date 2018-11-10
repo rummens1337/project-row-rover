@@ -1,155 +1,212 @@
+from time import sleep
 from src.common.log import *
-import smbus2 as smbus
-import atexit
-
-OFFSET = 0  # offset in the array
-ADDRESS = 0x32  # I2c address of the motorcontroller
-# speed from 4 to 250
-speedl = 0
-speedr = 0
-# 0 = stilstaan 1 = vooruit 2 = achteruit
-richtingl = 0
-richtingr = 0
-global bus
-
-def start():
-    """
-    Create a bus connection over I2C and sets the speed at 0
-    """
-    global bus
-    if config["Motor"].getboolean("simulate_motor") is False:
-        bus = smbus.SMBus(
-            1)  # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1) <- found on internet, hope it makes sense to you
-    else:
-        bus = 0
-
-    left(0)
-    right(0)
+import threading
+import math
+if config["Motor"].getboolean("simulate_motor") is False:
+    import smbus2 as smbus
+    import RPi.GPIO as GPIO
+else:
+    import src.dummy.smbus2dummy as smbus
+    import src.dummy.GPIOdummy as GPIO
 
 
-def __del__():
-    """
-    closes the i2c bus.
-    """
-    stop()
+class motor(threading.Thread):
+    __Instance = None
+    OFFSET = 0  # offset in the array
+    ADDRESS = 0x32  # I2c address of the motorcontroller
+    # variables for the Wheelencoder
+    INTERVALSPEED = 0.5  # seconds
+    ENCODERPIN1 = 12
+    ENCODERHOLES = 20
+    ENCODERCIRCUMFERENCE = (math.pi*24.0)/1000.0  # meters
+    ENCODERHOLEDISTANCE = ENCODERCIRCUMFERENCE/ENCODERHOLES  # meters
+    encoderPulses = 0
+    encoderSpeed = 0  # meters/second
+    # speed from 4 to 250
+    speedl = 0
+    speedr = 0
+    # 0 = stilstaan 1 = vooruit 2 = achteruit
+    richtingl = 0
+    richtingr = 0
 
-@atexit.register
-def stop() -> bool:
-    """
-    Stop the motors and stop the I2c bus connection
-    @return: returns a bool based on success
-    """
-    left(0)
-    right(0)
-    if config["Motor"].getboolean("simulate_motor") is False:
-        bus.close()
-    # TODO dit returnt altijd true, moet natuurlijk op basis van de uitkomst. @robin1
-    return True
+    def interruptPulse(self, channel):
+        """
+        Called by the wheel encoder when it creates a pulse, count the number of pulses
+        @param channel: The pin of the interrupt
+        """
+        self.encoderPulses += 1
 
+    def __init__(self):
+        """
+        Initilizes a motor object, but only one. To use this class, use getInstance instead.
+        @raises: exception when a instance of this class already exists
+        """
+        if motor.__Instance is not None:
+            raise Exception("Instance already exists")
+        else:
+            threading.Thread.__init__(self)
+            self.start()
+            motor.__Instance = self
+            self.bus = smbus.SMBus(1)  # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
+            GPIO.setmode(GPIO.BOARD)
+            GPIO.setup(self.ENCODERPIN1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            GPIO.add_event_detect(self.ENCODERPIN1, GPIO.FALLING, callback=self.interruptPulse)
+            self.leftright(0, 0)
 
-def left(speed: int) -> bool:
-    """
-    Speed and direction of the left wheels
-    @param speed: Range from -255 to 255
-    @return: returns a bool based on success
-    @raises: Value error when speed is out of the range
-    """
-    global speedl
-    global richtingl
-    if speed > -256 and speed < 256:
-        if speed == 0:
-            speedl = 0
-            richtingl = 0
-        if speed > 0:
-            speedl = speed
-            richtingl = 2
-        if speed < 0:
-            speedl = -speed
-            richtingl = 1
-    else:
-        raise ValueError("{0} is not in the range of -255 to 255".format(speed))
-    if _send_data():
-        return True
-    else:
-        return False
+    @staticmethod
+    def getInstance():
+        """
+        Initializes a compas object, but only one
+        @return: The single only instance of this class
+        """
+        if motor.__Instance is None:
+            motor()
+        return motor.__Instance
 
-def right(speed: int) -> bool:
-    """
-    Speed and direction of the right wheels
-    @param speed: Range from -255 to 255
-    @return: returns a bool based on success
-    @raises: Value error when speed is out of the range
-    """
-    global speedr
-    global richtingr
-    if speed > -256 and speed < 256:
-        if speed == 0:
-            speedr = 0
-            richtingr = 0
-        if speed > 0:
-            speedr = speed
-            richtingr = 2
-        if speed < 0:
-            speedr = -speed
-            richtingr = 1
-    else:
-        raise ValueError("{0} is not in the range of -255 to 255".format(speed))
-    if _send_data():
-        return True
-    else:
-        return False
+    def __del__(self):
+        """
+        Closes the i2c bus.
+        """
+        self.leftright(0, 0)
+        self.bus.close()
+        GPIO.cleanup()
 
+    def run(self):
+        while True:
+            self.encoderSpeed = (self.encoderPulses*self.ENCODERHOLEDISTANCE)/self.INTERVALSPEED
+            self.encoderPulses = 1
+            #log.debug(str(self.encoderSpeed)+" "+str(self.encoderPulses)+" "+str(self.ENCODERHOLEDISTANCE)+" " +str(self.INTERVALSPEED))
+            sleep(self.INTERVALSPEED)
 
-def status() -> dict:
-    """
-    Generates the current state of the motor
-    @return: returns a dictionary with the status
-    """
-    return {
-        "speedl": speedl,
-        "richtingl": richtingl,
-        "speedr": speedr,
-        "richtingr": richtingr
-    }
+    def leftright(self, speedl: int, speedr: int) -> bool:
+        """
+        Combines the functionalities of left and right
+        @param speed: Range from -255 to 255
+        @return: returns a bool based on success
+        @param speedl: Speed wheels left range from -255 to 255
+        @param speedr: Speed wheels right range from -255 to 255
+        """
+        if speedl > -256 and speedl < 256:
+            if speedl == 0:
+                self.speedl = 0
+                self.richtingl = 0
+            if speedl > 0:
+                self.speedl = speedl
+                self.richtingl = 2
+            if speedl < 0:
+                self.speedl = -speedl
+                self.richtingl = 1
+        else:
+            raise ValueError("{0} is not in the range of -255 to 255".format(speedl))
 
+        if speedr > -256 and speedr < 256:
+            if speedr == 0:
+                self.speedr = 0
+                self.richtingr = 0
+            if speedr > 0:
+                self.speedr = speedr
+                self.richtingr = 2
+            if speedr < 0:
+                self.speedr = -speedr
+                self.richtingr = 1
+        else:
+            raise ValueError("{0} is not in the range of -255 to 255".format(speedr))
 
-def get_speed() -> int:
-    """
-    @return: returns a dictionary with the speeds
-    """
-    # TODO return speed gemeten door sensor @robin1
-    return 0
+        if self._send_data():
+            return True
+        else:
+            return False
 
-def get_value_left() -> int:
-    """
-    Get left speed value
-    @return (int): value
-    """
-    return speedl
+    def left(self, speed: int) -> bool:
+        """
+        Speed and direction of the left wheels
+        @param speed: Range from -255 to 255
+        @return: returns a bool based on success
+        @raises: Value error when speed is out of the range
+        """
+        if speed > -256 and speed < 256:
+            if speed == 0:
+                self.speedl = 0
+                self.richtingl = 0
+            if speed > 0:
+                self.speedl = speed
+                self.richtingl = 2
+            if speed < 0:
+                self.speedl = -speed
+                self.richtingl = 1
+        else:
+            raise ValueError("{0} is not in the range of -255 to 255".format(speed))
+        if self._send_data():
+            return True
+        else:
+            return False
 
+    def right(self, speed: int) -> bool:
+        """
+        Speed and direction of the right wheels
+        @param speed: Range from -255 to 255
+        @return: returns a bool based on success
+        @raises: Value error when speed is out of the range
+        """
+        if speed > -256 and speed < 256:
+            if speed == 0:
+                self.speedr = 0
+                self.richtingr = 0
+            if speed > 0:
+                self.speedr = speed
+                self.richtingr = 2
+            if speed < 0:
+                self.speedr = -speed
+                self.richtingr = 1
+        else:
+            raise ValueError("{0} is not in the range of -255 to 255".format(speed))
+        if self._send_data():
+            return True
+        else:
+            return False
 
-def get_value_right() -> int:
-    """
-    Get right speed value
-    @return (int): value
-    """
-    return speedr
+    def status(self) -> dict:
+        """
+        Generates the current state of the motor
+        @return: returns a dictionary with the status
+        """
+        return {
+            "speedl": self.speedl,
+            "richtingl": self.richtingl,
+            "speedr": self.speedr,
+            "richtingr": self.richtingr
+        }
 
+    def get_speed(self) -> float:
+        """
+        @return: returns a dictionary with the speeds
+        """
+        return self.encoderSpeed
 
-def _send_data() -> bool:
-    """
-    generate an array of data for the motorcontroller and sends it over the I2C bus
-    @return: returns a bool based on success
-    """
-    global bus
-    if config["Motor"].getboolean("simulate_motor") == False:
+    def get_value_left(self) -> int:
+        """
+        Get left speed value
+        @return (int): value
+        """
+        return self.speedl
+
+    def get_value_right(self) -> int:
+        """
+        Get right speed value
+        @return (int): value
+        """
+        return self.speedr
+
+    def _send_data(self) -> bool:
+        """
+        generate an array of data for the motorcontroller and sends it over the I2C bus
+        @return: returns a bool based on success
+        """
         try:
-            motor_data = [7, 3, speedl, richtingl, 3, speedr, richtingr]
-            bus.write_i2c_block_data(ADDRESS, OFFSET, motor_data)
+            motor_data = [7, 3, self.speedl, self.richtingl, 3, self.speedr, self.richtingr]
+            self.bus.write_i2c_block_data(self.ADDRESS, self.OFFSET, motor_data)
         except IOError as e:
             print("I/O error({0}): {1}".format(e.errno, e.strerror))
             return False
         else:
             return True
-    else:
-        return True
