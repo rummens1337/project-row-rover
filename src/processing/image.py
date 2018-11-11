@@ -18,9 +18,7 @@ def get_faces(photo: np.array):
     if DEBUG >= 2:
         log.debug("Opencv Input image size:" + str(photo.shape))
 
-    # TODO cv2 crashed als je dit doet.
-    # img_gray = cv2.cvtColor(photo, cv2.COLOR_BGR2GRAY)
-    img_gray = photo
+    img_gray = cv2.cvtColor(photo, cv2.COLOR_BGR2GRAY)
 
     face_cascade = cv2.CascadeClassifier(config['FaceDetection']['HAAR_CASCADE_PATH'])
 
@@ -101,18 +99,22 @@ def cut_out_head(face, photo: np.array, cut_out_paddign: float) -> np.array:
     return cutout
 
 
-def draw_rectangle(frame, rect, texts=("")):
+def draw_rectangle(frame, rect, texts=(""), color=(0, 0, 255)):
     """
     draws a rectangle at rect (x, y, w, h) position
     @param frame: image to draw on
     @param rect: x,y,w,h
     @param texts: text to display
+    @param color: bgr color uint8 tuple (255, 0, 0) = blue
     @return frame with rectangle
     """
+    try:
+        height, width, _ = frame.shape
+    except ValueError:
+        height, width = frame.shape
 
-    height, width = frame.shape
     x, y, w, h = rect
-    letter_size_px = 25
+    letter_size_px = 11
     text_margin_px = 2
 
     # float text left or right of rect, based on the longest text
@@ -132,7 +134,7 @@ def draw_rectangle(frame, rect, texts=("")):
         frame = draw_text(frame, text, (text_offset, int(y + (text_nr * letter_size_px))))
         text_nr += 1
 
-    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+    cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
 
     return frame
 

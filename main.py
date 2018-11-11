@@ -1,5 +1,8 @@
 from src.common.log import *
 from src.processing.server import Server
+import src.hardware.motor as motor
+import src.hardware.lamp as lamp
+import src.hardware.camera as camera
 import time
 import sys
 import atexit
@@ -7,6 +10,7 @@ import atexit
 
 def main():
     log.info("David de ROW-rover! Version: %s", config["General"]["version"])
+    camera.start()
     server = Server()
     server.start()
     while True:
