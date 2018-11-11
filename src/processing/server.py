@@ -21,6 +21,9 @@ class Server(threading.Thread):
     flask = Flask(__name__, template_folder = template_dir, static_url_path='/static', static_folder= static_dir)
     api = 0
 
+    #TODO research on secure key and moving to config file
+    flask.secret_key = 'hasdku786*&^%*&^5dsa'
+
     def __init__(self, port=config["Server"].getint("port"), api_key=str(config["Server"]["api_key"])):
         """
         Start flask server. And API server.
