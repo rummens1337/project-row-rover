@@ -1,9 +1,14 @@
 import numpy as np
 from src.common.log import *
-import cv2
+import cv2, time, base64
+import src.hardware.camera as camera
 
 DEBUG = config['General'].getint('DEBUG')
 
+framerate = config["Camera"].getint("framerate")
+look_for_faces_timeout = config["FaceDetection"].getint("look_for_faces_timeout")
+photodata = []
+current_frame = 0
 
 def get_faces(photo: np.array):
     """
@@ -163,6 +168,45 @@ def draw_text(img, text, pos, size=1):
     cv2.putText(img, text, pos, font, size, (0, 0, 255), thickness, cv2.LINE_AA)
     return img
 
+
+def get_processed_frame():
+    """
+    get the current frame from the camera with face detection.
+    @return: frame with rectangles on the faces
+    @rtype: cv2 numpy array
+    """
+    global current_frame, framerate, look_for_faces_timeout, photodata
+    time.sleep((1.0 / framerate))
+    frame = camera.get_frame()
+    current_frame += 1
+    color = (0, 0, 255)
+
+    if current_frame == (framerate / look_for_faces_timeout):
+        current_frame = 0
+        color = (0, 255, 0)
+        photodata = list(get_faces(frame))
+
+    for face, conf in photodata:
+        frame = draw_rectangle(frame, face, color=color)
+
+    return frame
+
+
+def frame2jpg(frame):
+    """
+    turn an numpy array into a jpg
+    @return jpg image
+    @rtype: jpg
+    """
+    return cv2.imencode('.jpg', frame)[1].tostring()
+
+def to_base64(object):
+    """
+    encode object into base64
+    @return: base64 string of object
+    @rtype: base64 string
+    """
+    return base64.b64encode(object)
 
 if __name__ == "__main__":
     log.warn("Running as main")

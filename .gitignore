@@ -1,3 +1,5 @@
+log/*
+
 python_install/
 docs/_build
 *~

@@ -5,6 +5,7 @@ import time
 from src.common.log import *
 import threading
 import src.processing.image as image
+
 import cv2
 
 
@@ -12,8 +13,6 @@ class WebServer:
 
     def __init__(self, server):
         self.server = server
-        self.framerate = config["Camera"].getint("framerate")
-        self.look_for_faces_timeout = config["FaceDetection"].getint("look_for_faces_timeout")
         server.add_url_rule('/', 'index', self.index)
         server.add_url_rule('/video_feed', 'video_feed', self.video_feed)
 
@@ -31,23 +30,9 @@ class WebServer:
 
     def gen(self):
         """Video streaming generator function."""
-        photodata = []
-        cf = 0
         while True:
-            time.sleep((1.0 / self.framerate))
-            frame = camera.get_frame()
-            cf += 1
-            color = (0, 0, 255)
-
-            if cf == (self.framerate / self.look_for_faces_timeout):
-                cf = 0
-                color = (0, 255, 0)
-                photodata = list(image.get_faces(frame))
-
-            for face, conf in photodata:
-                frame = image.draw_rectangle(frame, face, color=color)
-
-            frame = cv2.imencode('.jpg', frame)[1].tostring()
+            # TODO testen
+            frame = image.frame2jpg(image.get_processed_frame())
 
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
