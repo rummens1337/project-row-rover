@@ -2,6 +2,7 @@ from time import sleep
 from src.common.log import *
 import threading
 import math
+import time
 if config["Motor"].getboolean("simulate_motor") is False:
     import smbus2 as smbus
     import RPi.GPIO as GPIO
@@ -90,11 +91,15 @@ class motor(threading.Thread):
 
     def run(self):
         while True:
-            self.encoderSpeedL = (self.encoderPulsesL*self.ENCODERHOLEDISTANCE)/self.INTERVALSPEED
-            self.encoderSpeedR = (self.encoderPulsesR*self.ENCODERHOLEDISTANCE)/self.INTERVALSPEED
+            now = time.time()
+            timedifference = now-self.lastCapture
+            # log.debug(str(self.lastCapture)+" "+str(now)+" "+str(now-self.lastCapture))
+            self.encoderSpeedL = (self.encoderPulsesL*self.ENCODERHOLEDISTANCE)/timedifference
+            self.encoderSpeedR = (self.encoderPulsesR*self.ENCODERHOLEDISTANCE)/timedifference
             self.encoderPulsesL = 1
-            self.encoderPulsesR = 20
-            log.debug(str(self.encoderSpeedL)+" "+str(self.encoderPulsesL)+" "+str(self.encoderSpeedR)+" " +str(self.encoderPulsesR)+" " +str(self.ENCODERCIRCUMFERENCE))
+            self.encoderPulsesR = 1
+            self.lastCapture = now
+            # log.debug(str(self.encoderSpeedL)+" "+str(self.encoderPulsesL)+" "+str(self.encoderSpeedR)+" " +str(self.encoderPulsesR)+" " +str(timedifference))
             sleep(self.INTERVALSPEED)
 
     def leftright(self, speedl: int, speedr: int) -> bool:
