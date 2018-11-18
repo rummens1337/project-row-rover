@@ -3,6 +3,7 @@ import threading
 import math
 import time
 from src.hardware.motor import motor
+from src.hardware.compas import Compas
 if config["Tracker"].getboolean("simulate_tracker") is False:
     import RPi.GPIO as GPIO
 else:
@@ -11,6 +12,7 @@ else:
 
 class Tracker(threading.Thread):
     __Instance = None
+    history = []
     # variables for the Wheelencoders
     INTERVALSPEED = 0.5  # seconds
     ENCODERPINL = 12
@@ -89,10 +91,12 @@ class Tracker(threading.Thread):
             time.sleep(self.INTERVALSPEED)
 
     def saveLocation(self):
-        return{
-            "speed":self.getSpeed(),
-            "curve":self.getCurve()
+        data = {
+            "speed": self.getSpeed(),
+            "curve": self.getCurve(),
+            "direction": Compas.getInstance().getDegree()
         }
+        self.history.append(data)
 
     def getSpeed(self):
         return (self.encoderSpeedR+self.encoderPulsesL)-self.getCurve()
@@ -115,5 +119,7 @@ class Tracker(threading.Thread):
         return speedR - speedL
 
     def moveBack(self):
-        pass
+        while True:
+            instruction = self.history.pop()
+            # TODO get to the choppah
 
