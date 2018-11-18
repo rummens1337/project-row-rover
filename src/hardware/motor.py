@@ -31,7 +31,7 @@ class motor:
     @staticmethod
     def getInstance():
         """
-        Initializes a compas object, but only one
+        Initializes a motor object, but only one
         @return: The single only instance of this class
         """
         if motor.__Instance is None:

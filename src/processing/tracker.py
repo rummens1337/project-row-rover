@@ -2,6 +2,7 @@ from src.common.log import *
 import threading
 import math
 import time
+from src.hardware.motor import motor
 if config["Tracker"].getboolean("simulate_tracker") is False:
     import RPi.GPIO as GPIO
 else:
@@ -66,7 +67,7 @@ class Tracker(threading.Thread):
     @staticmethod
     def getInstance():
         """
-        Initializes a compas object, but only one
+        Initializes a tracker object, but only one
         @return: The single only instance of this class
         """
         if Tracker.__Instance is None:
@@ -88,7 +89,30 @@ class Tracker(threading.Thread):
             time.sleep(self.INTERVALSPEED)
 
     def saveLocation(self):
-        pass
+        return{
+            "speed":self.getSpeed(),
+            "curve":self.getCurve()
+        }
+
+    def getSpeed(self):
+        return (self.encoderSpeedR+self.encoderPulsesL)-self.getCurve()
+
+    def getCurve(self):
+        """
+        Calculates if the rover is making a turn at the moment
+        @return: float value of how much the rover is turning and to which direction range:
+        """
+        if motor.richtingr is 2:
+            speedR = -self.encoderSpeedR
+        else:
+            speedR = self.encoderSpeedR
+
+        if motor.richtingl is 2:
+            speedL = -self.encoderSpeedL
+        else:
+            speedL = self.encoderSpeedL
+
+        return speedR - speedL
 
     def moveBack(self):
         pass
