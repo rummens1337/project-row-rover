@@ -1,53 +1,20 @@
-from time import sleep
 from src.common.log import *
-import threading
-import math
-import time
 if config["Motor"].getboolean("simulate_motor") is False:
     import smbus2 as smbus
-    import RPi.GPIO as GPIO
 else:
     import src.dummy.smbus2dummy as smbus
-    import src.dummy.GPIOdummy as GPIO
 
 
-class motor(threading.Thread):
+class motor:
     __Instance = None
     OFFSET = 0  # offset in the array
     ADDRESS = 0x32  # I2c address of the motorcontroller
-    # variables for the Wheelencoders
-    INTERVALSPEED = 0.5  # seconds
-    ENCODERPINL = 12
-    ENCODERPINR = 11
-    ENCODERHOLES = 20
-    ENCODERDIAMETER = 20.0  # mm full wheel is 24.0
-    ENCODERCIRCUMFERENCE = (math.pi*ENCODERDIAMETER)/1000.0  # meters
-    ENCODERHOLEDISTANCE = ENCODERCIRCUMFERENCE/ENCODERHOLES  # meters
-    encoderPulsesL = 0
-    encoderSpeedL = 0  # meters/second
-    encoderPulsesR = 0
-    encoderSpeedR = 0  # meters/second
-    lastCapture = 0
     # speed from 4 to 250
     speedl = 0
     speedr = 0
     # 0 = stilstaan 1 = vooruit 2 = achteruit
     richtingl = 0
     richtingr = 0
-
-    def interruptPulseL(self, channel):
-        """
-        Called by the wheel encoder when it creates a pulse, count the number of pulses
-        @param channel: The pin of the interrupt
-        """
-        self.encoderPulsesL += 1
-
-    def interruptPulseR(self, channel):
-        """
-        Called by the wheel encoder when it creates a pulse, count the number of pulses
-        @param channel: The pin of the interrupt
-        """
-        self.encoderPulsesR += 1
 
     def __init__(self):
         """
@@ -57,19 +24,9 @@ class motor(threading.Thread):
         if motor.__Instance is not None:
             raise Exception("Instance already exists")
         else:
-            threading.Thread.__init__(self)
-            self.start()
             motor.__Instance = self
             self.bus = smbus.SMBus(1)  # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
             self.leftright(0, 0)
-
-            GPIO.setmode(GPIO.BOARD)
-            # Wheelencoder Left
-            GPIO.setup(self.ENCODERPINL, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            GPIO.add_event_detect(self.ENCODERPINL, GPIO.RISING, callback=self.interruptPulseL)
-            # Wheelencoder right
-            GPIO.setup(self.ENCODERPINR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            GPIO.add_event_detect(self.ENCODERPINR, GPIO.RISING, callback=self.interruptPulseR)
 
     @staticmethod
     def getInstance():
@@ -87,25 +44,10 @@ class motor(threading.Thread):
         """
         self.leftright(0, 0)
         self.bus.close()
-        GPIO.cleanup()
-
-    def run(self):
-        while True:
-            now = time.time()
-            timedifference = now-self.lastCapture
-            # log.debug(str(self.lastCapture)+" "+str(now)+" "+str(now-self.lastCapture))
-            self.encoderSpeedL = (self.encoderPulsesL*self.ENCODERHOLEDISTANCE)/timedifference
-            self.encoderSpeedR = (self.encoderPulsesR*self.ENCODERHOLEDISTANCE)/timedifference
-            self.encoderPulsesL = 1
-            self.encoderPulsesR = 1
-            self.lastCapture = now
-            # log.debug(str(self.encoderSpeedL)+" "+str(self.encoderPulsesL)+" "+str(self.encoderSpeedR)+" " +str(self.encoderPulsesR)+" " +str(timedifference))
-            sleep(self.INTERVALSPEED)
 
     def leftright(self, speedl: int, speedr: int) -> bool:
         """
         Combines the functionalities of left and right
-        @param speed: Range from -255 to 255
         @return: returns a bool based on success
         @param speedl: Speed wheels left range from -255 to 255
         @param speedr: Speed wheels right range from -255 to 255
@@ -200,12 +142,6 @@ class motor(threading.Thread):
             "speedr": self.speedr,
             "richtingr": self.richtingr
         }
-
-    def get_speed(self) -> float:
-        """
-        @return: returns a dictionary with the speeds
-        """
-        return self.encoderSpeed
 
     def get_value_left(self) -> int:
         """
