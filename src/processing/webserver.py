@@ -14,7 +14,6 @@ class WebServer:
     def __init__(self, server):
         self.server = server
         server.add_url_rule('/', 'index', self.index)
-        server.add_url_rule('/video_feed', 'video_feed', self.video_feed)
 
     def index(self):
         """Video streaming home page."""
