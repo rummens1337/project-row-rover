@@ -26,6 +26,7 @@ class Socket:
         self.framerate = config["Camera"].getint("framerate")
         self.look_for_faces_timeout = config["FaceDetection"].getint("look_for_faces_timeout")
         self.current_frame = 0
+        self.lcdInstance = lcd()
         atexit.register(self.__del__)
 
         @socket.route('/')
