@@ -87,7 +87,7 @@ class Tracker(threading.Thread):
             self.encoderPulsesL = 1
             self.encoderPulsesR = 1
             self.lastCapture = now
-            # log.debug(str(self.encoderSpeedL)+" "+str(self.encoderPulsesL)+" "+str(self.encoderSpeedR)+" " +str(self.encoderPulsesR)+" " +str(timedifference))
+            log.debug(str(self.encoderSpeedL)+" "+str(self.encoderPulsesL)+" "+str(self.encoderSpeedR)+" " +str(self.encoderPulsesR)+" " +str(timedifference))
             time.sleep(self.INTERVALSPEED)
 
     def saveLocation(self):
