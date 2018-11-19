@@ -257,7 +257,7 @@ $("#screenText").on('blur', function () {
 
 function videoWebsocketStart() {
     if ("WebSocket" in window) {
-        var ws_path = 'ws://' + window.location.host + "/video";
+        var ws_path = 'ws://' + window.location.host + ":8080";
         //alert(ws_path);
         var ws = new WebSocket(ws_path);
         //alert(ws);
@@ -266,7 +266,7 @@ function videoWebsocketStart() {
         };
         ws.onmessage = function (msg) {
             $("#video").attr('src', 'data:image/jpg;base64,' + msg.data);
-            console.info(msg.data);
+            console.info(msg);
             ws.send(1);
         };
         ws.onerror = function (e) {

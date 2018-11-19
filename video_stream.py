@@ -4,6 +4,10 @@ import src.hardware.camera as camera
 import src.processing.image as image
 
 
+# global vars
+last_frame = None
+
+
 def loop():
     time.sleep(1000)
 
@@ -20,7 +24,18 @@ def startServer():
 
 
 async def video(websocket, path):
-    await websocket.send(image.to_base64(image.frame2jpg(image.get_processed_frame())))
+    global last_frame, current_frame
+    current_frame = None
+    while True:
+        try:
+            current_frame = image.get_processed_frame()
+            if current_frame is not last_frame:
+                await websocket.send(image.to_base64(image.frame2jpg(current_frame)))
+                last_frame = current_frame
+        except ConnectionClosed:
+            log.debug("connection closed")
+            break
+
 
 
 def main():

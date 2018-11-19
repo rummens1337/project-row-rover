@@ -206,7 +206,7 @@ def to_base64(object):
     @return: base64 string of object
     @rtype: base64 string
     """
-    return base64.b64encode(object)
+    return (base64.b64encode(object)).decode("utf-8")
 
 if __name__ == "__main__":
     log.warn("Running as main")
