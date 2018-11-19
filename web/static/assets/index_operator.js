@@ -242,15 +242,15 @@ function send(request, data) {
 //    TODO callback.
 }
 
-$("#screenText").on('blur', function () {
-    var rovertext = $(this).val();
-    var msg = {
-        "key": "1234",
-        "request": "displayMsg",
-        "data": rovertext.toString()
-    };
-    webSocket.send(JSON.stringify(msg));
-});
+// $("#screenText").on('blur', function () {
+//     var rovertext = $(this).val();
+//     var msg = {
+//         "key": "1234",
+//         "request": "displayMsg",
+//         "data": rovertext.toString()
+//     };
+//     webSocket.send(JSON.stringify(msg));
+// });
 
 
 // videowebsocket
