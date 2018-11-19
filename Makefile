@@ -13,7 +13,7 @@ run-current:
 	docker run -it -v $(PWD)/:/app/ --device /dev/i2c-1 --device /dev/gpiomem --device /dev/vchiq -p $(p):80 -p $(vp):8080 --entrypoint $(target) rover
 
 run-current-amd64:
-	docker run -it -v ${CURDIR}/:/app/ -v ${CURDIR}/settings.amd64.conf:/app/settings.conf -v ${CURDIR}/$(target):/app/main.py -p $(p):80 -p $(vp):8080 --entrypoint $(target) rover
+	docker run -it -v ${CURDIR}/:/app/ -v ${CURDIR}/settings.amd64.conf:/app/settings.conf -p $(p):80 -p $(vp):8080 --entrypoint $(target) rover
 
 
 install:
