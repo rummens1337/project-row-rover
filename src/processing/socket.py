@@ -87,13 +87,6 @@ class Socket:
 
             self.close()
 
-        @socket.route("/video")
-        def get_video(ws):
-            # TODO testen.
-            frame = image.get_processed_frame()
-            frame = image.to_base64(image.frame2jpg(frame))
-            log.debug(frame)
-            ws.send(str(frame))
 
     def close(self):
         """

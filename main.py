@@ -14,7 +14,6 @@ def main():
     # mem = subprocess.call("cat /proc/meminfo | grep MemTotal")
     log.info("David de ROW-rover! Version: %s", config["General"]["version"])
     # log.info("Container running on %s cores and %s", cores, mem)
-    camera.start()
     server = Server()
     server.start()
     while True:
