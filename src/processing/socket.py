@@ -32,6 +32,7 @@ class Socket:
             handle the incomming websocket connection. Do not call this function.
             @param ws: websocket object, supplied by flask_sockets
             """
+            # TODO exit if not a websocket request
             while not ws.closed:
                 try:
                     recieved = json.loads(ws.receive())

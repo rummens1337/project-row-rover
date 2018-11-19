@@ -2,6 +2,7 @@ from src.common.log import *
 import threading
 import math
 import time
+import pymysql.cursors
 from src.hardware.motor import motor
 from src.hardware.compas import Compas
 if config["Tracker"].getboolean("simulate_tracker") is False:
@@ -59,6 +60,27 @@ class Tracker(threading.Thread):
             GPIO.setup(self.ENCODERPINR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.add_event_detect(self.ENCODERPINR, GPIO.RISING, callback=self.interruptPulseR)
             self.start()
+
+            connection = pymysql.connect(host='localhost', user='ooportal', password='HRvu4CX5', db='testdatabase', charset='utf8mb4', cursorclass=pymysql.cursors.DictCursor)
+
+            try:
+                with connection.cursor() as cursor:
+                    # Create a new record
+                    sql = "INSERT INTO `users` (`email`, `password`) VALUES (%s, %s)"
+                    cursor.execute(sql, ('webmaster@python.org', 'very-secret'))
+
+                    # connection is not autocommit by default. So you must commit to save
+                    # your changes.
+                    connection.commit()
+
+                with connection.cursor() as cursor:
+                    # Read a single record
+                    sql = "SELECT `id`, `password` FROM `users` WHERE `email`=%s"
+                    cursor.execute(sql, ('webmaster@python.org',))
+                    result = cursor.fetchone()
+                    print(result)
+            finally:
+                connection.close()
 
     def __del__(self):
         """
