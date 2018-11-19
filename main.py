@@ -1,5 +1,3 @@
-import cv2
-import platform
 from src.common.log import *
 from src.processing.server import Server
 import src.hardware.motor as motor
@@ -17,12 +15,11 @@ def main():
     log.info("David de ROW-rover! Version: %s", config["General"]["version"])
     # log.info("Container running on %s cores and %s", cores, mem)
     camera.start()
-    motor.start()  # motor in api class.
-    lamp.start()
     server = Server()
     server.start()
     while True:
         loop()
+
 
 def loop():
     time.sleep(1000)

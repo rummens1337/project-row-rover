@@ -14,6 +14,12 @@ Made available under GNU GENERAL PUBLIC LICENSE
 # 2015-02-10, ver 0.1
 
 """
+from time import sleep
+from src.common.log import *
+if config["Display"].getboolean("simulate_display") is False:
+    import smbus2 as smbus
+else:
+    import src.dummy.smbus2dummy as smbus
 
 # i2c bus (0 -- original Pi, 1 -- Rev 2 Pi)
 I2CBUS = 1
@@ -21,9 +27,6 @@ I2CBUS = 1
 # LCD Address
 ADDRESS = 0x3f
 
-import smbus2 as smbus
-from time import sleep
-from src.common.log import *
 
 class i2c_device:
     def __init__(self, addr, port=I2CBUS):
@@ -104,24 +107,22 @@ En = 0b00000100 # Enable bit
 Rw = 0b00000010 # Read/Write bit
 Rs = 0b00000001 # Register select bit
 
+
 class lcd:
-    #initializes objects and lcd
-
+    # initializes objects and lcd
     def __init__(self):
-        if config["Display"].getboolean("simulate_display") == False:
-            self.lcd_device = i2c_device(ADDRESS)
+        self.lcd_device = i2c_device(ADDRESS)
 
-            self.lcd_write(0x03)
-            self.lcd_write(0x03)
-            self.lcd_write(0x03)
-            self.lcd_write(0x02)
+        self.lcd_write(0x03)
+        self.lcd_write(0x03)
+        self.lcd_write(0x03)
+        self.lcd_write(0x02)
 
-            self.lcd_write(LCD_FUNCTIONSET | LCD_2LINE | LCD_5x8DOTS | LCD_4BITMODE)
-            self.lcd_write(LCD_DISPLAYCONTROL | LCD_DISPLAYON)
-            self.lcd_write(LCD_CLEARDISPLAY)
-            self.lcd_write(LCD_ENTRYMODESET | LCD_ENTRYLEFT)
-            sleep(0.2)
-
+        self.lcd_write(LCD_FUNCTIONSET | LCD_2LINE | LCD_5x8DOTS | LCD_4BITMODE)
+        self.lcd_write(LCD_DISPLAYCONTROL | LCD_DISPLAYON)
+        self.lcd_write(LCD_CLEARDISPLAY)
+        self.lcd_write(LCD_ENTRYMODESET | LCD_ENTRYLEFT)
+        sleep(0.2)
 
     # clocks EN to latch command
     def lcd_strobe(self, data):
@@ -147,22 +148,20 @@ class lcd:
 
     # put string function with optional char positioning
     def lcd_display_string(self, string, line=1, pos=0):
-        if config["Display"].getboolean("simulate_display") == False:
-            if line == 1:
-                pos_new = pos
-            elif line == 2:
-                pos_new = 0x40 + pos
+        if line == 1:
+            pos_new = pos
+        elif line == 2:
+            pos_new = 0x40 + pos
 
-            self.lcd_write(0x80 + pos_new)
+        self.lcd_write(0x80 + pos_new)
 
-            for char in string:
-                self.lcd_write(ord(char), Rs)
+        for char in string:
+            self.lcd_write(ord(char), Rs)
 
     # clear lcd and set to home
     def lcd_clear(self):
-        if config["Display"].getboolean("simulate_display")== False:
-            self.lcd_write(LCD_CLEARDISPLAY)
-            self.lcd_write(LCD_RETURNHOME)
+        self.lcd_write(LCD_CLEARDISPLAY)
+        self.lcd_write(LCD_RETURNHOME)
 
     # define backlight on/off (lcd.backlight(1); off= lcd.backlight(0)
     def backlight(self, state): # for state, 1 = on, 0 = off
