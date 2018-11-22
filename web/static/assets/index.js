@@ -256,25 +256,23 @@ $("#screenText").on('blur', function () {
 // videowebsocket
 
 function videoWebsocketStart() {
+    // TODO port moet dynamish zijn.
     if ("WebSocket" in window) {
         var ws_path = 'ws://' + window.location.host + ":8080";
-        //alert(ws_path);
         var ws = new WebSocket(ws_path);
-        //alert(ws);
         ws.onopen = function () {
             ws.send(1);
         };
         ws.onmessage = function (msg) {
             $("#video").attr('src', 'data:image/jpg;base64,' + msg.data);
-            console.info(msg);
+            console.info(msg.data);
             ws.send(1);
         };
         ws.onerror = function (e) {
-            console.log(e);
             ws.send(1);
         };
     } else {
-        console.error("WebSocket not supported");
+        alert("WebSocket not supported, please update your browser!");
     }
 }
 videoWebsocketStart();

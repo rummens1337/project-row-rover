@@ -3,7 +3,10 @@ vp= 8080
 tag = latest
 target= supervisord
 
+
 # TODO privileged mode moet eigenlijk niet, kunnen beter cap-add ofzo gebruiken
+
+# TODO je moet een log kunnen "tailen" wanneer je een run command doet.
 run:
 	docker run --privileged -it --device /dev/i2c-1 --device /dev/gpiomem --device /dev/vchiq -p $(p):80 -p $(vp):8080 --entrypoint $(target) rover
 
@@ -16,16 +19,20 @@ run-current:
 run-current-amd64:
 	docker run -it -v ${CURDIR}/:/app/ -v ${CURDIR}/settings.amd64.conf:/app/settings.conf -p $(p):80 -p $(vp):8080 --entrypoint $(target) rover
 
-
 install:
 	docker run -it --rm --privileged multiarch/qemu-user-static:register
 
 build:
-	docker build -t rover .
+	docker build --rm -t rover .
 
 push: build
 	docker tag rover noeel/rover:$(tag)
 	docker push noeel/rover:$(tag)
+
+# TODO bestanden moeten niet als sudo worden aangemaakt.
+# TODO logs (en config) moeten in een map buiten de docker image.
+clear-logs:
+	sudo rm log/*.log*
 
 # TODO build documentation
 

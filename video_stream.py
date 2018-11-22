@@ -1,11 +1,9 @@
-import sys, time, atexit, subprocess, websockets, asyncio
+import sys, time, atexit, subprocess, websockets, asyncio, threading
 from src.common.log import *
 import src.hardware.camera as camera
 import src.processing.image as image
+import numpy as np
 
-
-# global vars
-last_frame = None
 
 
 def loop():
@@ -24,15 +22,21 @@ def startServer():
 
 
 async def video(websocket, path):
-    global last_frame, current_frame
+    log.debug("new video object")
     current_frame = None
+    last_frame = None
     while True:
+        # TODO alleen de 1e client die verbonden is heeft verbinding met de socket.
         try:
             current_frame = image.get_processed_frame()
-            if current_frame is not last_frame:
+            # TODO uitzoeken of deze equal functie niet teveel tijd kost.
+            if not np.array_equal(current_frame, last_frame):
+                log.debug("new info!")
                 await websocket.send(image.to_base64(image.frame2jpg(current_frame)))
                 last_frame = current_frame
-        except ConnectionClosed:
+            websocket.recv()
+        #     TODO deze exception werkt niet
+        except websockets.exceptions.ConnectionClosed:
             log.debug("connection closed")
             break
 
@@ -47,6 +51,10 @@ def main():
     # log.info("Container running on %s cores and %s", cores, mem)
     log.info("video stream start")
     camera.start()
+    # TODO beter als we multiprocessing gebruiken
+    pf = threading.Thread(target = image.process_frames_forever)
+    pf.daemon = True
+    pf.start()
     startServer()
     while True:
         loop()

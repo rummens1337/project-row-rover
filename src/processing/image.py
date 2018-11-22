@@ -1,6 +1,6 @@
 import numpy as np
 from src.common.log import *
-import cv2, time, base64
+import cv2, time, base64, asyncio
 import src.hardware.camera as camera
 
 DEBUG = config['General'].getint('DEBUG')
@@ -8,7 +8,7 @@ DEBUG = config['General'].getint('DEBUG')
 framerate = config["Camera"].getint("framerate")
 look_for_faces_timeout = config["FaceDetection"].getint("look_for_faces_timeout")
 photodata = []
-current_frame = 0
+color = (0, 0, 255)
 
 def get_faces(photo: np.array):
     """
@@ -44,7 +44,7 @@ def get_faces(photo: np.array):
     if len(confidences) and DEBUG >= 2:
         log.debug("face confidence " + str(confidences[0]))
 
-    if DEBUG and len(faces):
+    if DEBUG >=2 and len(faces):
         log.debug("got " + str(len(faces)) + " faces! (in one foto)")
 
     return zip(faces, confidences)
@@ -175,21 +175,34 @@ def get_processed_frame():
     @return: frame with rectangles on the faces
     @rtype: cv2 numpy array
     """
-    global current_frame, framerate, look_for_faces_timeout, photodata
+    global framerate,  photodata, color
     time.sleep((1.0 / framerate))
     frame = camera.get_frame()
-    current_frame += 1
-    color = (0, 0, 255)
-
-    if current_frame == (framerate / look_for_faces_timeout):
-        current_frame = 0
-        color = (0, 255, 0)
-        photodata = list(get_faces(frame))
-
+    log.debug("get fd: %s", photodata)
     for face, conf in photodata:
         frame = draw_rectangle(frame, face, color=color)
 
     return frame
+
+def process_frames_forever():
+    """
+    get new frame from camera and processes this. Stores result in `photodata`
+    """
+    global framerate, look_for_faces_timeout, photodata
+    current_frame = 0
+    last_frame = None
+    while True:
+        # time.sleep((1.0 / framerate))
+        current_frame += 1
+        frame = camera.get_frame()
+        # TODO detectie moet op basis van tijd, want het is niet gegarandeerd dat dit 24* per seconde draaid.
+        if (current_frame == (framerate / look_for_faces_timeout)) and not (np.array_equal(frame, last_frame)):
+            current_frame = 0
+            photodata = list(get_faces(frame))
+            log.debug("set fd: %s", photodata)
+            last_frame = frame
+
+
 
 
 def frame2jpg(frame):

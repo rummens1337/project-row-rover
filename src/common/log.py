@@ -15,6 +15,13 @@ logging.basicConfig(
     datefmt='%d-%m-%Y:%H:%M:%S',
     level=logging.DEBUG)
 
+# disable all loggers from different files
+# logging.getLogger('asyncio').setLevel(logging.WARN)
+# logging.getLogger('asyncio.coroutines').setLevel(logging.WARN)
+logging.getLogger('websockets.server').setLevel(logging.WARN)
+logging.getLogger('websockets.protocol').setLevel(logging.WARN)
+
+
 # https://docs.python.org/3/library/logging.html#logging-levels
 # 0 = debug
 # 20 = info en erger
