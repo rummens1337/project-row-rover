@@ -193,14 +193,15 @@ def process_frames_forever():
     """
     global look_for_faces_timeout, photodata
     current_frame = camera.get_frame()
-    last_frame = None
+    #last_frame = np.zeros(shape=(4,4))
     while True:
+        #log.debug("loopted, mothefucker")
         time.sleep(look_for_faces_timeout)
-        if not (np.array_equal(current_frame, last_frame)):
-            current_frame = camera.get_frame()
-            photodata = list(get_faces(current_frame))
-            log.debug("set photodata: %s", photodata)
-            last_frame = current_frame
+        #if not np.array_equal(current_frame, last_frame):
+        current_frame = camera.get_frame()
+        photodata = list(get_faces(current_frame))
+        log.debug("set photodata: %s", photodata)
+        #last_frame = current_frame
 
 
 def frame2jpg(frame):
