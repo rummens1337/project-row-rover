@@ -53,10 +53,10 @@ class Tracker(threading.Thread):
             Tracker.__Instance = self
             GPIO.setmode(GPIO.BOARD)
             # Wheelencoder Left
-            GPIO.setup(self.ENCODERPINL, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            GPIO.setup(self.ENCODERPINL, GPIO.IN)
             GPIO.add_event_detect(self.ENCODERPINL, GPIO.RISING, callback=self.interruptPulseL)
             # Wheelencoder right
-            GPIO.setup(self.ENCODERPINR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            GPIO.setup(self.ENCODERPINR, GPIO.IN)
             GPIO.add_event_detect(self.ENCODERPINR, GPIO.RISING, callback=self.interruptPulseR)
             self.start()
 
@@ -79,15 +79,15 @@ class Tracker(threading.Thread):
     def run(self):
         self.lastCapture = time.time()
         while True:
+            # log.debug(str(self.encoderPulsesL)+" "+str(self.encoderPulsesR)+" "+str(Compas.getInstance().getDegree()))
             now = time.time()
             timedifference = now-self.lastCapture
-            # log.debug(str(self.lastCapture)+" "+str(now)+" "+str(now-self.lastCapture))
             self.encoderSpeedL = (self.encoderPulsesL*self.ENCODERHOLEDISTANCE)/timedifference
             self.encoderSpeedR = (self.encoderPulsesR*self.ENCODERHOLEDISTANCE)/timedifference
             self.encoderPulsesL = 1
             self.encoderPulsesR = 1
             self.lastCapture = now
-            log.debug(str(self.encoderSpeedL)+" "+str(self.encoderPulsesL)+" "+str(self.encoderSpeedR)+" " +str(self.encoderPulsesR)+" " +str(timedifference)+" "+str(self.getCurve())+" "+str(self.getSpeed()))
+            self.saveLocation()
             time.sleep(self.INTERVALSPEED)
 
     def saveLocation(self):
@@ -106,15 +106,19 @@ class Tracker(threading.Thread):
         Calculates if the rover is making a turn at the moment
         @return: float value of how much the rover is turning and to which direction range:
         """
-        if motor.richtingr is 2:
+        if motor.getInstance().get_richting_right() is 1:
             speedR = -self.encoderSpeedR
         else:
             speedR = self.encoderSpeedR
 
-        if motor.richtingl is 2:
+        log.debug(str(motor.getInstance().get_richting_right() )+" "+str(motor.getInstance().get_richting_left() ))
+
+        if motor.getInstance().get_richting_left() is 1:
             speedL = -self.encoderSpeedL
         else:
             speedL = self.encoderSpeedL
+
+        log.debug(str(speedL)+" "+str(speedR))
 
         return speedR - speedL
 
@@ -122,4 +126,8 @@ class Tracker(threading.Thread):
         while True:
             instruction = self.history.pop()
             # TODO get to the choppah
+
+    def locationToMove(self, location):
+        pass
+
 

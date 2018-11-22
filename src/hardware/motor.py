@@ -12,7 +12,7 @@ class motor:
     # speed from 4 to 250
     speedl = 0
     speedr = 0
-    # 0 = stilstaan 1 = vooruit 2 = achteruit
+    # 0 = stilstaan 2 = vooruit 1 = achteruit
     richtingl = 0
     richtingr = 0
 
@@ -156,6 +156,20 @@ class motor:
         @return (int): value
         """
         return self.speedr
+
+    def get_richting_left(self) -> int:
+        """
+        Get left direction value
+        @return (int): value
+        """
+        return self.richtingl
+
+    def get_richting_right(self) -> int:
+        """
+        Get right direction value
+        @return (int): value
+        """
+        return self.richtingr
 
     def _send_data(self) -> bool:
         """
