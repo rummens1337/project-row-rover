@@ -144,6 +144,7 @@ webSocket.onerror = function () {
 };
 
 webSocket.onmessage = function (event) {
+
     //TODO error validation.
     console.log(event.data);
 };
@@ -251,6 +252,15 @@ function send(request, data) {
 //     };
 //     webSocket.send(JSON.stringify(msg));
 // });
+
+// Laat de kompas schijf draaien.
+function setCompass(dir) {
+
+    var compassDisc = document.getElementById("compassArrowImg");
+    compassDisc.style.webkitTransform = "rotate(" + dir + "deg)";
+    compassDisc.style.MozTransform = "rotate(" + dir + "deg)";
+    compassDisc.style.transform = "rotate(" + dir + "deg)";
+}
 
 
 // videowebsocket
