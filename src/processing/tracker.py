@@ -100,19 +100,26 @@ class Tracker(threading.Thread):
         self.history.append(data)
 
     def getSpeed(self):
-        return (self.encoderSpeedR+self.encoderPulsesL)-self.getCurve()
+        richtingr = motor.getInstance().get_richting_right()
+        richtingl = motor.getInstance().get_richting_left()
+        if richtingr is 1 and richtingl is 1:
+            return -((self.encoderSpeedR+self.encoderSpeedL)/2)
+        else:
+            return (self.encoderSpeedR+self.encoderSpeedL)/2
 
     def getCurve(self):
         """
         Calculates if the rover is making a turn at the moment
         @return: float value of how much the rover is turning and to which direction range:
         """
-        if motor.getInstance().get_richting_right() is 1:
+        richtingr = motor.getInstance().get_richting_right()
+        richtingl = motor.getInstance().get_richting_left()
+        if richtingr is 1:
             speedR = -self.encoderSpeedR
         else:
             speedR = self.encoderSpeedR
 
-        if motor.getInstance().get_richting_left() is 1:
+        if richtingl is 1:
             speedL = -self.encoderSpeedL
         else:
             speedL = self.encoderSpeedL
