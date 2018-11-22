@@ -96,6 +96,7 @@ class Tracker(threading.Thread):
             "curve": self.getCurve(),
             "direction": Compas.getInstance().getDegree()
         }
+        log.debug(str(data))
         self.history.append(data)
 
     def getSpeed(self):
@@ -111,14 +112,10 @@ class Tracker(threading.Thread):
         else:
             speedR = self.encoderSpeedR
 
-        log.debug(str(motor.getInstance().get_richting_right() )+" "+str(motor.getInstance().get_richting_left() ))
-
         if motor.getInstance().get_richting_left() is 1:
             speedL = -self.encoderSpeedL
         else:
             speedL = self.encoderSpeedL
-
-        log.debug(str(speedL)+" "+str(speedR))
 
         return speedR - speedL
 
