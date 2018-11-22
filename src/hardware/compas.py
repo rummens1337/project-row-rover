@@ -61,23 +61,57 @@ class Compas:
             Compas()
         return Compas.__Instance
 
-    def read_raw_data(self, addr):
+    def __convert(self, data, offset):
+        # to get signed value from module
+        value = ((int(data[offset]) << 8) | int(data[offset+1]))
+        if value > 32768:
+            value = value - 65536
+        return value
+
+    def read_raw_data(self):
         """
         Read data from a register in the compas
         @param addr: The address of the register to read
         @return: The data in the register in 16 bit
         """
+        data = self.bus.read_i2c_block_data(self.ADDRESS, 0x00)
+        #log.debug(str(data))
+        x = self.__convert(data, 3)
+        y = self.__convert(data, 7)
+        z = self.__convert(data, 5)
+        return x, y, z
         #Read raw 16-bit value
-        high = self.bus.read_byte_data(self.ADDRESS, addr)
-        low = self.bus.read_byte_data(self.ADDRESS, addr+1)
+        # high = self.bus.read_byte_data(self.ADDRESS, addr)
+        # low = self.bus.read_byte_data(self.ADDRESS, addr+1)
 
         #concatenate higher and lower value
-        value = ((high << 8) | low)
+        # value = ((high << 8) | low)
+        #
+        # #to get signed value from module
+        # if(value > 32768):
+        #     value = value - 65536
+        # return value
 
-        #to get signed value from module
-        if(value > 32768):
-            value = value - 65536
-        return value
+    def getDegree(self) -> float:
+        """
+        Calculate the degree of the rover based on X and Y of the compas
+        @return: The degree the rover is pointing at, range 0 to 360
+        """
+        # Read Accelerometer raw value
+        # x = self.read_raw_data(self.X_axis_H)
+        # z = self.read_raw_data(self.Z_axis_H)
+        # y = self.read_raw_data(self.Y_axis_H)
+        (x, y, z) = self.read_raw_data()
+        # Calculate direction
+        heading = math.atan2(y, x) + self.declination
+        if heading > (2*math.pi):
+            heading = heading - 2*math.pi
+        # check for sign
+        if heading < 0:
+            heading = heading + 2*math.pi
+
+        heading_angle = heading * 180/math.pi
+        return heading_angle
 
     def getDirection(self) -> str:
         """
@@ -89,25 +123,6 @@ class Compas:
         if number > 7:
             number = 1
         return self.directions[number]
-
-    def getDegree(self) -> float:
-        """
-        Calculate the degree of the rover based on X and Y of the compas
-        @return: The degree the rover is pointing at, range 0 to 360
-        """
-        # Read Accelerometer raw value
-        x = self.read_raw_data(self.X_axis_H)
-        z = self.read_raw_data(self.Z_axis_H)
-        y = self.read_raw_data(self.Y_axis_H)
-        # Calculate direction
-        heading = math.atan2(y, x) + self.declination
-        if heading > (2*math.pi):
-            heading = heading - 2*math.pi
-        # check for sign
-        if heading < 0:
-            heading = heading + 2*math.pi
-        heading_angle = heading * 180/math.pi
-        return heading_angle
 
     @atexit.register
     def stop(self):
