@@ -144,6 +144,12 @@ webSocket.onerror = function () {
 };
 
 webSocket.onmessage = function (event) {
+    if(typeof event.data === String){
+        var msg = JSON.parse(event.data);
+        var time = new Date(msg.date);
+        var timeStr = time.toLocaleTimeString();
+        setCompass(msg.data);
+    }
 
     //TODO error validation.
     console.log(event.data);
