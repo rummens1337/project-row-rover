@@ -16,8 +16,8 @@ logging.basicConfig(
     level=logging.DEBUG)
 
 # disable all loggers from different files
-# logging.getLogger('asyncio').setLevel(logging.WARN)
-# logging.getLogger('asyncio.coroutines').setLevel(logging.WARN)
+logging.getLogger('asyncio').setLevel(logging.WARN)
+logging.getLogger('asyncio.coroutines').setLevel(logging.WARN)
 logging.getLogger('websockets.server').setLevel(logging.WARN)
 logging.getLogger('websockets.protocol').setLevel(logging.WARN)
 
