@@ -128,7 +128,7 @@ html, body, body > div {
     top: 0px;
     left: 0px;
     z-index: 200;
-    background: url('http://dev.rvltn.eu/compass/compass.svg');
+    background: url('./img/compass.svg');
     width: 4rem;
     height: 4rem;
     background-size: 100%;
@@ -139,7 +139,7 @@ html, body, body > div {
     top: 0px;
     left: 0px;
     z-index: 1000;
-    background: url('http://dev.rvltn.eu/compass/arrow.svg');
+    background: url('./img/arrow.svg');
     width: 4rem;
     height: 4rem;
     background-size: 100%;

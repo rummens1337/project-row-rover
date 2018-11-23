@@ -156,13 +156,13 @@ function getCompassData(){
 }
 
 webSocket.onmessage = function (event) {
-    var timeStamp = new Date().toLocaleTimeString();
+    // var timeStamp = new Date().toLocaleTimeString();
     console.log(event);
     var obj = JSON.parse(event.data);
 
         if (!(obj === undefined || obj.compass === undefined || obj.compass.dir === undefined)) {
             setCompass(parseInt(obj.compass.dir));
-            document.getElementById("time").innerHTML = timeStamp;
+            // document.getElementById("time").innerHTML = timeStamp;
         }
     //TODO error validation.
 };
