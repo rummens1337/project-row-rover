@@ -131,8 +131,9 @@ flashLight.release = function () {
 
 
 webSocket.onopen = function () {
-    // waarom word deze hier aangeroepen?
     callLoop();
+    getCompassData();
+    console.log("Called onopen Function!!!");
 };
 
 webSocket.onclose = function () {
@@ -143,22 +144,35 @@ webSocket.onerror = function () {
 //    TODO error handeling.
 };
 
-webSocket.onmessage = function (event) {
-    if(typeof event.data === String){
-        var msg = JSON.parse(event.data);
-        var time = new Date(msg.date);
-        var timeStr = time.toLocaleTimeString();
-        setCompass(msg.data);
-    }
+//TODO: Checken of onderstaande functies werken.
+function getCompassData(){
+    //TODO: Goede conditie maken zodat deze alleen utigevoerd wordt bij een open connectie.
+    setTimeout(getCompassData, 1000);
+    send("compass", {
+        dir: 10
+    });
+}
 
+webSocket.onmessage = function (event) {
+    console.log(event);
+    var obj = JSON.parse(event.data);
+    if (!(obj === undefined || obj.compass === undefined || obj.compass.dir === undefined)) {
+            setCompass(parseInt(obj.compass.dir));
+    }
     //TODO error validation.
-    console.log(event.data);
 };
+
+// Set de compass data afhankelijk van de waarden op de rover.
+function setCompass(dir) {
+    var compassDisc = document.getElementById("compassArrowImg");
+    compassDisc.style.webkitTransform = "rotate(" + dir + "deg)";
+    compassDisc.style.MozTransform = "rotate(" + dir + "deg)";
+    compassDisc.style.transform = "rotate(" + dir + "deg)";
+}
 
 
 function callLoop() {
     // TODO documentatie
-    // waarom heet deze functie loop als hij niet loopt?
     var le = l.toFixed(0);
     var ri = r.toFixed(0);
     // TODO deze moet alleen data versturen als er veraderingen zijn.
@@ -258,15 +272,6 @@ function send(request, data) {
 //     };
 //     webSocket.send(JSON.stringify(msg));
 // });
-
-// Laat de kompas schijf draaien.
-function setCompass(dir) {
-
-    var compassDisc = document.getElementById("compassArrowImg");
-    compassDisc.style.webkitTransform = "rotate(" + dir + "deg)";
-    compassDisc.style.MozTransform = "rotate(" + dir + "deg)";
-    compassDisc.style.transform = "rotate(" + dir + "deg)";
-}
 
 
 // videowebsocket

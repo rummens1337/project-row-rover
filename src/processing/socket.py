@@ -18,6 +18,7 @@ class Socket:
         status = 1,
         lamp = 2,
         displayMsg = 3
+        compass = 4
 
     def __init__(self, server, api_key):
         socket = Sockets(server)
@@ -77,6 +78,11 @@ class Socket:
                         self.lcdInstance.lcd_display_string(str(recieved["data"][16:33]), 2)
                         ws.send(json.dumps(Api.print()))
 
+                    elif recieved["request"] == Socket.Request.compass.name:
+                        #TODO: Toevoegen van actuele compasdata.
+                        data = {"compass": {"dir": 10}}
+                        ws.send(json.dumps(data))
+
                     else:
                         raise AttributeError("Request not found")
                 except (AttributeError, JSONDecodeError, KeyError, ValueError) as err:
@@ -109,6 +115,8 @@ class Socket:
 
             frame = cv2.imencode('.jpg', frame)[1].tostring()
             ws.send(base64.b64encode(frame))
+
+
 
     def close(self):
         """
