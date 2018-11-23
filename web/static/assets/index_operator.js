@@ -147,18 +147,23 @@ webSocket.onerror = function () {
 //TODO: Checken of onderstaande functies werken.
 function getCompassData(){
     //TODO: Goede conditie maken zodat deze alleen utigevoerd wordt bij een open connectie.
-    setTimeout(getCompassData, 1000);
-    send("compass", {
-        dir: 10
-    });
+    if(webSocket.isConnected) {
+        setTimeout(getCompassData, 1000);
+        send("compass", {
+            dir: 10
+        });
+    }
 }
 
 webSocket.onmessage = function (event) {
+    var timeStamp = new Date().toLocaleTimeString();
     console.log(event);
     var obj = JSON.parse(event.data);
-    if (!(obj === undefined || obj.compass === undefined || obj.compass.dir === undefined)) {
+
+        if (!(obj === undefined || obj.compass === undefined || obj.compass.dir === undefined)) {
             setCompass(parseInt(obj.compass.dir));
-    }
+            document.getElementById("time").innerHTML = timeStamp;
+        }
     //TODO error validation.
 };
 

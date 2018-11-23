@@ -80,7 +80,8 @@ class Socket:
 
                     elif recieved["request"] == Socket.Request.compass.name:
                         #TODO: Toevoegen van actuele compasdata.
-                        data = {"compass": {"dir": 10}}
+                        direction = 180
+                        data = {"compass": {"dir": direction}}
                         ws.send(json.dumps(data))
 
                     else:
