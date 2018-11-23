@@ -144,10 +144,9 @@ webSocket.onerror = function () {
 //    TODO error handeling.
 };
 
-//TODO: Checken of onderstaande functies werken.
 function getCompassData(){
     //TODO: Goede conditie maken zodat deze alleen utigevoerd wordt bij een open connectie.
-    if(webSocket.isConnected) {
+    if(webSocket.OPEN) {
         setTimeout(getCompassData, 1000);
         send("compass", {
             dir: 10
@@ -156,13 +155,11 @@ function getCompassData(){
 }
 
 webSocket.onmessage = function (event) {
-    // var timeStamp = new Date().toLocaleTimeString();
     console.log(event);
     var obj = JSON.parse(event.data);
-
         if (!(obj === undefined || obj.compass === undefined || obj.compass.dir === undefined)) {
             setCompass(parseInt(obj.compass.dir));
-            // document.getElementById("time").innerHTML = timeStamp;
+            document.getElementById("time").innerHTML = new Date().toLocaleTimeString();
         }
     //TODO error validation.
 };
