@@ -16,6 +16,10 @@ class motor:
     richtingl = 0
     richtingr = 0
 
+    lastSendData = [7,0,0,0,0,0,0]
+
+    history = []
+
     def __init__(self):
         """
         Initilizes a motor object, but only one. To use this class, use getInstance instead.
@@ -178,7 +182,9 @@ class motor:
         """
         try:
             motor_data = [7, 3, self.speedl, self.richtingl, 3, self.speedr, self.richtingr]
-            self.bus.write_i2c_block_data(self.ADDRESS, self.OFFSET, motor_data)
+            if motor_data is not self.lastSendData:
+                self.bus.write_i2c_block_data(self.ADDRESS, self.OFFSET, motor_data)
+            self.lastSendData = motor_data
         except IOError as e:
             print("I/O error({0}): {1}".format(e.errno, e.strerror))
             return False
