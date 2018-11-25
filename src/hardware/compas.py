@@ -103,7 +103,7 @@ class Compas:
         #convert into angle
         heading_angle = int(heading * 180/math.pi)
 
-        log.debug(str(heading_angle)+" "+str(x)+" "+str(y)+" "+str(z))
+        # log.debug(str(heading_angle)+" "+str(x)+" "+str(y)+" "+str(z))
         return heading_angle
 
     def getDirection(self) -> str:

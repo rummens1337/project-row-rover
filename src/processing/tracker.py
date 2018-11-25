@@ -97,7 +97,7 @@ class Tracker(threading.Thread):
             "direction": Compas.getInstance().getDegree(),
             "time": timeElapsed
         }
-        log.debug(str(data))
+        # log.debug(str(data))
         self.history.append(data)
 
     def getSpeed(self):
