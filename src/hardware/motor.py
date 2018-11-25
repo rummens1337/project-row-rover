@@ -186,18 +186,23 @@ class motor:
             motor_data = [7, 3, self.speedl, self.richtingl, 3, self.speedr, self.richtingr]
             if motor_data is not self.lastSendData:
                 self.bus.write_i2c_block_data(self.ADDRESS, self.OFFSET, motor_data)
-            self.lastSendData = motor_data
-
-            now = time.time()
-            timedifference = now-self.lastSendTime
-            self.lastSendTime = now
-            data = {
-                "motor": motor_data,
-                "time": timedifference
-            }
-            self.history.append(data)
+                self.lastSendData = motor_data
+                now = time.time()
+                timedifference = now-self.lastSendTime
+                self.lastSendTime = now
+                data = {
+                    "motor": motor_data,
+                    "time": timedifference
+                }
+                self.history.append(data)
         except IOError as e:
             print("I/O error({0}): {1}".format(e.errno, e.strerror))
             return False
         else:
             return True
+
+    def moveBack(self):
+        while True:
+            instruction = self.history.pop()
+            self.bus.write_i2c_block_data(self.ADDRESS, self.OFFSET, instruction.get("motor"))
+            time.sleep(instruction.get("time"))
