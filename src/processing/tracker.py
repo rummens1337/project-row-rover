@@ -87,14 +87,15 @@ class Tracker(threading.Thread):
             self.encoderPulsesL = 1
             self.encoderPulsesR = 1
             self.lastCapture = now
-            self.saveLocation()
+            self.saveLocation(timedifference)
             time.sleep(self.INTERVALSPEED)
 
-    def saveLocation(self):
+    def saveLocation(self, timeElapsed):
         data = {
             "speed": self.getSpeed(),
             "curve": self.getCurve(),
-            "direction": Compas.getInstance().getDegree()
+            "direction": Compas.getInstance().getDegree(),
+            "time": timeElapsed
         }
         log.debug(str(data))
         self.history.append(data)
