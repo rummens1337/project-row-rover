@@ -34,6 +34,7 @@ class motor:
             motor.__Instance = self
             self.bus = smbus.SMBus(1)  # 0 = /dev/i2c-0 (port I2C0), 1 = /dev/i2c-1 (port I2C1)
             self.leftright(0, 0)
+            self.lastSendTime = time.time()
 
     @staticmethod
     def getInstance():
@@ -187,29 +188,44 @@ class motor:
             motor_data = [7, 3, self.speedl, self.richtingl, 3, self.speedr, self.richtingr]
             if motor_data is not self.lastSendData:
                 self.bus.write_i2c_block_data(self.ADDRESS, self.OFFSET, motor_data)
+                self.saveLocation(self.lastSendData)
                 self.lastSendData = motor_data
-                now = time.time()
-                timedifference = now - self.lastSendTime
-                self.lastSendTime = now
-                data = {
-                    "motor": motor_data,
-                    "time": timedifference
-                }
-                self.history.append(data)
         except IOError as e:
             print("I/O error({0}): {1}".format(e.errno, e.strerror))
             return False
         else:
             return True
 
+    def saveLocation(self, motor_data):
+        now = time.time()
+        timedifference = now - self.lastSendTime
+        self.lastSendTime = now
+        data = {
+            "motor": motor_data,
+            "time": timedifference
+        }
+        self.history.append(data)
+
     def moveBack(self):
         while True:
-            if self.history:
+            if len(self.history) > 1:
                 instruction = self.history.pop()
+                log.debug(instruction)
             else:
-                return 1
+                log.debug("Returned to start")
+                self.leftright(0, 0)
+                self.history = []
+                break
+
             data = instruction.get("motor")
-            data[3] = -data[3]
-            data[6] = -data[6]
+            if data[3] is 2:
+                data[3] = 1
+            elif data[3] is 1:
+                data[3] = 2
+
+            if data[6] is 2:
+                data[6] = 1
+            elif data[6] is 1:
+                data[6] = 2
             self.bus.write_i2c_block_data(self.ADDRESS, self.OFFSET, data)
             time.sleep(instruction.get("time"))
