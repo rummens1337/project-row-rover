@@ -3,7 +3,7 @@ from src.processing.server import Server
 import src.hardware.motor as motor
 import src.hardware.lamp as lamp
 import src.hardware.camera as camera
-import time, subprocess
+import time, subprocess, signal
 import sys
 import atexit
 
@@ -12,8 +12,11 @@ def main():
     # TODO cores en ram printen
     # cores = subprocess.call("nproc")
     # mem = subprocess.call("cat /proc/meminfo | grep MemTotal")
+    log.info("==========")
     log.info("David de ROW-rover! Version: %s", config["General"]["version"])
     # log.info("Container running on %s cores and %s", cores, mem)
+    signal.signal(signal.SIGINT, close)
+    signal.signal(signal.SIGTERM, close)
     server = Server()
     server.start()
     while True:
@@ -24,13 +27,17 @@ def loop():
     time.sleep(1000)
 
 
-@atexit.register
-def close():
+def close(signum=0, frame=0):
+    # TODO misschien iets met signum en frame doen.
     log.info("Closing down...")
+    sys.exit(0)
 
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt as e:
-        sys.exit(0)
+       close()
+else:
+    log.crit("must be run as main, exiting")
+    sys.exit(1)

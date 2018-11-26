@@ -1,4 +1,4 @@
-import sys, time, atexit, subprocess, websockets, asyncio, threading
+import sys, time, atexit, subprocess, websockets, asyncio, threading, signal
 from src.common.log import *
 import src.hardware.camera as camera
 import src.processing.image as image
@@ -11,9 +11,10 @@ def loop():
     time.sleep(1000)
 
 
-@atexit.register
-def close():
+def close(signum = 0, frame = 0):
+    # TODO misschien iets met signum en frame doen.
     log.info("Closing down...")
+    sys.exit(0)
 
 
 def startServer():
@@ -52,6 +53,8 @@ def main():
     # log.info("Container running on %s cores and %s", cores, mem)
     log.info("==========")
     log.info("video stream start")
+    signal.signal(signal.SIGINT, close)
+    signal.signal(signal.SIGTERM, close)
     camera.start()
     # TODO beter als we multiprocessing gebruiken
     pf = threading.Thread(target = image.process_frames_forever)
@@ -66,7 +69,7 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt as e:
-        sys.exit(0)
+        close()
 else:
     log.crit("must be run as main, exiting")
     sys.exit(1)

@@ -180,7 +180,6 @@ def get_processed_frame():
     global framerate, photodata, color
     time.sleep((1.0 / framerate))
     frame = camera.get_frame()
-    log.debug("get fd: %s", photodata)
     for face, conf in photodata:
         frame = draw_rectangle(frame, face, color=color)
 
@@ -192,16 +191,12 @@ def process_frames_forever():
     get new frame from camera and processes this. Stores result in `photodata`
     """
     global look_for_faces_timeout, photodata
-    current_frame = camera.get_frame()
-    #last_frame = np.zeros(shape=(4,4))
+    current_frame = None
     while True:
-        #log.debug("loopted, mothefucker")
         time.sleep(look_for_faces_timeout)
-        #if not np.array_equal(current_frame, last_frame):
         current_frame = camera.get_frame()
         photodata = list(get_faces(current_frame))
-        log.debug("set photodata: %s", photodata)
-        #last_frame = current_frame
+        log.debug("found %s face(s)", str(len(photodata[0][1])))
 
 
 def frame2jpg(frame):

@@ -256,6 +256,7 @@ $("#screenText").on('blur', function () {
 // videowebsocket
 
 function videoWebsocketStart() {
+    // TODO documentatie
     // TODO port moet dynamish zijn.
     if ("WebSocket" in window) {
         var ws_path = 'ws://' + window.location.host + ":8080";
