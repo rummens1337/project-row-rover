@@ -181,7 +181,8 @@ def get_processed_frame():
     time.sleep((1.0 / framerate))
     frame = camera.get_frame()
     for face, conf in photodata:
-        frame = draw_rectangle(frame, face, color=color)
+        if conf > config['FaceDetection'].getfloat('MIN_FACE_CONFIDENCE'):
+            frame = draw_rectangle(frame, face, color=color)
 
     return frame
 

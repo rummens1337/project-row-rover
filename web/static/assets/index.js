@@ -266,7 +266,6 @@ function videoWebsocketStart() {
         };
         ws.onmessage = function (msg) {
             $("#video").attr('src', 'data:image/jpg;base64,' + msg.data);
-            console.info(msg.data);
             ws.send(1);
         };
         ws.onerror = function (e) {
