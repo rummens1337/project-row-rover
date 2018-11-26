@@ -45,12 +45,6 @@ async def video(websocket, path):
 
 
 def main():
-    # TODO cores en ram printen
-    # cores = subprocess.call("nproc")
-    # meminfo = dict((i.split()[0].rstrip(':'),int(i.split()[1])) for i in open('/proc/meminfo').readlines())
-    # mem_kib = meminfo['MemTotal']  # e.g. 3921852
-    # mem = subprocess.call(["cat", "/proc/meminfo", "grep", "MemTotal"])
-    # log.info("Container running on %s cores and %s", cores, mem)
     log.info("==========")
     log.info("video stream start")
     signal.signal(signal.SIGINT, close)

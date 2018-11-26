@@ -9,12 +9,12 @@ import atexit
 
 
 def main():
-    # TODO cores en ram printen
-    # cores = subprocess.call("nproc")
-    # mem = subprocess.call("cat /proc/meminfo | grep MemTotal")
+    cores = subprocess.check_output("nproc", shell=True)
+    mem = subprocess.check_output("cat /proc/meminfo | grep MemTotal", shell=True)
     log.info("==========")
+    # TODO cores en ram worden niet zo netjes geprint.
     log.info("David de ROW-rover! Version: %s", config["General"]["version"])
-    # log.info("Container running on %s cores and %s", cores, mem)
+    log.info("Container running on %s cores and %s", cores, mem)
     signal.signal(signal.SIGINT, close)
     signal.signal(signal.SIGTERM, close)
     server = Server()
