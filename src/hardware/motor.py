@@ -206,13 +206,9 @@ class motor:
         self.lastSendTime = now
         data = {
             "motor": motor_data,
-            "time": timedifference,
-            "pulsesl": Tracker.getInstance().getPulsesL(),
-            "pulsesr": Tracker.getInstance().getPulsesR()
+            "time": timedifference
         }
         self.history.append(data)
-        Tracker.getInstance().resetPulsesR()
-        Tracker.getInstance().resetPulsesL()
 
     def moveBack(self):
         """
