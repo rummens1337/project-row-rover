@@ -19,7 +19,7 @@ class WebServer:
 
     def index(self):
         """Video streaming home page."""
-        return render_template('index.html')
+        return render_template('operator.html')
 
     def video_feed(self):
         """
