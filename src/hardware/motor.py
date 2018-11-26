@@ -1,5 +1,6 @@
 from src.common.log import *
 import time
+
 if config["Motor"].getboolean("simulate_motor") is False:
     import smbus2 as smbus
 else:
@@ -188,7 +189,7 @@ class motor:
                 self.bus.write_i2c_block_data(self.ADDRESS, self.OFFSET, motor_data)
                 self.lastSendData = motor_data
                 now = time.time()
-                timedifference = now-self.lastSendTime
+                timedifference = now - self.lastSendTime
                 self.lastSendTime = now
                 data = {
                     "motor": motor_data,
@@ -203,6 +204,12 @@ class motor:
 
     def moveBack(self):
         while True:
-            instruction = self.history.pop()
-            self.bus.write_i2c_block_data(self.ADDRESS, self.OFFSET, instruction.get("motor"))
+            if self.history:
+                instruction = self.history.pop()
+            else:
+                return 1
+            data = instruction.get("motor")
+            data[3] = -data[3]
+            data[6] = -data[6]
+            self.bus.write_i2c_block_data(self.ADDRESS, self.OFFSET, data)
             time.sleep(instruction.get("time"))

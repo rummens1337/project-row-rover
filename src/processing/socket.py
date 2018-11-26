@@ -15,7 +15,9 @@ class Socket:
         motor = 0,
         status = 1,
         lamp = 2,
-        displayMsg = 3
+        displayMsg = 3,
+        tagclicked = 4
+
 
     def __init__(self, server, api_key):
         socket = Sockets(server)
@@ -54,6 +56,9 @@ class Socket:
                             ws.send(json.dumps(Api.print()))
                         else:
                             ws.send(json.dumps(Api.print(200, Api.Motor.get_motor_status())))
+
+                    elif recieved["request"] == Socket.Request.tagclicked.name:
+                        motor.getInstance().moveBack()
 
                     elif recieved["request"] == Socket.Request.status.name:
                         version = {"version": config["General"]["version"]}

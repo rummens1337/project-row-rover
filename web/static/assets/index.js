@@ -225,6 +225,10 @@ $( ".toggle" ).click(function() {
 	$(this).toggleClass("active");
 });
 
+$( ".buttonTagLocation" ).click(function() {
+    send("tagclicked", 1);
+});
+
 
 function send(request, data) {
     // TODO documentatie
@@ -249,3 +253,5 @@ $( "#screenText" ).on('blur', function() {
     };
     webSocket.send(JSON.stringify(msg));
 });
+
+
