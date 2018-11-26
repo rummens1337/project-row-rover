@@ -1,6 +1,6 @@
 from src.common.log import *
 from src.processing.server import Server
-from src.processing.tracker import Tracker
+import src.hardware.camera as camera
 import time
 import sys
 import atexit
@@ -8,7 +8,7 @@ import atexit
 
 def main():
     log.info("David de ROW-rover! Version: %s", config["General"]["version"])
-    # tracker = Tracker.getInstance()
+    camera.start()
     server = Server()
     server.start()
     while True:
