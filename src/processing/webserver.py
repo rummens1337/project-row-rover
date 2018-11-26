@@ -1,13 +1,10 @@
 from flask import Flask, render_template, Response, redirect, request
 import flask_login
 from src.processing.User import User
-# Raspberry Pi camera module (requires picamera package, developed by Miguel Grinberg)
-import src.hardware.camera as camera
 import time
 from src.common.log import *
 import threading
 import src.processing.image as image
-
 import cv2
 
 
@@ -17,7 +14,6 @@ class WebServer:
 
     def __init__(self, server):
         self.server = server
-        self.camera = Camera()
         self.login_manager = flask_login.LoginManager()
 
         self.login_manager.init_app(self.server)
@@ -28,8 +24,6 @@ class WebServer:
         self.server.add_url_rule('/logout', 'logout', self.logout)
         self.server.add_url_rule('/rover', 'index', self.index)
 
-        self.framerate = config["Camera"].getint("framerate")
-        self.look_for_faces_timeout = config["FaceDetection"].getint("look_for_faces_timeout")
 
     def post(self):
         # TODO make somekind of central database for users?

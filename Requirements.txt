@@ -1,5 +1,5 @@
-Flask-RESTful==0.3.6
-Flask==1.0.2
+F
+lask==1.0.2
 http_status==1.0.0
 smbus2==0.2.1
 uwsgi==2.0.17
