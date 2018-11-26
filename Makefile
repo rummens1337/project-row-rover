@@ -1,4 +1,4 @@
-p=8080
+p=80
 tag = latest
 target=main.py
 

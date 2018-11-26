@@ -4,6 +4,7 @@ monkey.patch_all()
 from src.processing.api import Api
 from src.processing.socket import Socket
 from src.processing.webserver import WebServer
+from src.processing.tracker import Tracker
 from flask import Flask
 from src.common.log import *
 import os

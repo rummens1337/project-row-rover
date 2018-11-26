@@ -30,7 +30,8 @@ def output(pin, mode):
 
 def add_event_detect(pin, edge, callback):
     log.debug("GPIO Interrupt created on pin "+str(pin)+" on " + str(edge) + " as callback " + str(callback))
-
+    for i in range(10):
+        callback(pin)
 
 def cleanup():
     log.debug("GPIO is clean again")

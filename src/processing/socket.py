@@ -8,22 +8,27 @@ from src.hardware.motor import motor
 from src.hardware.display import lcd
 from src.hardware.lamp import lamp
 import atexit
-
+import src.hardware.camera as camera
+import src.processing.image as image
+import base64, time, cv2
 
 class Socket:
     class Request(Enum):
         motor = 0,
         status = 1,
         lamp = 2,
-        displayMsg = 3
+        displayMsg = 3,
+        tagclicked = 4,
+        compass = 5
 
     def __init__(self, server, api_key):
         socket = Sockets(server)
         self.api_key = api_key
-        #self.lcdInstance = lcd()
-        # TODO waarom als de socket aangaat word er tekst op de LCD geprint. Deze twee zijn toch onrelevant van elkaar? @michel
-        #self.lcdInstance.lcd_display_string("Team: David", 1)
-        #self.lcdInstance.lcd_display_string("\"RescueDavid\"", 2)
+        self.photodata = []
+        self.framerate = config["Camera"].getint("framerate")
+        self.look_for_faces_timeout = config["FaceDetection"].getint("look_for_faces_timeout")
+        self.current_frame = 0
+        self.lcdInstance = lcd()
         atexit.register(self.__del__)
 
         @socket.route('/')
@@ -32,10 +37,10 @@ class Socket:
             handle the incomming websocket connection. Do not call this function.
             @param ws: websocket object, supplied by flask_sockets
             """
+            # TODO exit if not a websocket request
             while not ws.closed:
                 try:
                     recieved = json.loads(ws.receive())
-                    log.error("Some message is received.")
                     if recieved["key"] != self.api_key:
                         msg = Api.print(401)
                         ws.send(json.dumps(msg) + json.dumps(recieved))
@@ -43,13 +48,19 @@ class Socket:
 
                     if recieved["request"] == Socket.Request.motor.name:
                         if "data" in recieved:
-                            if "left" in recieved["data"]:
-                                motor.getInstance().left(int(recieved["data"]["left"]))
-                            if "right" in recieved["data"]:
-                                motor.getInstance().right(int(recieved["data"]["right"]))
+                            if "left" in recieved["data"] and "right" in recieved["data"]:
+                                motor.getInstance().leftright(int(recieved["data"]["left"]), int(recieved["data"]["right"]))
+                            else:
+                                if "left" in recieved["data"]:
+                                    motor.getInstance().left(int(recieved["data"]["left"]))
+                                if "right" in recieved["data"]:
+                                    motor.getInstance().right(int(recieved["data"]["right"]))
                             ws.send(json.dumps(Api.print()))
                         else:
                             ws.send(json.dumps(Api.print(200, Api.Motor.get_motor_status())))
+
+                    elif recieved["request"] == Socket.Request.tagclicked.name:
+                        motor.getInstance().moveBack()
 
                     elif recieved["request"] == Socket.Request.status.name:
                         version = {"version": config["General"]["version"]}
@@ -72,6 +83,12 @@ class Socket:
                         self.lcdInstance.lcd_display_string(str(recieved["data"][16:33]), 2)
                         ws.send(json.dumps(Api.print()))
 
+                    elif recieved["request"] == Socket.Request.compass.name:
+                        #TODO: Toevoegen van actuele compasdata.
+                        direction = 180
+                        data = {"compass": {"dir": direction}}
+                        ws.send(json.dumps(data))
+
                     else:
                         raise AttributeError("Request not found")
                 except (AttributeError, JSONDecodeError, KeyError, ValueError) as err:
@@ -86,6 +103,26 @@ class Socket:
                         log.error("Internal Server Error", exc_info=True)
 
             self.close()
+
+        @socket.route("/video")
+        def get_video(ws):
+            time.sleep((1.0 / self.framerate))
+            frame = camera.get_frame()
+            self.current_frame += 1
+            color = (0, 0, 255)
+
+            if self.current_frame == (self.framerate / self.look_for_faces_timeout):
+                self.current_frame = 0
+                color = (0, 255, 0)
+                self.photodata = list(image.get_faces(frame))
+
+            for face, conf in self.photodata:
+                frame = image.draw_rectangle(frame, face, color=color)
+
+            frame = cv2.imencode('.jpg', frame)[1].tostring()
+            ws.send(base64.b64encode(frame))
+
+
 
     def close(self):
         """

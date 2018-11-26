@@ -2,20 +2,19 @@ from flask import Flask, render_template, Response, redirect, request
 import flask_login
 from src.processing.User import User
 # Raspberry Pi camera module (requires picamera package, developed by Miguel Grinberg)
-from src.hardware.camera_pi import Camera
+import src.hardware.camera as camera
 import time
 from src.common.log import *
 import threading
+import src.processing.image as image
+import cv2
+
 
 class WebServer:
 
     current_user = User()
 
     def __init__(self, server):
-        # TODO is het verstandig dat dit in een thread zit?
-        # TODO deze thead werkt niet eens omdat het geen `run()` functie heeft.
-        # threading.Thread.__init__(self)
-        # self.daemon = True
         self.server = server
         self.camera = Camera()
         self.login_manager = flask_login.LoginManager()
@@ -28,6 +27,9 @@ class WebServer:
         self.server.add_url_rule('/logout', 'logout', self.logout)
         self.server.add_url_rule('/rover', 'index', self.index)
         self.server.add_url_rule('/video_feed', 'video_feed', self.video_feed)
+
+        self.framerate = config["Camera"].getint("framerate")
+        self.look_for_faces_timeout = config["FaceDetection"].getint("look_for_faces_timeout")
 
     def post(self):
         # TODO make somekind of central database for users?
@@ -49,7 +51,7 @@ class WebServer:
             return redirect("/")
 
         """Video streaming home page."""
-        return render_template('index.html')
+        return render_template('operator.html')
 
     def video_feed(self):
         if not self.current_user.is_authenticated:
@@ -58,8 +60,6 @@ class WebServer:
 
         @returns frame -
         """
-        # TODO camera lag fixen, comment hieronder kan daarbij helpen
-        #time.sleep(0.03)
         """Video streaming route. Put this in the src attribute of an img tag."""
         return Response(self.gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
@@ -67,8 +67,23 @@ class WebServer:
         if not self.current_user.is_authenticated:
             return self.server.login_manager.unauthorized()
         """Video streaming generator function."""
+        photodata = []
+        cf = 0
         while True:
-            frame = self.camera.get_frame()
+            time.sleep((1.0 / self.framerate))
+            frame = camera.get_frame()
+            cf += 1
+            color = (0, 0, 255)
+
+            if cf == (self.framerate / self.look_for_faces_timeout):
+                cf = 0
+                color = (0, 255, 0)
+                photodata = list(image.get_faces(frame))
+
+            for face, conf in photodata:
+                frame = image.draw_rectangle(frame, face, color=color)
+
+            frame = cv2.imencode('.jpg', frame)[1].tostring()
+
             yield (b'--frame\r\n'
-                #    TODO crashed in emulated mode
-                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
