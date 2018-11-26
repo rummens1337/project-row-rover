@@ -1,5 +1,9 @@
+// TODO deze javascript is echt een tering zooi, nergens documentatie en alles in een bestand gesmeten. Dit moet effe iemand opruimen.
 var x, y, l = 0.0, r = 0.0;
 var multiplier = 3.5;
+// TODO eigenlijk moet flashlight (net als vele andere dingen hier) haar eigen class hebben.
+// TODO lampstatus moet gevraagt worden van de server
+// TODO alle variabelen worden met `var` aangemaakt. Het is netter om het met `let` te doen.
 let flashlightStatus = 0;
 let flashlightDOM = document.querySelector(".buttonFlashlight");
 
@@ -278,6 +282,10 @@ $(".joystick").on('touchend touchcancel', function () {
 
 $(".toggle").click(function () {
     $(this).toggleClass("active");
+});
+
+$( ".buttonTagLocation" ).click(function() {
+    send("tagclicked", 1);
 });
 
 /**

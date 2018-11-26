@@ -17,8 +17,9 @@ class Socket:
         motor = 0,
         status = 1,
         lamp = 2,
-        displayMsg = 3
-        compass = 4
+        displayMsg = 3,
+        tagclicked = 4,
+        compass = 5
 
     def __init__(self, server, api_key):
         socket = Sockets(server)
@@ -36,6 +37,7 @@ class Socket:
             handle the incomming websocket connection. Do not call this function.
             @param ws: websocket object, supplied by flask_sockets
             """
+            # TODO exit if not a websocket request
             while not ws.closed:
                 try:
                     recieved = json.loads(ws.receive())
@@ -56,6 +58,9 @@ class Socket:
                             ws.send(json.dumps(Api.print()))
                         else:
                             ws.send(json.dumps(Api.print(200, Api.Motor.get_motor_status())))
+
+                    elif recieved["request"] == Socket.Request.tagclicked.name:
+                        motor.getInstance().moveBack()
 
                     elif recieved["request"] == Socket.Request.status.name:
                         version = {"version": config["General"]["version"]}
