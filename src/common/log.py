@@ -20,7 +20,7 @@ logging.getLogger('asyncio').setLevel(logging.WARN)
 logging.getLogger('asyncio.coroutines').setLevel(logging.WARN)
 logging.getLogger('websockets.server').setLevel(logging.WARN)
 logging.getLogger('websockets.protocol').setLevel(logging.WARN)
-logging.getLogger('flask').setLevel(logging.WARN)
+logging.getLogger('werkzeug').setLevel(logging.WARN)
 
 
 # https://docs.python.org/3/library/logging.html#logging-levels
