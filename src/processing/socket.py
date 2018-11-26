@@ -18,8 +18,8 @@ class Socket:
         status = 1,
         lamp = 2,
         displayMsg = 3,
-        tagclicked = 4
-
+        tagclicked = 4,
+        compass = 5
 
     def __init__(self, server, api_key):
         socket = Sockets(server)
@@ -28,6 +28,7 @@ class Socket:
         self.framerate = config["Camera"].getint("framerate")
         self.look_for_faces_timeout = config["FaceDetection"].getint("look_for_faces_timeout")
         self.current_frame = 0
+        self.lcdInstance = lcd()
         atexit.register(self.__del__)
 
         @socket.route('/')
@@ -82,6 +83,12 @@ class Socket:
                         self.lcdInstance.lcd_display_string(str(recieved["data"][16:33]), 2)
                         ws.send(json.dumps(Api.print()))
 
+                    elif recieved["request"] == Socket.Request.compass.name:
+                        #TODO: Toevoegen van actuele compasdata.
+                        direction = 180
+                        data = {"compass": {"dir": direction}}
+                        ws.send(json.dumps(data))
+
                     else:
                         raise AttributeError("Request not found")
                 except (AttributeError, JSONDecodeError, KeyError, ValueError) as err:
@@ -114,6 +121,8 @@ class Socket:
 
             frame = cv2.imencode('.jpg', frame)[1].tostring()
             ws.send(base64.b64encode(frame))
+
+
 
     def close(self):
         """
