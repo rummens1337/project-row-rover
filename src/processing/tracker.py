@@ -12,7 +12,6 @@ else:
 
 class Tracker(threading.Thread):
     __Instance = None
-    history = []
     # variables for the Wheelencoders
     INTERVALSPEED = 0.5  # seconds
     ENCODERPINL = 12
@@ -26,6 +25,20 @@ class Tracker(threading.Thread):
     encoderPulsesR = 0
     encoderSpeedR = 0  # meters/second
     lastCapture = 0
+
+    def getSpeedL(self) -> float:
+        """
+        Get the speed of the left wheels
+        @return: Speed of the left wheels
+        """
+        return self.encoderSpeedL
+
+    def getSpeedR(self) -> float:
+        """
+        Get the speed of the right wheels
+        @return: Speed of the right wheels
+        """
+        return self.encoderSpeedR
 
     def interruptPulseL(self, channel):
         """
@@ -77,6 +90,9 @@ class Tracker(threading.Thread):
         return Tracker.__Instance
 
     def run(self):
+        """
+        Thread for calculating the speed over the left and the right wheels of the rover based on the number of encoder pulses
+        """
         self.lastCapture = time.time()
         while True:
             # log.debug(str(self.encoderPulsesL)+" "+str(self.encoderPulsesR)+" "+str(Compas.getInstance().getDegree()))
@@ -87,20 +103,13 @@ class Tracker(threading.Thread):
             self.encoderPulsesL = 1
             self.encoderPulsesR = 1
             self.lastCapture = now
-            self.saveLocation(timedifference)
             time.sleep(self.INTERVALSPEED)
 
-    def saveLocation(self, timeElapsed):
-        data = {
-            "speed": self.getSpeed(),
-            "curve": self.getCurve(),
-            "direction": Compas.getInstance().getDegree(),
-            "time": timeElapsed
-        }
-        # log.debug(str(data))
-        self.history.append(data)
-
     def getSpeed(self):
+        """
+        Get the speed of the rover
+        @return: Speed of the left and right wheels of the rover combined
+        """
         richtingr = motor.getInstance().get_richting_right()
         richtingl = motor.getInstance().get_richting_left()
         if richtingr is 1 and richtingl is 1:
@@ -126,13 +135,3 @@ class Tracker(threading.Thread):
             speedL = self.encoderSpeedL
 
         return speedR - speedL
-
-    def moveBack(self):
-        while True:
-            instruction = self.history.pop()
-            # TODO get to the choppah
-
-    def locationToMove(self, location):
-        pass
-
-

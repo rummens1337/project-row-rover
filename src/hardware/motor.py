@@ -197,6 +197,10 @@ class motor:
             return True
 
     def saveLocation(self, motor_data):
+        """
+        Save a combiantion of motordata and time it lasted in the history
+        @param motor_data: The command that was executed since the last save
+        """
         now = time.time()
         timedifference = now - self.lastSendTime
         self.lastSendTime = now
@@ -207,6 +211,9 @@ class motor:
         self.history.append(data)
 
     def moveBack(self):
+        """
+        Move the rover back to its starting position
+        """
         while True:
             if len(self.history) > 1:
                 instruction = self.history.pop()
