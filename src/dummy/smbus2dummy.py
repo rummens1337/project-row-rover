@@ -40,5 +40,9 @@ class SMBus(object):
         log.debug("I2C read byte from "+ str(addres)+" with command "+str(cmd))
         return self.lastBlockData
 
+    def read_i2c_block_data(self, addres, cmd):
+        log.debug("I2C read byte from "+ str(addres)+" with command "+str(cmd))
+        return [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
     def close(self):
         log.debug("I2C bus closed")

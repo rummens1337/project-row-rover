@@ -17,7 +17,9 @@ class Socket:
         motor = 0,
         status = 1,
         lamp = 2,
-        displayMsg = 3
+        displayMsg = 3,
+        tagclicked = 4,
+        compass = 5
 
     def __init__(self, server, api_key):
         socket = Sockets(server)
@@ -30,6 +32,7 @@ class Socket:
             handle the incomming websocket connection. Do not call this function.
             @param ws: websocket object, supplied by flask_sockets
             """
+            # TODO exit if not a websocket request
             while not ws.closed:
                 try:
                     recieved = json.loads(ws.receive())
@@ -50,6 +53,9 @@ class Socket:
                             ws.send(json.dumps(Api.print()))
                         else:
                             ws.send(json.dumps(Api.print(200, Api.Motor.get_motor_status())))
+
+                    elif recieved["request"] == Socket.Request.tagclicked.name:
+                        motor.getInstance().moveBack()
 
                     elif recieved["request"] == Socket.Request.status.name:
                         version = {"version": config["General"]["version"]}
@@ -72,6 +78,12 @@ class Socket:
                         self.lcdInstance.lcd_display_string(str(recieved["data"][16:33]), 2)
                         ws.send(json.dumps(Api.print()))
 
+                    elif recieved["request"] == Socket.Request.compass.name:
+                        #TODO: Toevoegen van actuele compasdata.
+                        direction = 180
+                        data = {"compass": {"dir": direction}}
+                        ws.send(json.dumps(data))
+
                     else:
                         raise AttributeError("Request not found")
                 except (AttributeError, JSONDecodeError, KeyError, ValueError) as err:
@@ -86,6 +98,8 @@ class Socket:
                         log.error("Internal Server Error", exc_info=True)
 
             self.close()
+
+
 
 
     def close(self):

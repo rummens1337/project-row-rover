@@ -7,13 +7,11 @@ var multiplier = 3.5;
 let flashlightStatus = 0;
 let flashlightDOM = document.querySelector(".buttonFlashlight");
 
-// wat is dit?
-window.requestAnimationFrame = window.requestAnimationFrame
-    || window.webkitRequestAnimationFrame
-    || window.mozRequestAnimationFrame
-    || function (callback) {
-        window.setTimeout(callback, 1000 / 60);
-    };
+/**
+ * Het volledige scherm wordt afgevangen, en alle inputs worden doorgegeven aan het inputObject, welke specificeerd
+ * wat er moet gebeuren wanneer een bepaalde input wordt gegeven.
+ * @type {{up: {key: string[], pad: string[]}, down: {key: string[], pad: string[], axes: string[]}, left: {key: string[], pad: string[]}, right: {key: string[], pad: string[], axes: string[]}, flashlight: {key: string[], pad: string[]}}}
+ */
 
 var inputObject = {
     "up": {
@@ -39,17 +37,26 @@ var inputObject = {
         "pad": ["BUTTON_X"]
     }
 };
+
 // What controller to lisen to
 var controllerIndex = 0;
 var topSpeed = 255;
+
 // our input objects
 var up = new Input.Input(inputObject.up, controllerIndex);
 var down = new Input.Input(inputObject.down, controllerIndex);
 var left = new Input.Input(inputObject.left, controllerIndex);
 var right = new Input.Input(inputObject.right, controllerIndex);
 var flashLight = new Input.Input(inputObject.flashlight, controllerIndex, flashlightDOM);
+
+// Websocket verbinding
 var webSocket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
 
+
+/**
+ * Alle onderstaande functies, betreffende up/down/right/left, houden bij hoe hard de rover moet rijden
+ * Deze roepen dan weer de updateRL() functie aan, welke de data verstuurd naar de rover zelf.
+ */
 // up
 up.press = function () {
     l = topSpeed * this.value;
@@ -65,7 +72,6 @@ up.release = function () {
     }
     else down.press();
 };
-
 // down
 down.press = function () {
     l = -topSpeed * this.value;
@@ -80,7 +86,6 @@ down.release = function () {
     }
     else down.press();
 };
-
 // left
 left.press = function () {
     l = -topSpeed * this.value;
@@ -95,7 +100,6 @@ left.release = function () {
     }
     else down.press();
 };
-
 // right
 right.press = function () {
     l = topSpeed * this.value;
@@ -111,15 +115,15 @@ right.release = function () {
     else down.press();
 };
 
-// flashlight
-
 flashLight.press = function () {
 //    deze is nodig omdat anders dingen gaan crashen.
 };
+
+/**
+ * Wordt aangeroepen wanneer de flashlight wordt gepressed in de UI, en houdt bij of deze aan of uit staat.
+ */
 flashLight.release = function () {
-    // TODO documentatie
     if (flashlightStatus) {
-        // TODO lampstatus moet gedefineerd worden door te vragen aan de server of hij aanstaat. En dan de output flippen zodat hij echt toggled.
         flashlightStatus = 0;
         flashlightDOM.classList.add("active");
     } else {
@@ -130,9 +134,15 @@ flashLight.release = function () {
 };
 
 
+/**
+ * Als er een verbinding gemaakt wordt tussen de client en server - voor control, geen video - roept het
+ * onderstaande functies aan.
+ */
+
 webSocket.onopen = function () {
-    // waarom word deze hier aangeroepen?
     callLoop();
+    getCompassData();
+    console.log("Called onopen Function!!!");
 };
 
 webSocket.onclose = function () {
@@ -143,41 +153,88 @@ webSocket.onerror = function () {
 //    TODO error handeling.
 };
 
+/**
+ * Vraagt om de seconde compass data aan, mits de webSocket (variabele) verbinding open is.
+ */
+function getCompassData(){
+    //TODO: Goede conditie maken zodat deze alleen utigevoerd wordt bij een open connectie.
+    if(webSocket.OPEN) {
+        setTimeout(getCompassData, 1000);
+        send("compass", {
+            dir: "request"
+        });
+    }
+}
+
+/**
+ * Handelt alle inkomende berichten op de webSocket verbinding (LET OP: Geen "W" maar w, de variabele dus).
+ * @param event WebSocket event welke meegegeven wordt door de WebSocket eventhandler telkens als er een bericht binnenkomt.
+ */
+
 webSocket.onmessage = function (event) {
-    //TODO error validation.
-    console.log(event.data);
+    console.log(event);
+    var obj = JSON.parse(event.data);
+        if (!(obj === undefined))
+            if(!(obj.compass === undefined))
+                if(!(obj.compass.dir === undefined)) {
+                    setCompass(parseInt(obj.compass.dir));
+                    document.getElementById("time").innerHTML = new Date().toLocaleTimeString();
+                }else{
+                    log.error("Compass wel gedefinieerd, maar geen direction meegegeven.");
+                }
 };
 
+/**
+ * Set de waarde van het compass in de client
+ * @param dir De direction waarde voor het compass display.
+ */
+function setCompass(dir) {
+    var compassDisc = document.getElementById("compassArrowImg");
+    compassDisc.style.webkitTransform = "rotate(" + dir + "deg)";
+    compassDisc.style.MozTransform = "rotate(" + dir + "deg)";
+    compassDisc.style.transform = "rotate(" + dir + "deg)";
+}
+
+/**
+ * Verstuurd waarden naar de motor toe als een bepaalde knop wordt ingedrukt.
+ * TODO: Verstuur alleen waarden als de waarde niet gelijk is aan de oude verstuurde data.
+ */
 
 function callLoop() {
-    // TODO documentatie
-    // waarom heet deze functie loop als hij niet loopt?
     var le = l.toFixed(0);
     var ri = r.toFixed(0);
-    // TODO deze moet alleen data versturen als er veraderingen zijn.
     send("motor", {
         left: le,
         right: ri
     });
 }
 
+/**
+ * Print de ingevoerde motor waarden zodat deze tentoon gesteld wordt in de interface
+ */
+
 function updateRL() {
-    // TODO is het nodig dat de gebruiker ziet welke waarde hij heeft ingevoerd?
     $("#l")[0].innerHTML = l.toFixed(1);
     $("#r")[0].innerHTML = r.toFixed(1);
     callLoop();
 }
 
 /**
- * @param num - entered number
- * @param min - what is considered minimum
- * @param max - what is considered maximum
- * @returns min or max - Checks if num is closer to max or to min, returns accordingly.
+ * Kijkt of
+ * @param num Het nummer dat je wilt checken
+ * @param min Het minimum
+ * @param max Het maximum
+ * @returns min or max -
  */
 function clamp(num, min, max) {
-    //  TODO documentatie beschrijving, weet nog steeds niet waar het handig voor is.
     return num <= min ? min : num >= max ? max : num;
 }
+
+/**
+ *
+ * @param movedX
+ * @param movedY
+ */
 
 function move(movedX, movedY) {
     // TODO documenatie
@@ -227,6 +284,15 @@ $(".toggle").click(function () {
     $(this).toggleClass("active");
 });
 
+$( ".buttonTagLocation" ).click(function() {
+    send("tagclicked", 1);
+});
+
+/**
+ * Send Websocket data
+ * @param request Het onderdeel wat je wilt aansturen, bijvoorbeeld "motor".
+ * @param data De array aan data die je naar dit onderdeel wilt sturen, in JSON notatie.
+ */
 
 function send(request, data) {
     // TODO documentatie
@@ -242,22 +308,15 @@ function send(request, data) {
 //    TODO callback.
 }
 
-$("#screenText").on('blur', function () {
-    var rovertext = $(this).val();
-    var msg = {
-        "key": "1234",
-        "request": "displayMsg",
-        "data": rovertext.toString()
-    };
-    webSocket.send(JSON.stringify(msg));
-});
-
-
-// videowebsocket
+/**
+ * VideoWebSocket
+ * Start de websocket verbinding voor de video, deze is compleet gescheiden van de andere websocket verbinding.
+ */
 
 function videoWebsocketStart() {
     // TODO documentatie
     // TODO port moet dynamish zijn.
+    // Controlleert of de browser WebSockets ondersteund door het Window object te lezen.
     if ("WebSocket" in window) {
         var ws_path = 'ws://' + window.location.host + ":8080";
         var ws = new WebSocket(ws_path);

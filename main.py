@@ -1,7 +1,5 @@
 from src.common.log import *
 from src.processing.server import Server
-import src.hardware.motor as motor
-import src.hardware.lamp as lamp
 import src.hardware.camera as camera
 import time, subprocess, signal
 import sys

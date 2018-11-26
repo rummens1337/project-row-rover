@@ -29,7 +29,7 @@ html, body, body > div {
     bottom: 20px;
     left: 0;
     right: 0;
-    width: 15%;
+    width: 30%;
     margin: auto;
     resize: none;
     font-size: 3px;
@@ -65,11 +65,10 @@ html, body, body > div {
 }
 
 .navTopRight {
-    top: 15px;
-    right: 15px;
-    width: 75px;
+    top: 0.5rem;
+    right: 0px;
+    width: 4.5rem;
     height: 30px;
-    background: green;
 }
 
 .buttonsBottomLeft {
@@ -113,6 +112,37 @@ html, body, body > div {
     background-color: rgba(192, 192, 192, .5);
     border: 1px solid rgba(128, 128, 128, 1);
     border-radius: 500px;
+}
+
+.compass {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    margin: 0px auto;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.compass .disc {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 200;
+    background: url('./img/compass.svg');
+    width: 4rem;
+    height: 4rem;
+    background-size: 100%;
+}
+
+.compass .arrow {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1000;
+    background: url('./img/arrow.svg');
+    width: 4rem;
+    height: 4rem;
+    background-size: 100%;
 }
 
 
