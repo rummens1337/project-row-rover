@@ -1,6 +1,6 @@
 from src.common.log import *
 import time
-
+from src.processing.tracker import Tracker
 if config["Motor"].getboolean("simulate_motor") is False:
     import smbus2 as smbus
 else:
@@ -206,9 +206,13 @@ class motor:
         self.lastSendTime = now
         data = {
             "motor": motor_data,
-            "time": timedifference
+            "time": timedifference,
+            "pulsesl": Tracker.getInstance().getPulsesL(),
+            "pulsesr": Tracker.getInstance().getPulsesR()
         }
         self.history.append(data)
+        Tracker.getInstance().resetPulsesR()
+        Tracker.getInstance().resetPulsesL()
 
     def moveBack(self):
         """

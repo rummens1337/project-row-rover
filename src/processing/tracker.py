@@ -2,8 +2,7 @@ from src.common.log import *
 import threading
 import math
 import time
-from src.hardware.motor import motor
-from src.hardware.compas import Compas
+# from src.hardware.motor import motor
 if config["Tracker"].getboolean("simulate_tracker") is False:
     import RPi.GPIO as GPIO
 else:
@@ -40,6 +39,32 @@ class Tracker(threading.Thread):
         """
         return self.encoderSpeedR
 
+    def getPulsesL(self) -> int:
+        """
+        Get the pulses of the left wheels
+        @return: Pulses of the left wheels
+        """
+        return self.encoderPulsesL
+
+    def getPulsesR(self) -> int:
+        """
+        Get the pulses of the right wheels
+        @return: Pulses of the right wheels
+        """
+        return self.encoderPulsesR
+
+    def resetPulsesL(self):
+        """
+        Sets the encoder pulses of the left wheel to 1
+        """
+        self.encoderPulsesL = 1
+
+    def resetPulsesR(self):
+        """
+        Sets the encoder pulses of the right wheel to 1
+        """
+        self.encoderPulsesR = 1
+
     def interruptPulseL(self, channel):
         """
         Called by the wheel encoder when it creates a pulse, count the number of pulses
@@ -71,7 +96,6 @@ class Tracker(threading.Thread):
             # Wheelencoder right
             GPIO.setup(self.ENCODERPINR, GPIO.IN)
             GPIO.add_event_detect(self.ENCODERPINR, GPIO.RISING, callback=self.interruptPulseR)
-            self.start()
 
     def __del__(self):
         """
@@ -105,33 +129,33 @@ class Tracker(threading.Thread):
             self.lastCapture = now
             time.sleep(self.INTERVALSPEED)
 
-    def getSpeed(self):
-        """
-        Get the speed of the rover
-        @return: Speed of the left and right wheels of the rover combined
-        """
-        richtingr = motor.getInstance().get_richting_right()
-        richtingl = motor.getInstance().get_richting_left()
-        if richtingr is 1 and richtingl is 1:
-            return -((self.encoderSpeedR+self.encoderSpeedL)/2)
-        else:
-            return (self.encoderSpeedR+self.encoderSpeedL)/2
-
-    def getCurve(self):
-        """
-        Calculates if the rover is making a turn at the moment
-        @return: float value of how much the rover is turning and to which direction range:
-        """
-        richtingr = motor.getInstance().get_richting_right()
-        richtingl = motor.getInstance().get_richting_left()
-        if richtingr is 1:
-            speedR = -self.encoderSpeedR
-        else:
-            speedR = self.encoderSpeedR
-
-        if richtingl is 1:
-            speedL = -self.encoderSpeedL
-        else:
-            speedL = self.encoderSpeedL
-
-        return speedR - speedL
+    # def getSpeed(self):
+    #     """
+    #     Get the speed of the rover
+    #     @return: Speed of the left and right wheels of the rover combined
+    #     """
+    #     richtingr = motor.getInstance().get_richting_right()
+    #     richtingl = motor.getInstance().get_richting_left()
+    #     if richtingr is 1 and richtingl is 1:
+    #         return -((self.encoderSpeedR+self.encoderSpeedL)/2)
+    #     else:
+    #         return (self.encoderSpeedR+self.encoderSpeedL)/2
+    #
+    # def getCurve(self):
+    #     """
+    #     Calculates if the rover is making a turn at the moment
+    #     @return: float value of how much the rover is turning and to which direction range:
+    #     """
+    #     richtingr = motor.getInstance().get_richting_right()
+    #     richtingl = motor.getInstance().get_richting_left()
+    #     if richtingr is 1:
+    #         speedR = -self.encoderSpeedR
+    #     else:
+    #         speedR = self.encoderSpeedR
+    #
+    #     if richtingl is 1:
+    #         speedL = -self.encoderSpeedL
+    #     else:
+    #         speedL = self.encoderSpeedL
+    #
+    #     return speedR - speedL
