@@ -1,4 +1,10 @@
+// De websocket verbinding.
 var webSocket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
+
+/**
+ * Als er een verbinding gemaakt wordt tussen de client en server - voor control, geen video - roept het
+ * onderstaande functies aan.
+ */
 
 webSocket.onopen = function () {
     //TODO iets verzinnen :)
@@ -17,15 +23,13 @@ webSocket.onmessage = function (event) {
     console.log(event.data);
 };
 
-// function clamp(num, min, max) {
-//     //  TODO documentatie beschrijving, weet nog steeds niet waar het handig voor is.
-//     return num <= min ? min : num >= max ? max : num;
-// }
-
 $(".toggle").click(function () {
     $(this).toggleClass("active");
 });
 
+/**
+ * Zet de microfoon output aan, of uit. De functie houdt ook bij in welke staat dit zich bevindt.
+ */
 $(".buttonMic").click(function () {
     if($(this).hasClass("active")){
         // send enable
@@ -34,6 +38,9 @@ $(".buttonMic").click(function () {
     }
 });
 
+/**
+ * Stuurt data naar het display op de rover toe, wanneer er tekst ingevoerd wordt en de tekstbar gedeselecteerd wordt.
+ */
 $("#screenText").on('blur', function () {
     var rovertext = $(this).val();
     var msg = {
@@ -44,8 +51,10 @@ $("#screenText").on('blur', function () {
     webSocket.send(JSON.stringify(msg));
 });
 
-
-// videowebsocket
+/**
+ * VideoWebSocket
+ * Start de websocket verbinding voor de video, deze is compleet gescheiden van de andere websocket verbinding.
+ */
 
 function videoWebsocketStart() {
     if ("WebSocket" in window) {
