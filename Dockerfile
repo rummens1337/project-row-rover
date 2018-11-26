@@ -10,7 +10,7 @@ COPY Requirements.txt /app/Requirements.txt
 
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-COPY settings.conf /app/settings.conf
+COPY settings.template.conf /app/settings.conf
 
 LABEL maintainer "Noeël Moeskops <noeel.moeskops@hva.nl>"
 
