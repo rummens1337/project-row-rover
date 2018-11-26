@@ -2,7 +2,7 @@
 import logging, configparser
 
 config = configparser.ConfigParser()
-config.read('settings.conf')
+config.read('/appdata/settings.conf')
 
 
 def __init__():
