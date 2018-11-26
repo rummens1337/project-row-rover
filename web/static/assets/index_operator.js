@@ -172,6 +172,7 @@ function getCompassData(){
  */
 
 webSocket.onmessage = function (event) {
+    // TODO kan deze console log weg?
     console.log(event);
     var obj = JSON.parse(event.data);
         if (!(obj === undefined))
@@ -321,6 +322,7 @@ function videoWebsocketStart() {
         var ws_path = 'ws://' + window.location.host + ":8080";
         var ws = new WebSocket(ws_path);
         ws.onopen = function () {
+            // TODO testen of het nodig is om steeds een bericht terug te sturen.
             ws.send(1);
         };
         ws.onmessage = function (msg) {
