@@ -2,7 +2,7 @@
 import logging, configparser
 
 config = configparser.ConfigParser()
-config.read('settings.conf')
+config.read('/appdata/settings.conf')
 
 
 def __init__():
@@ -14,6 +14,14 @@ logging.basicConfig(
     format='%(levelname)-8s %(asctime)s [%(filename)s:%(lineno)d] %(message)s',
     datefmt='%d-%m-%Y:%H:%M:%S',
     level=logging.DEBUG)
+
+# disable all loggers from different files
+logging.getLogger('asyncio').setLevel(logging.WARN)
+logging.getLogger('asyncio.coroutines').setLevel(logging.WARN)
+logging.getLogger('websockets.server').setLevel(logging.WARN)
+logging.getLogger('websockets.protocol').setLevel(logging.WARN)
+logging.getLogger('werkzeug').setLevel(logging.WARN)
+
 
 # https://docs.python.org/3/library/logging.html#logging-levels
 # 0 = debug

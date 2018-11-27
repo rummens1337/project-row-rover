@@ -1,5 +1,9 @@
+log/*
+appdata
 python_install/
 docs/_build
+settings.conf
+
 *~
 #*
 .idea
