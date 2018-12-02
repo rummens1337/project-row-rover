@@ -1,0 +1,73 @@
+@startuml
+actor user
+
+skinparam BoxPadding 50
+
+box "startup"
+participant entrypoint
+participant init.py
+end box
+
+box "processes" #LightBlue
+participant main.py
+participant video_stream.py
+end box
+
+box "threads" #orange
+participant camera
+participant image
+participant wsc as "wsc handeler"
+end box
+
+
+entrypoint [#green]-> init.py: start init
+
+activate init.py
+init.py -> init.py: check appdata,\nmake settings.conf if necessary
+deactivate init.py
+
+entrypoint [#green]-> main.py: start main process
+rnote over main.py
+	main process is left out
+	because its to complex for
+	the purpose of this diagram.
+end note
+activate main.py
+entrypoint [#green]-> video_stream.py: start video stream
+activate video_stream.py
+
+
+video_stream.py -> video_stream.py: start websocket server
+video_stream.py -> camera: continues capture camera
+activate camera
+camera -> camera: capture at 24fps
+rnote right of camera
+	camera, image and wsc handeler run in a forever
+	loop with an interval.
+end note
+video_stream.py -> image: continues detect faces
+activate image
+image -> camera: get frame
+image -> image: detect faces
+image -> image: stores faces in global \nfacedata variable
+
+user -> video_stream.py: request video stream
+video_stream.py -> wsc: handle request
+activate wsc
+wsc -> image: get facedata
+wsc -> camera: get frame
+wsc -> wsc: build frame with \nfacial recognition
+wsc -> user: continues stream data
+
+user [#red]-> wsc: disconnect
+deactivate wsc
+
+entrypoint [#red]-> main.py: SIGINT
+deactivate main.py
+entrypoint [#red]-> video_stream.py: SIGINT
+video_stream.py -[#red]> camera: destoy
+deactivate camera
+video_stream.py [#red]-> image: destoy
+deactivate image
+deactivate video_stream.py
+@enduml
