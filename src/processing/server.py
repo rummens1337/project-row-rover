@@ -4,6 +4,7 @@ monkey.patch_all()
 from src.processing.api import Api
 from src.processing.socket import Socket
 from src.processing.webserver import WebServer
+from src.processing.tracker import Tracker
 from flask import Flask
 from src.common.log import *
 import os
@@ -20,6 +21,9 @@ class Server(threading.Thread):
     PORT = 0
     flask = Flask(__name__, template_folder = template_dir, static_url_path='/static', static_folder= static_dir)
     api = 0
+
+    #TODO research on secure key and moving to config file
+    flask.secret_key = 'hasdku786*&^%*&^5dsa'
 
     def __init__(self, port=config["Server"].getint("port"), api_key=str(config["Server"]["api_key"])):
         """
