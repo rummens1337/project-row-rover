@@ -1,6 +1,5 @@
 from src.common.log import *
 import time
-from src.processing.tracker import Tracker
 if config["Motor"].getboolean("simulate_motor") is False:
     import smbus2 as smbus
 else:
@@ -234,5 +233,9 @@ class motor:
                 data[6] = 1
             elif data[6] is 1:
                 data[6] = 2
+
             self.bus.write_i2c_block_data(self.ADDRESS, self.OFFSET, data)
-            time.sleep(instruction.get("time"))
+            if instruction is [7, 3, 0, 0, 3, 0, 0]:
+                time.sleep(0.5)
+            else:
+                time.sleep(instruction.get("time"))
