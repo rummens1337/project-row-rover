@@ -1,11 +1,12 @@
 from espeak import espeak
 
+
 class Audio:
     def __init__(self):
-        espeak.synth("Suck My Dick!")
+        pass
 
     def say(self, text):
-        espeak.synth("Suck My Dick!")
+        espeak.synth(text)
 
     def run(self):
-        espeak.synth("Suck My Dick!")
+        pass

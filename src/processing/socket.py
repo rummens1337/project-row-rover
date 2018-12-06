@@ -6,11 +6,13 @@ from src.processing.api import Api
 from enum import Enum
 from src.hardware.motor import motor
 from src.hardware.display import lcd
+from src.hardware.audio import Audio
 from src.hardware.lamp import lamp
 import atexit
 import src.hardware.camera as camera
 import src.processing.image as image
 import base64, time, cv2
+
 
 class Socket:
     class Request(Enum):
@@ -23,6 +25,7 @@ class Socket:
 
     def __init__(self, server, api_key):
         socket = Sockets(server)
+        audio = Audio()
         self.api_key = api_key
         atexit.register(self.__del__)
 
@@ -72,6 +75,7 @@ class Socket:
                             ws.send(json.dumps(Api.print()))
 
                     elif recieved["request"] == Socket.Request.displayMsg.name:
+                        audio.say(str(recieved["data"]))
                         # TODO displayMsg status opvragen
                         self.lcdInstance.lcd_clear()
                         self.lcdInstance.lcd_display_string(str(recieved["data"][0:16]), 1)
