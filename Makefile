@@ -7,13 +7,13 @@ tag = latest
 
 run:
 # TODO privileged mode moet eigenlijk niet, kunnen beter cap-add ofzo gebruiken
-	docker run --privileged -it -v ${CURDIR}/appdata:/appdata --device /dev/i2c-1 --device /dev/gpiomem --device /dev/vchiq -p $(p):80 -p $(vp):8080 rover
+	docker run --privileged -it -v ${CURDIR}/appdata:/appdata --device /dev/i2c-1 --device /dev/gpiomem --device /dev/vchiq --device /dev/snd -p $(p):80 -p $(vp):8080 rover
 
 run-amd64:
 	docker run -it -v ${CURDIR}/settings.amd64.template.conf:/app/settings.conf -v ${CURDIR}/appdata:/appdata -p $(p):80 -p $(vp):8080 rover && tail -f appdata/log/rover.log
 
 run-current:
-	docker run --privileged -it -v ${CURDIR}/:/app/ -v ${CURDIR}/appdata:/appdata --device /dev/i2c-1 --device /dev/gpiomem --device /dev/vchiq -p $(p):80 -p $(vp):8080 rover
+	docker run --privileged -it -v ${CURDIR}/:/app/ -v ${CURDIR}/appdata:/appdata --device /dev/i2c-1 --device /dev/gpiomem --device /dev/vchiq --device /dev/snd -p $(p):80 -p $(vp):8080 rover
 
 run-current-amd64:
 	docker run -it -v ${CURDIR}/settings.amd64.template.conf:/app/settings.conf -v ${CURDIR}/appdata:/appdata -v ${CURDIR}/:/app/ -p $(p):80 -p $(vp):8080 rover
