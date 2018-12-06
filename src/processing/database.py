@@ -25,7 +25,7 @@ class Database:
         self.connection = pymysql.connect(host='localhost',
                                      user='ooportal',
                                      password='HRvu4CX5',
-                                     db='testdatabase',
+                                     db='row',
                                      charset='utf8mb4',
                                      cursorclass=pymysql.cursors.DictCursor)
 
@@ -38,7 +38,7 @@ class Database:
         
         sep = ""
         for i in range(len(columns)):
-            sql += sep + "`" + str(columns[i].getName()) + "`"
+            sql += sep + "`" + table + "_" + str(columns[i].getName()) + "`"
             sep = ", "
 
         sql += " FROM `" + table + "`"
