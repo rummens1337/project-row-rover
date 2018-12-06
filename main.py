@@ -4,6 +4,7 @@ import src.hardware.camera as camera
 import time, subprocess, signal
 import sys
 import atexit
+import src.hardware.battery as bat
 
 
 def main():
@@ -17,6 +18,8 @@ def main():
     signal.signal(signal.SIGTERM, close)
     server = Server()
     server.start()
+    bat.start()
+    log.debug(bat.get_batteryStatus())
     while True:
         loop()
 
