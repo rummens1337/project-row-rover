@@ -45,5 +45,5 @@ class WebServer:
             return redirect("/")
 
         """Video streaming home page."""
-        return render_template('operator.html')
+        return render_template('communicator.html')
 
