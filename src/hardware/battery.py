@@ -7,10 +7,17 @@ else:
 
 
 def start():
+    """
+    Join the I²C bus as master
+    """
     global bus
     bus = smbus.SMBus(1)
 
 
 def get_batteryStatus():
+    """
+    get the battery percentage.
+    @return: int 0-100
+    """
     global bus
     return bus.read_byte_data(int(config["Battery"]["I2C_slave_address"], 16), 0)
