@@ -237,7 +237,7 @@ class motor:
                 data[6] = 2
 
             self.bus.write_i2c_block_data(self.ADDRESS, self.OFFSET, data)
-            if instruction is self.stop:
+            if data is self.stop:
                 time.sleep(0.5)
             else:
                 time.sleep(instruction.get("time"))
