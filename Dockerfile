@@ -21,7 +21,7 @@ WORKDIR /app
 RUN pip3 install --trusted-host pypi.python.org -r Requirements.txt
 
 # Install supervisor, requered for multiprocessing
-RUN apt-get update && apt-get install -y supervisor=3.3.1-1+deb9u1 espeak python3-espeak
+RUN apt-get update && apt-get install -y supervisor=3.3.1-1+deb9u1 alsa-utils espeak python3-espeak
 
 RUN mkdir /appdata
 

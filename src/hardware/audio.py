@@ -7,10 +7,9 @@ else:
     from src.dummy.audiodummy import *
 
 
-
 class Audio:
     def __init__(self):
-        self.mixer = Mixer('Mono Output Select')
+        self.mixer = Mixer()
         pass
 
     def say(self, text):
