@@ -24,11 +24,6 @@ class Socket:
     def __init__(self, server, api_key):
         socket = Sockets(server)
         self.api_key = api_key
-        self.photodata = []
-        self.framerate = config["Camera"].getint("framerate")
-        self.look_for_faces_timeout = config["FaceDetection"].getint("look_for_faces_timeout")
-        self.current_frame = 0
-        self.lcdInstance = lcd()
         atexit.register(self.__del__)
 
         @socket.route('/')
@@ -104,23 +99,6 @@ class Socket:
 
             self.close()
 
-        @socket.route("/video")
-        def get_video(ws):
-            time.sleep((1.0 / self.framerate))
-            frame = camera.get_frame()
-            self.current_frame += 1
-            color = (0, 0, 255)
-
-            if self.current_frame == (self.framerate / self.look_for_faces_timeout):
-                self.current_frame = 0
-                color = (0, 255, 0)
-                self.photodata = list(image.get_faces(frame))
-
-            for face, conf in self.photodata:
-                frame = image.draw_rectangle(frame, face, color=color)
-
-            frame = cv2.imencode('.jpg', frame)[1].tostring()
-            ws.send(base64.b64encode(frame))
 
 
 

@@ -1,8 +1,15 @@
 import numpy as np
 from src.common.log import *
-import cv2
+import cv2, time, base64, asyncio
+import src.hardware.camera as camera
 
 DEBUG = config['General'].getint('DEBUG')
+
+framerate = config["Camera"].getint("framerate")
+look_for_faces_timeout = config["FaceDetection"].getfloat("look_for_faces_timeout")
+# TODO getter en setter voor photodata is wel netjes
+photodata = []
+color = (0, 0, 255)
 
 
 def get_faces(photo: np.array):
@@ -39,7 +46,7 @@ def get_faces(photo: np.array):
     if len(confidences) and DEBUG >= 2:
         log.debug("face confidence " + str(confidences[0]))
 
-    if DEBUG and len(faces):
+    if DEBUG >= 2 and len(faces):
         log.debug("got " + str(len(faces)) + " faces! (in one foto)")
 
     return zip(faces, confidences)
@@ -162,6 +169,53 @@ def draw_text(img, text, pos, size=1):
     thickness = 1
     cv2.putText(img, text, pos, font, size, (0, 0, 255), thickness, cv2.LINE_AA)
     return img
+
+
+def get_processed_frame():
+    """
+    get the current frame from the camera with face detection.
+    @return: frame with rectangles on the faces
+    @rtype: cv2 numpy array
+    """
+    global framerate, photodata, color
+    time.sleep((1.0 / framerate))
+    frame = camera.get_frame()
+    for face, conf in photodata:
+        if conf > config['FaceDetection'].getfloat('MIN_FACE_CONFIDENCE'):
+            frame = draw_rectangle(frame, face, color=color)
+
+    return frame
+
+
+def process_frames_forever():
+    """
+    get new frame from camera and processes this. Stores result in `photodata`
+    """
+    global look_for_faces_timeout, photodata
+    current_frame = None
+    while True:
+        time.sleep(look_for_faces_timeout)
+        current_frame = camera.get_frame()
+        photodata = list(get_faces(current_frame))
+        log.debug("found %s face(s)", str(len(photodata[0][1])))
+
+
+def frame2jpg(frame):
+    """
+    turn an numpy array into a jpg
+    @return jpg image
+    @rtype: jpg
+    """
+    return cv2.imencode('.jpg', frame)[1].tostring()
+
+
+def to_base64(object):
+    """
+    encode object into base64
+    @return: base64 string of object
+    @rtype: base64 string
+    """
+    return (base64.b64encode(object)).decode("utf-8")
 
 
 if __name__ == "__main__":

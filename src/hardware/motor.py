@@ -1,6 +1,5 @@
 from src.common.log import *
 import time
-from src.processing.tracker import Tracker
 if config["Motor"].getboolean("simulate_motor") is False:
     import smbus2 as smbus
 else:
@@ -18,6 +17,7 @@ class motor:
     richtingl = 0
     richtingr = 0
 
+    stop = [7, 3, 0, 0, 3, 0, 0]
     lastSendData = [7, 0, 0, 0, 0, 0, 0]
     lastSendTime = 0
 
@@ -214,6 +214,7 @@ class motor:
         """
         Move the rover back to its starting position
         """
+        log.debug("Starting drive back")
         while True:
             if len(self.history) > 1:
                 instruction = self.history.pop()
@@ -234,5 +235,9 @@ class motor:
                 data[6] = 1
             elif data[6] is 1:
                 data[6] = 2
+
             self.bus.write_i2c_block_data(self.ADDRESS, self.OFFSET, data)
-            time.sleep(instruction.get("time"))
+            if instruction is self.stop:
+                time.sleep(0.5)
+            else:
+                time.sleep(instruction.get("time"))

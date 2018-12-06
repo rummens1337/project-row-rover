@@ -172,6 +172,7 @@ function getCompassData(){
  */
 
 webSocket.onmessage = function (event) {
+    // TODO kan deze console log weg?
     console.log(event);
     var obj = JSON.parse(event.data);
         if (!(obj === undefined))
@@ -314,13 +315,14 @@ function send(request, data) {
  */
 
 function videoWebsocketStart() {
+    // TODO documentatie
+    // TODO port moet dynamish zijn.
     // Controlleert of de browser WebSockets ondersteund door het Window object te lezen.
     if ("WebSocket" in window) {
-        var ws_path = 'ws://' + window.location.host + window.location.pathname + 'video';
-        //alert(ws_path);
+        var ws_path = 'ws://' + window.location.host + ":8080";
         var ws = new WebSocket(ws_path);
-        //alert(ws);
         ws.onopen = function () {
+            // TODO testen of het nodig is om steeds een bericht terug te sturen.
             ws.send(1);
         };
         ws.onmessage = function (msg) {
@@ -328,13 +330,10 @@ function videoWebsocketStart() {
             ws.send(1);
         };
         ws.onerror = function (e) {
-            console.log(e);
             ws.send(1);
         };
     } else {
-        // TODO video_feed is nu statisch, de waarde daarvan moet eigenlijk door Flask worden gezet.
-        $("#video").attr('src', "video_feed");
-        log.error("WebSocket not supported");
+        alert("WebSocket not supported, please update your browser!");
     }
 }
 videoWebsocketStart();

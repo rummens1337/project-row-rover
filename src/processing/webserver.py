@@ -29,8 +29,6 @@ class WebServer:
         self.server.add_url_rule('/communicator', 'comm', self.communicator)
         self.server.add_url_rule('/video_feed', 'video_feed', self.video_feed)
 
-        self.framerate = config["Camera"].getint("framerate")
-        self.look_for_faces_timeout = config["FaceDetection"].getint("look_for_faces_timeout")
 
     def post(self):
         # With database
