@@ -7,7 +7,7 @@ else:
     from src.dummy.audiodummy import mixer
 
 class Audio:
-    def __init__(self, volume=0):
+    def __init__(self, volume=100):
         self._volume = volume
         mixer.init()
 
