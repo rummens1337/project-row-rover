@@ -2,14 +2,14 @@ from src.common.log import *
 import atexit
 from espeak import espeak
 if config["Audio"].getboolean("simulate_audio") is False:
-    import pygame
+    from pygame import mixer
 else:
-    import src.dummy.audiodummy as pygame
+    from src.dummy.audiodummy import mixer
 
 class Audio:
     def __init__(self, volume=0):
         self._volume = volume
-        pygame.mixer.init()
+        mixer.init()
 
     def __del__(self):
         self.play("Jams/Shutdown.mp3", 0)
@@ -21,7 +21,7 @@ class Audio:
     def setVolume(self, volume):
         if volume <= 100 and volume >= 0:
             amp = volume/100
-            pygame.mixer.music.set_volume(amp)
+            mixer.music.set_volume(amp)
             self._volume = volume
         else:
             log.error("Volume "+str(volume)+" is an invalid volume")
@@ -41,6 +41,6 @@ class Audio:
         self.volume -= 10
 
     def play(self, path, loops=-1):
-        pygame.mixer.music.load(path)
-        pygame.mixer.music.play(loops)
+        mixer.music.load(path)
+        mixer.music.play(loops)
 
