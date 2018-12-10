@@ -32,8 +32,7 @@ class Distance:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(TRIG, GPIO.OUT)
         GPIO.setup(ECHO, GPIO.IN)
-
-        GPIO.output(TRIG, False)
+        GPIO.output(TRIG, 0)
 
     try:
         import RPi.GPIO as GPIO
