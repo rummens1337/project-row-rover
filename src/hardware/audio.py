@@ -1,5 +1,6 @@
 from src.common.log import *
 import atexit
+import subprocess
 from espeak import espeak
 if config["Audio"].getboolean("simulate_audio") is False:
     from pygame import mixer
@@ -10,10 +11,14 @@ class Audio:
     def __init__(self, volume=100):
         self._volume = volume
         mixer.init()
-        atexit.register(self.__del__)
+        atexit.register(self.shutdown)
+
+    def shutdown(self):
+        log.debug("BYE BYE AUDIO")
+        subprocess.Popen(["mpg123", "-q", "/app/jams/Shutdown.mp3"]).wait()
 
     def __del__(self):
-        self.play("/app/jams/Shutdown.mp3", 0)
+        self.shutdown()
 
     def say(self, text):
         log.debug("Saying: "+str(text))
