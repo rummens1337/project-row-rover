@@ -10,6 +10,7 @@ class Audio:
     def __init__(self, volume=100):
         self._volume = volume
         mixer.init()
+        atexit.register(self.__del__)
 
     def __del__(self):
         self.play("/app/jams/Shutdown.mp3", 0)
