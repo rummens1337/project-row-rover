@@ -30,7 +30,7 @@ RUN chown -R rover:rover /appdata
 
 ADD /src /app/src
 ADD /web /app/web
-ADD /Jams /app/Jams
+ADD /jams /app/jams
 ADD /haarCascades /app/haarCascades
 ADD main.py /app
 ADD video_stream.py /app

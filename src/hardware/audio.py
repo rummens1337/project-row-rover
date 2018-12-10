@@ -12,7 +12,7 @@ class Audio:
         mixer.init()
 
     def __del__(self):
-        self.play("Jams/Shutdown.mp3", 0)
+        self.play("/app/jams/Shutdown.mp3", 0)
 
     def say(self, text):
         log.debug("Saying: "+str(text))

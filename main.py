@@ -18,7 +18,7 @@ def main():
     signal.signal(signal.SIGTERM, close)
     speak = Audio()
     speak.say("Hello")
-    speak.play("jams/Startup.mp3", 0)
+    speak.play("/app/jams/Startup.mp3", 0)
     server = Server()
     server.start()
     while True:
