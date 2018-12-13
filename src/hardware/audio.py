@@ -21,7 +21,6 @@ class Audio:
         self.shutdown()
 
     def say(self, text):
-        log.debug("Saying: "+str(text))
         espeak.synth(text)
 
     def pause(self):

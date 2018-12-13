@@ -87,7 +87,6 @@ class Socket:
                             audio.volumeMasterDOWN()
 
                     elif recieved["request"] == Socket.Request.displayMsg.name:
-                        log.debug("Received: "+str(recieved["data"]))
                         audio.say(str(recieved["data"]))
                         # TODO displayMsg status opvragen
                         self.lcdInstance.lcd_clear()

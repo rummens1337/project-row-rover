@@ -39,7 +39,6 @@ $(".buttonMic").click(function () {
 });
 
 $(".buttonMusic").click(function () {
-    console.log("Music Pressed");
     if($(this).hasClass("active")){
         send("audio",1);
     }else{
@@ -48,12 +47,10 @@ $(".buttonMusic").click(function () {
 });
 
 $(".buttonIncreaseAudio").click(function () {
-    console.log("Increase audio Pressed");
     send("audio",2);
 });
 
 $(".buttonDecreaseAudio").click(function () {
-    console.log("Decrease audio Pressed");
     send("audio",3);
 });
 /**
@@ -61,7 +58,6 @@ $(".buttonDecreaseAudio").click(function () {
  */
 $(".buttonDisplaySend").click(function () {
     var rovertext = document.getElementById("screenText").value;
-    console.log("SENDING TEXT"+rovertext);
     send("displayMsg", rovertext)
 });
 
