@@ -49,6 +49,14 @@ class mixer:
             global song
             log.debug("Playing audio, song: "+str(song)+" loops: "+str(loops))
 
+        @staticmethod
+        def pause():
+            log.debug("Audio paused")
+
+        @staticmethod
+        def unpause():
+            log.debug("Audio unpaused")
+
 
 
 class PCM:

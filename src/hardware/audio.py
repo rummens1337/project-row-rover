@@ -24,6 +24,12 @@ class Audio:
         log.debug("Saying: "+str(text))
         espeak.synth(text)
 
+    def pause(self):
+        mixer.music.pause()
+
+    def unpause(self):
+        mixer.music.unpause()
+
     def setVolume(self, volume):
         if volume <= 100 and volume >= 0:
             amp = volume/100

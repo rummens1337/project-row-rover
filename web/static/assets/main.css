@@ -24,15 +24,31 @@ html, body, body > div {
     height: 100%;
     width: 100%;
 }
-.displayInput{
+
+.display{
     position: absolute;
     bottom: 20px;
-    left: 0;
-    right: 0;
-    width: 30%;
+    right: 15px;
+    width: 60%;
+    height: 10%;
     margin: auto;
+}
+.displayInput{
+    position: absolute;
+    width: 70%;
     resize: none;
-    font-size: 3px;
+}
+.buttonDisplaySend {
+    right: 0;
+    position: absolute;
+    height: 60px;
+    width: 60px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    background-color: rgba(192, 192, 192, .5);
+    border: 1px solid rgba(128, 128, 128, 1);
+    border-radius: 500px;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .uiWrapper > div {
@@ -89,7 +105,7 @@ html, body, body > div {
 }
 
 .buttonsBottomLeft .button.active,
-.button:active,
+.button:active,.button:hover, .button:focus,
 .joystick.active {
     background-color: rgba(64, 64, 64, .5);
     border: 1px solid rgba(64, 64, 64, 1);

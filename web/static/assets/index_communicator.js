@@ -38,18 +38,55 @@ $(".buttonMic").click(function () {
     }
 });
 
-/**
- * Stuurt data naar het display op de rover toe, wanneer er tekst ingevoerd wordt en de tekstbar gedeselecteerd wordt.
- */
-$("#screenText").on('blur', function () {
-    var rovertext = $(this).val();
-    var msg = {
-        "key": "1234",
-        "request": "displayMsg",
-        "data": rovertext.toString()
-    };
-    webSocket.send(JSON.stringify(msg));
+$(".buttonMusic").click(function () {
+    console.log("Music Pressed");
+    if($(this).hasClass("active")){
+        send("audio",1);
+    }else{
+        send("audio",0);
+    }
 });
+
+$(".buttonIncreaseAudio").click(function () {
+    console.log("Increase audio Pressed");
+    send("audio",2);
+});
+
+$(".buttonDecreaseAudio").click(function () {
+    console.log("Decrease audio Pressed");
+    send("audio",3);
+});
+/**
+ * Stuurt data naar het display op de rover toe, wanneer er tekst ingevoerd wordt
+ */
+$(".buttonDisplaySend").click(function () {
+    var rovertext = document.getElementById("screenText").value;
+    console.log("SENDING TEXT"+rovertext);
+    send("displayMsg", rovertext)
+});
+
+
+
+
+/**
+ * Send Websocket data
+ * @param request Het onderdeel wat je wilt aansturen, bijvoorbeeld "motor".
+ * @param data De array aan data die je naar dit onderdeel wilt sturen, in JSON notatie.
+ */
+
+function send(request, data) {
+    // TODO documentatie
+    let key = "1234";
+    webSocket.send(JSON.stringify(
+        {
+            "key": key,
+            "request": request,
+            // TODO data moet optioneel zijn
+            "data": data
+        }
+    ));
+//    TODO callback.
+}
 
 /**
  * VideoWebSocket

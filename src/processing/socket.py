@@ -21,12 +21,14 @@ class Socket:
         lamp = 2,
         displayMsg = 3,
         tagclicked = 4,
-        compass = 5
+        compass = 5,
+        audio = 6
 
     def __init__(self, server, api_key):
         socket = Sockets(server)
         audio = Audio()
         self.api_key = api_key
+        self.lcdInstance = lcd()
         atexit.register(self.__del__)
 
         @socket.route('/')
@@ -74,7 +76,18 @@ class Socket:
                             lamp.getInstance().lampoff()
                             ws.send(json.dumps(Api.print()))
 
+                    elif recieved["request"] == Socket.Request.audio.name:
+                        if recieved["data"] == 0:
+                            audio.pause()
+                        elif recieved["data"] == 1:
+                            audio.unpause()
+                        elif recieved["data"] == 2:
+                            audio.volumeMasterUP()
+                        elif recieved["data"] == 3:
+                            audio.volumeMasterDOWN()
+
                     elif recieved["request"] == Socket.Request.displayMsg.name:
+                        log.debug("Received: "+str(recieved["data"]))
                         audio.say(str(recieved["data"]))
                         # TODO displayMsg status opvragen
                         self.lcdInstance.lcd_clear()
