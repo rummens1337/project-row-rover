@@ -8,8 +8,11 @@ distSensorFront = DistanceSensor(config["RangeSensor"].getint("TRIGGER"), config
 
 while True:
     distanceLeft = distSensorLeft.getDistanceCM()
+    time.sleep(50)
     distanceRight = distSensorRight.getDistanceCM()
+    time.sleep(50)
     distanceFront = distSensorFront.getDistanceCM()
+    time.sleep(50)
 
     print("Measured DistanceLEFT = %.1f cm" % distanceLeft)
     print("Measured DistanceRIGHT = %.1f cm" % distanceRight)
