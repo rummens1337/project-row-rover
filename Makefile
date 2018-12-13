@@ -23,7 +23,7 @@ bash:
 	docker run -it -v ${CURDIR}/appdata:/appdata -p $(p):80 -p $(vp):8080 --entrypoint bash rover
 	
 bash-current:
-	docker run -it -v ${CURDIR}/appdata:/appdata --device /dev/gpiomem -v ${CURDIR}/:/app/ -p $(p):80 -p $(vp):8080 --entrypoint bash rover
+	docker run --privileged -it -v ${CURDIR}/appdata:/appdata --device /dev/gpiomem -v ${CURDIR}/:/app/ -p $(p):80 -p $(vp):8080 --entrypoint bash rover
 
 install:
 	docker run -it --rm --privileged multiarch/qemu-user-static:register

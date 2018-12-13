@@ -7,7 +7,7 @@ if config["RangeSensor"].getboolean("simulate_rangesensor") is False:
 else:
     import src.dummy.GPIOdummy as GPIO
 
-class DistanceSensor():
+class DistanceSensor:
 
     def __init__(self,TRIGGER,ECHO):
         self.distance = 0
@@ -27,10 +27,7 @@ class DistanceSensor():
         GPIO.setup(self.GPIO_ECHO, GPIO.IN)
 
         # Define an ISR for when an ECHO is received on the sensor.
-        GPIO.add_event_detect(self.GPIO_ECHO, GPIO.RISING, callback=self.echoInterruptHandler())
-
-        # Send pulse to initialize the loop
-        self.sendPulse()
+        GPIO.add_event_detect(self.GPIO_ECHO, GPIO.RISING, callback=self.echoInterruptHandler)
 
     def sendPulse(self):
         # set Trigger to HIGH
@@ -59,8 +56,9 @@ class DistanceSensor():
         # distance = (TimeElapsed * self.sonicSpeed) / 2
 
 
-    def echoInterruptHandler(self):
+    def echoInterruptHandler(self,channel):
         # Save time of arrival
+        print("interrupt handler is called, pin changed to: ", GPIO.input(self.GPIO_ECHO))
         self.stopTime = time.time()
 
         # Time difference between start and arrival
@@ -69,9 +67,8 @@ class DistanceSensor():
         # Multiply with the sonic speed (34300 cm/s)
         # Divide by two because it travels to and back
         self.distance = (self.timeElapsed * self.sonicSpeed) / 2
-        self.sendPulse()
 
-    def getDistanceCM(self) -> float:
+    def getDistanceCM(self):
         return self.distance
 
 
