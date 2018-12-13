@@ -14,11 +14,7 @@ class Audio:
         atexit.register(self.shutdown)
 
     def shutdown(self):
-        log.debug("BYE BYE AUDIO")
         subprocess.Popen(["mpg123", "-q", "/app/jams/Shutdown.mp3"]).wait()
-
-    def __del__(self):
-        self.shutdown()
 
     def say(self, text):
         espeak.synth(text)
