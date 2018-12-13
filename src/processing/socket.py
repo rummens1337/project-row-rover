@@ -88,8 +88,14 @@ class Socket:
 
                     elif recieved["request"] == Socket.Request.displayMsg.name:
                         audio.say(str(recieved["data"]))
-                        if str(recieved["data"]) is "HEY":
+                        if str(recieved["data"]) == "HEY":
                             audio.play("/app/jams/WHATS_GOING_ON.mp3")
+
+                        if str(recieved["data"]) == "NEVER":
+                            audio.play("/app/jams/Never.mp3")
+
+                        if str(recieved["data"]) == "Sandstorm":
+                            audio.play("/app/jams/Sandstorm.mp3")
 
                         # TODO displayMsg status opvragen
                         self.lcdInstance.lcd_clear()
