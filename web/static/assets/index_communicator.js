@@ -57,6 +57,8 @@ $("#screenText").on('blur', function () {
  */
 
 function videoWebsocketStart() {
+// TODO wiens idee was het om een functie van index_operator.js te copieeren naar index_communicator?
+// TODO het is omgeveer 10⁹⁹⁹⁹ keer beter om gewoon die functie daar aan te roepen ipv 2x precies dezelfde functie in twee bestanden te hebben!
     if ("WebSocket" in window) {
         var ws_path = 'ws://' + window.location.host + window.location.pathname + 'video';
         //alert(ws_path);
