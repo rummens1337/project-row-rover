@@ -1,20 +1,31 @@
 from src.common.log import *
 import atexit
 import subprocess
-from espeak import espeak
 if config["Audio"].getboolean("simulate_audio") is False:
     from pygame import mixer
+    from espeak import espeak
 else:
     from src.dummy.audiodummy import mixer
+    from src.dummy.audiodummy import espeak
+
 
 class Audio:
+    shutdownCount = 0
+
     def __init__(self, volume=100):
-        self._volume = volume
+        self.volume = volume
         mixer.init()
         atexit.register(self.shutdown)
 
     def shutdown(self):
-        subprocess.Popen(["mpg123", "-q", "/app/jams/Shutdown.mp3"]).wait()
+        if Audio.shutdownCount is 0:
+            Audio.shutdownCount = 1
+            log.error("PLAYING SHUTDOWN")
+            if config["Audio"].getboolean("simulate_audio") is False:
+                # subprocess.Popen(["mpg123", "-q", "/app/jams/Shutdown.mp3"]).wait()
+                self.play("/app/jams/Shutdown.mp3", 0)
+                while mixer.music.get_busy():
+                    pass
 
     def say(self, text):
         espeak.synth(text)

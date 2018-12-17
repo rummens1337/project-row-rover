@@ -57,7 +57,9 @@ class mixer:
         def unpause():
             log.debug("Audio unpaused")
 
-
+        @staticmethod
+        def get_busy():
+            return False
 
 class PCM:
     def __init__(self, type="PCM_PLAYBACK", mode="PCM_NORMAL", device='default', cardindex=-1):
