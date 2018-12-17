@@ -21,8 +21,7 @@ WORKDIR /app
 RUN pip3 install --trusted-host pypi.python.org -r Requirements.txt
 
 # Install supervisor, requered for multiprocessing
-RUN apt-get update && apt-get install -y supervisor=3.3.1-1+deb9u1 espeak=1.48.04+dfsg-5  python3-espeak=0.5-1+b2 python3-pygame=1.9.3+dfsg-2
-RUN apt-get update && apt-get install -y mysql-server
+RUN apt-get update && apt-get install -y supervisor=3.3.1-1+deb9u1 mysql-server=5.5.9999+default espeak=1.48.04+dfsg-5  python3-espeak=0.5-1+b2 python3-pygame=1.9.3+dfsg-2
 
 COPY 50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 
