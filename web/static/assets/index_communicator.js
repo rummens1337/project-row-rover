@@ -37,7 +37,7 @@ $(".buttonMic").click(function () {
         // send disable
     }
 });
-
+// Button pause audio
 $(".buttonMusic").click(function () {
     if($(this).hasClass("active")){
         send("audio",0);
@@ -47,11 +47,11 @@ $(".buttonMusic").click(function () {
         document.getElementById("buttonMusic").src="/static/assets/img/pause.png";
     }
 });
-
+// Button increase audio
 $(".buttonIncreaseAudio").click(function () {
     send("audio",2);
 });
-
+// Button decrease audio
 $(".buttonDecreaseAudio").click(function () {
     send("audio",3);
 });

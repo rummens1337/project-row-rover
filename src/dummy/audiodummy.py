@@ -1,6 +1,7 @@
 from src.common.log import *
 import atexit
 
+# This contains all methods that need to be simulated for the audio, when not runned on a raspberry pi
 
 class espeak:
     def synth(self, text="No text given"):
