@@ -69,8 +69,7 @@ up.release = function () {
         l = 0;
         r = 0;
         updateRL();
-    }
-    else down.press();
+    } else down.press();
 };
 // down
 down.press = function () {
@@ -83,8 +82,7 @@ down.release = function () {
         l = 0;
         r = 0;
         updateRL();
-    }
-    else down.press();
+    } else down.press();
 };
 // left
 left.press = function () {
@@ -97,8 +95,7 @@ left.release = function () {
         l = 0;
         r = 0;
         updateRL();
-    }
-    else down.press();
+    } else down.press();
 };
 // right
 right.press = function () {
@@ -111,8 +108,7 @@ right.release = function () {
         l = 0;
         r = 0;
         updateRL();
-    }
-    else down.press();
+    } else down.press();
 };
 
 flashLight.press = function () {
@@ -156,9 +152,9 @@ webSocket.onerror = function () {
 /**
  * Vraagt om de seconde compass data aan, mits de webSocket (variabele) verbinding open is.
  */
-function getCompassData(){
+function getCompassData() {
     //TODO: Goede conditie maken zodat deze alleen utigevoerd wordt bij een open connectie.
-    if(webSocket.OPEN) {
+    if (webSocket.OPEN) {
         setTimeout(getCompassData, 1000);
         send("compass", {
             dir: "request"
@@ -172,17 +168,20 @@ function getCompassData(){
  */
 
 webSocket.onmessage = function (event) {
-    // TODO kan deze console log weg?
-    console.log(event);
+    // TODO deze event handler is best wel vies, moet gewoon met een callback kunnen.
+    // TODO want nu controleerd hij ook al het andre verkeer.
     var obj = JSON.parse(event.data);
-        if (!(obj === undefined))
-            if(!(obj.compass === undefined))
-                if(!(obj.compass.dir === undefined)) {
-                    setCompass(parseInt(obj.compass.dir));
-                    document.getElementById("time").innerHTML = new Date().toLocaleTimeString();
-                }else{
-                    log.error("Compass wel gedefinieerd, maar geen direction meegegeven.");
-                }
+        if (obj["data"]["battery"]) {
+            updateBatteryStatus(obj["data"]["battery"]);
+        //    TODO deze elseif is te ingewikkeld, kan 1000x simpeler.
+        } else if (!(obj.compass === undefined)) {
+            if (!(obj.compass.dir === undefined)) {
+                setCompass(parseInt(obj.compass.dir));
+                document.getElementById("time").innerHTML = new Date().toLocaleTimeString();
+            } else {
+                log.error("Compass wel gedefinieerd, maar geen direction meegegeven.");
+            }
+        }
 };
 
 /**
@@ -285,7 +284,7 @@ $(".toggle").click(function () {
     $(this).toggleClass("active");
 });
 
-$( ".buttonTagLocation" ).click(function() {
+$(".buttonTagLocation").click(function () {
     send("tagclicked", 1);
 });
 
@@ -336,4 +335,21 @@ function videoWebsocketStart() {
         alert("WebSocket not supported, please update your browser!");
     }
 }
+
 videoWebsocketStart();
+
+function getBatteryStatus() {
+    // TODO documentatie
+    send("battery", "");
+}
+
+function updateBatteryStatus(percent) {
+    // TODO documentatie
+    document.querySelector(".battery").innerHTML = percent + "%";
+}
+
+function start() {
+    // TODO documentatie
+    setInterval(getBatteryStatus, 5000);
+}
+start();
