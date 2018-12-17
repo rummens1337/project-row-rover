@@ -74,6 +74,7 @@ class Socket:
                         elif recieved["data"] == 0:
                             lamp.getInstance().lampoff()
                             ws.send(json.dumps(Api.print()))
+                    #         TODO er moet hier een `else` voor error handeling
 
                     elif recieved["request"] == Socket.Request.displayMsg.name:
                         # TODO displayMsg status opvragen
@@ -90,7 +91,9 @@ class Socket:
                         ws.send(json.dumps(data))
 
                     elif recieved["request"] == Socket.Request.battery.name:
-                        ws.send(Api.print(200, json.dumps(battery.get_batteryStatus())))
+                        ws.send(json.dumps(Api.print(200,
+                            {"battery": battery.get_batteryStatus()}
+                        )))
 
                     else:
                         raise AttributeError("Request not found")

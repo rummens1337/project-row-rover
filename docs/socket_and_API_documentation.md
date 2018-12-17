@@ -166,7 +166,7 @@ Get the battery percentage of the rover (0-100)
 Example:
 ```
 > {"key": "<KEY>", "request": "battery", "data":""}
-< {"description": "Request was successful.", "status": 200, "data": "57", "message": "OK"}
+< {"description": "Request was successful.", "status": 200, "data": {"battery": 57}, "message": "OK"}
 ```
 
 ## On failure
