@@ -93,7 +93,7 @@ function send(request, data) {
 
 function videoWebsocketStart() {
     if ("WebSocket" in window) {
-        var ws_path = 'ws://' + window.location.host + window.location.pathname + 'video';
+        var ws_path = 'ws://' + window.location.host + ":8080";
         //alert(ws_path);
         var ws = new WebSocket(ws_path);
         //alert(ws);
@@ -105,7 +105,6 @@ function videoWebsocketStart() {
             ws.send(1);
         };
         ws.onerror = function (e) {
-            console.log(e);
             ws.send(1);
         };
     } else {
