@@ -20,4 +20,11 @@ def get_batteryStatus():
     @return: int 0-100
     """
     global bus
-    return bus.read_byte_data(int(config["Battery"]["I2C_slave_address"], 16), 0)
+    data = None
+    try:
+        data = bus.read_byte_data(int(config["Battery"]["I2C_slave_address"], 16), 0)
+    except IOError as err:
+        msg = ("IOError while reading battery status: %s", str(err))
+        log.error(msg)
+        raise IOError(msg)
+    return data

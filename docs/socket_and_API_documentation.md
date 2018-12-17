@@ -156,5 +156,18 @@ Example:
 < {"description": "Request was successful.", "status": 200, "data": "", "message": "OK"}
 ```
 
+#### get battery status
+Get the battery percentage of the rover (0-100)
+
+* Request: `battery`
+* Data: None
+* Returns: int (0-100)
+
+Example:
+```
+> {"key": "<KEY>", "request": "battery", "data":""}
+< {"description": "Request was successful.", "status": 200, "data": "57", "message": "OK"}
+```
+
 ## On failure
 the socket closes the connection on a failed request (400) or on an internal server error (500). More detail about the failer can be read in the `data` section of the message.

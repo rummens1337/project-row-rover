@@ -11,6 +11,8 @@ import atexit
 import src.hardware.camera as camera
 import src.processing.image as image
 import base64, time, cv2
+import src.hardware.battery as battery
+
 
 class Socket:
     class Request(Enum):
@@ -19,7 +21,8 @@ class Socket:
         lamp = 2,
         displayMsg = 3,
         tagclicked = 4,
-        compass = 5
+        compass = 5,
+        battery = 6
 
     def __init__(self, server, api_key):
         socket = Sockets(server)
@@ -44,7 +47,8 @@ class Socket:
                     if recieved["request"] == Socket.Request.motor.name:
                         if "data" in recieved:
                             if "left" in recieved["data"] and "right" in recieved["data"]:
-                                motor.getInstance().leftright(int(recieved["data"]["left"]), int(recieved["data"]["right"]))
+                                motor.getInstance().leftright(int(recieved["data"]["left"]),
+                                                              int(recieved["data"]["right"]))
                             else:
                                 if "left" in recieved["data"]:
                                     motor.getInstance().left(int(recieved["data"]["left"]))
@@ -79,10 +83,14 @@ class Socket:
                         ws.send(json.dumps(Api.print()))
 
                     elif recieved["request"] == Socket.Request.compass.name:
-                        #TODO: Toevoegen van actuele compasdata.
+                        # TODO: Toevoegen van actuele compasdata.
                         direction = 180
                         data = {"compass": {"dir": direction}}
+                        # TODO dit houd zich niet aan de API spec, hij moet api.print(htmlco, data) doen
                         ws.send(json.dumps(data))
+
+                    elif recieved["request"] == Socket.Request.battery.name:
+                        ws.send(Api.print(200, json.dumps(battery.get_batteryStatus())))
 
                     else:
                         raise AttributeError("Request not found")
@@ -98,9 +106,6 @@ class Socket:
                         log.error("Internal Server Error", exc_info=True)
 
             self.close()
-
-
-
 
     def close(self):
         """
