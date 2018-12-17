@@ -59,6 +59,7 @@ Example:
 
 ```
 
+
 ### On failure
 The api gives a 400 error if the request is not valid, and a 500 error if the server encounters an internal server error.
 
@@ -143,7 +144,7 @@ Example:
 < {"status": 200, "description": "Request was successful.", "data": {"lamppin": 7, "lampmode": 0}, "message": "OK"}
 ```
 
-#### Display message on display
+#### Set Display message on display
 Display a 16*2(32) set of characters on the display of the rover.
 
 * Request: `displayMsg`
@@ -154,6 +155,19 @@ Example:
 ```
 > {"key": "<KEY>", "request": "displayMsg", "data":"hello, world!"}
 < {"description": "Request was successful.", "status": 200, "data": "", "message": "OK"}
+```
+
+#### Get compass data
+Request the compass data.
+
+* Request:  `compass`
+* Data: none
+* Returns: current compass data (0-360 degrees)
+
+Example:
+```
+> {"key": "<KEY>", "request": "compass", "data":""}
+< {"description": "Request was successful.", "status": 200, "data": 360, "message": "OK"}
 ```
 
 ## On failure

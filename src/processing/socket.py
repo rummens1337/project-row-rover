@@ -104,10 +104,10 @@ class Socket:
                         ws.send(json.dumps(Api.print()))
 
                     elif recieved["request"] == Socket.Request.compass.name:
-                        #TODO: Toevoegen van actuele compasdata.
+                        # TODO: Toevoegen van actuele compasdata.
                         direction = 180
                         data = {"compass": {"dir": direction}}
-                        ws.send(json.dumps(data))
+                        ws.send(json.dumps(Api.print(200, str(data))))
 
                     else:
                         raise AttributeError("Request not found")
