@@ -40,11 +40,11 @@ $(".buttonMic").click(function () {
 
 $(".buttonMusic").click(function () {
     if($(this).hasClass("active")){
-        send("audio",1);
-        document.getElementById("buttonMusic").src="/static/assets/img/speaker.png";
-    }else{
         send("audio",0);
-        document.getElementById("buttonMusic").src="/static/assets/img/nosound.png";
+        document.getElementById("buttonMusic").src="/static/assets/img/pause.png";
+    }else{
+        send("audio",1);
+        document.getElementById("buttonMusic").src="/static/assets/img/play.png";
     }
 });
 
