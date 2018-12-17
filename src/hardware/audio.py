@@ -13,8 +13,8 @@ class Audio:
     shutdownCount = 0
 
     def __init__(self, volume=100):
-        self.volume = volume
         mixer.init()
+        self.volume = volume
         atexit.register(self.shutdown)
 
     def shutdown(self):
