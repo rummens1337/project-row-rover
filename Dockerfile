@@ -32,6 +32,7 @@ RUN chown -R rover:rover /appdata
 
 ADD /src /app/src
 ADD /web /app/web
+ADD /mysql /app/mysql 
 ADD /haarCascades /app/haarCascades
 ADD main.py /app
 ADD video_stream.py /app
@@ -43,4 +44,4 @@ EXPOSE 8080
 ENV NAME rover
 
 # Run main.py and /src/video_stream.py via supervisord when the container launches
-CMD ["sh", "-c", "service mysql start && python3 init.py && supervisord"]
+CMD ["sh", "-c", "python3 init.py && service mysql start && supervisord"]
