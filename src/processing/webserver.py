@@ -13,7 +13,7 @@ from src.processing.database import *
 class WebServer:
 
     current_user = UserManager()
-    # db = Database()
+    db = Database()
 
     def __init__(self, server):
         self.server = server
@@ -32,20 +32,20 @@ class WebServer:
 
     def post(self):
         # With database
-        # res = db.select(table = "user", columns = [Column("id"), Column("password"), Column("can_drive"), Column("can_speak")], joins = [], where = "`user_name` = '"+request.form['username']+"'")
+        res = self.db.select(table = "user", columns = [Column("id"), Column("password"), Column("can_drive"), Column("can_speak")], joins = [], where = "`user_name` = '"+request.form['username']+"'")
 
-        # if(request.form['password'] == res[0]['user_password']):
-        #     self.current_user.is_authenticated = True
-        #     self.current_user.can_drive = res[0]['user_can_drive'] == 1
-        #     self.current_user.can_speak = res[0]['user_can_speak'] == 1
-        # return redirect("/")
+        if(request.form['password'] == res[0]['user_password']):
+            self.current_user.is_authenticated = True
+            self.current_user.can_drive = res[0]['user_can_drive'] == 1
+            self.current_user.can_speak = res[0]['user_can_speak'] == 1
+        return redirect("/")
         
         # Without database
-        if(request.form['password'] == 'qpzn'):
-            self.current_user.is_authenticated = True
-            self.current_user.can_drive = 1 == 1
-            self.current_user.can_speak = 1 == 1
-        return redirect("/")
+        # if(request.form['password'] == 'qpzn'):
+        #     self.current_user.is_authenticated = True
+        #     self.current_user.can_drive = 1 == 1
+        #     self.current_user.can_speak = 1 == 1
+        # return redirect("/")
 
     def login(self):
         if self.current_user.is_authenticated:
@@ -57,7 +57,7 @@ class WebServer:
         return render_template('login.html')
 
     def logout(self):
-        self.current_user = User()
+        self.current_user = UserManager()
         return redirect("/")
 
     def operator(self):

@@ -23,9 +23,9 @@ class Database:
 
         # Connect to the database
         self.connection = pymysql.connect(host='localhost',
-                                     user='ooportal',
+                                     user='daviddb',
                                      password='HRvu4CX5',
-                                     db='row',
+                                     db='david',
                                      charset='utf8mb4',
                                      cursorclass=pymysql.cursors.DictCursor)
 
