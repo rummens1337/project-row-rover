@@ -22,14 +22,17 @@ RUN pip3 install --trusted-host pypi.python.org -r Requirements.txt
 
 # Install supervisor, requered for multiprocessing
 RUN apt-get update && apt-get install -y supervisor=3.3.1-1+deb9u1
+RUN apt-get update && apt-get install -y mysql-server
+
+COPY 50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
 
 RUN mkdir /appdata
 
 RUN chown -R rover:rover /appdata
 
-
 ADD /src /app/src
 ADD /web /app/web
+ADD /mysql /app/mysql 
 ADD /haarCascades /app/haarCascades
 ADD main.py /app
 ADD video_stream.py /app
@@ -41,4 +44,5 @@ EXPOSE 8080
 ENV NAME rover
 
 # Run main.py and /src/video_stream.py via supervisord when the container launches
+# CMD ["sh", "-c", "python3 init.py && service mysql start && supervisord"]
 CMD ["sh", "-c", "python3 init.py && supervisord"]

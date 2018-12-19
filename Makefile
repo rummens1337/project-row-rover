@@ -20,7 +20,7 @@ run-current-amd64:
 
 bash:
 # TODO target/entrypoint maken ipv `run-bash`
-	docker run -it -v ${CURDIR}/appdata:/appdata -v -p $(p):80 -p $(vp):8080 --entrypoint bash rover
+	docker run -it -v ${CURDIR}/appdata:/appdata -p $(p):80 -p $(vp):8080 --entrypoint bash rover
 
 install:
 	docker run -it --rm --privileged multiarch/qemu-user-static:register
