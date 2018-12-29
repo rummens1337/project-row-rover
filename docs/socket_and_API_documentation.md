@@ -59,7 +59,6 @@ Example:
 
 ```
 
-
 ### On failure
 The api gives a 400 error if the request is not valid, and a 500 error if the server encounters an internal server error.
 
@@ -155,6 +154,19 @@ Example:
 ```
 > {"key": "<KEY>", "request": "displayMsg", "data":"hello, world!"}
 < {"description": "Request was successful.", "status": 200, "data": "", "message": "OK"}
+```
+
+#### get battery status
+Get the battery percentage of the rover (0-100)
+
+* Request: `battery`
+* Data: None
+* Returns: int (0-100)
+
+Example:
+```
+> {"key": "<KEY>", "request": "battery", "data":""}
+< {"description": "Request was successful.", "status": 200, "data": {"battery": 57}, "message": "OK"}
 ```
 
 #### Get compass data

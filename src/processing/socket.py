@@ -11,6 +11,8 @@ import atexit
 import src.hardware.camera as camera
 import src.processing.image as image
 import base64, time, cv2
+import src.hardware.battery as battery
+
 
 class Socket:
     class Request(Enum):
@@ -19,7 +21,8 @@ class Socket:
         lamp = 2,
         displayMsg = 3,
         tagclicked = 4,
-        compass = 5
+        compass = 5,
+        battery = 6
 
     def __init__(self, server, api_key):
         socket = Sockets(server)
@@ -44,7 +47,8 @@ class Socket:
                     if recieved["request"] == Socket.Request.motor.name:
                         if "data" in recieved:
                             if "left" in recieved["data"] and "right" in recieved["data"]:
-                                motor.getInstance().leftright(int(recieved["data"]["left"]), int(recieved["data"]["right"]))
+                                motor.getInstance().leftright(int(recieved["data"]["left"]),
+                                                              int(recieved["data"]["right"]))
                             else:
                                 if "left" in recieved["data"]:
                                     motor.getInstance().left(int(recieved["data"]["left"]))
@@ -70,6 +74,7 @@ class Socket:
                         elif recieved["data"] == 0:
                             lamp.getInstance().lampoff()
                             ws.send(json.dumps(Api.print()))
+                    #         TODO er moet hier een `else` voor error handeling
 
                     elif recieved["request"] == Socket.Request.displayMsg.name:
                         # TODO displayMsg status opvragen
@@ -82,7 +87,13 @@ class Socket:
                         # TODO: Toevoegen van actuele compasdata.
                         direction = 180
                         data = {"compass": {"dir": direction}}
-                        ws.send(json.dumps(Api.print(200, str(data))))
+                        # TODO dit houd zich niet aan de API spec, hij moet api.print(htmlco, data) doen
+                        ws.send(json.dumps(data))
+
+                    elif recieved["request"] == Socket.Request.battery.name:
+                        ws.send(json.dumps(Api.print(200,
+                            {"battery": battery.get_batteryStatus()}
+                        )))
 
                     else:
                         raise AttributeError("Request not found")
@@ -98,9 +109,6 @@ class Socket:
                         log.error("Internal Server Error", exc_info=True)
 
             self.close()
-
-
-
 
     def close(self):
         """
