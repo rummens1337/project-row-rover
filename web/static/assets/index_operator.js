@@ -336,20 +336,28 @@ function videoWebsocketStart() {
     }
 }
 
-videoWebsocketStart();
 
+/**
+ * Send battery request to rover.
+ * uses `webSocket.onmessage = function (event)` to capture return
+ */
 function getBatteryStatus() {
-    // TODO documentatie
     send("battery", "");
 }
 
+/**
+ * update the UI with the new battery percentage.
+ * @param percent int 0-100
+ */
 function updateBatteryStatus(percent) {
-    // TODO documentatie
     document.querySelector(".battery").innerHTML = percent + "%";
 }
 
+/**
+ * Entrypoint of the document, although not fully respected.
+ */
 function start() {
-    // TODO documentatie
     setInterval(getBatteryStatus, 5000);
+    videoWebsocketStart();
 }
 start();
