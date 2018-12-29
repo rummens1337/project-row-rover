@@ -1,6 +1,6 @@
 from src.common.log import *
 
-if config["Battery"].getboolean("simulate_Battery") is False:
+if config["Battery"].getboolean("simulate_battery") is False:
     import smbus2 as smbus
 else:
     import src.dummy.smbus2dummy as smbus
