@@ -45,6 +45,9 @@ class Server(threading.Thread):
 
 
     def run(self):
+        """
+        Called when thread is started
+        """
         log.info("Started server on port: %s, api_key: %s", self.PORT, self.api_key)
         self.server.serve_forever()
 
