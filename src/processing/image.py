@@ -199,7 +199,8 @@ def process_frames_forever():
         time.sleep(look_for_faces_timeout)
         current_frame = camera.get_frame()
         photodata = list(get_faces(current_frame))
-        log.debug("found %s face(s)", str(len(photodata[0][1])))
+        if photodata:
+            log.debug("found %s face(s)", str(len(photodata[0][1])))
 
 
 def frame2jpg(frame):
