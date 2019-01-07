@@ -180,6 +180,8 @@ def get_processed_frame():
     global framerate, photodata, color
     time.sleep((1.0 / framerate))
     frame = camera.get_frame()
+    if not photodata:
+        return frame
     for face, conf in photodata:
         if conf > config['FaceDetection'].getfloat('MIN_FACE_CONFIDENCE'):
             frame = draw_rectangle(frame, face, color=color)
@@ -197,7 +199,8 @@ def process_frames_forever():
         time.sleep(look_for_faces_timeout)
         current_frame = camera.get_frame()
         photodata = list(get_faces(current_frame))
-        log.debug("found %s face(s)", str(len(photodata[0][1])))
+        if photodata:
+            log.debug("found %s face(s)", str(len(photodata[0][1])))
 
 
 def frame2jpg(frame):
