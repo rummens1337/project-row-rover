@@ -59,7 +59,6 @@ Example:
 
 ```
 
-
 ### On failure
 The api gives a 400 error if the request is not valid, and a 500 error if the server encounters an internal server error.
 
@@ -157,6 +156,19 @@ Example:
 < {"description": "Request was successful.", "status": 200, "data": "", "message": "OK"}
 ```
 
+#### get battery status
+Get the battery percentage of the rover (0-100)
+
+* Request: `battery`
+* Data: None
+* Returns: int (0-100)
+
+Example:
+```
+> {"key": "<KEY>", "request": "battery", "data":""}
+< {"description": "Request was successful.", "status": 200, "data": {"battery": 57}, "message": "OK"}
+```
+
 #### Get compass data
 Request the compass data.
 
@@ -168,6 +180,19 @@ Example:
 ```
 > {"key": "<KEY>", "request": "compass", "data":""}
 < {"description": "Request was successful.", "status": 200, "data": 360, "message": "OK"}
+```
+
+#### Set audio data
+Play and pause audio from the rover and change the volume
+
+* Request:  `audio`
+* Data: 0 (Play), 1 (Pause), 2 (Increase audio), 3 (Decrease audio)
+* Returns: None
+
+Example:
+```
+> {"key": "<KEY>", "request": "audio", "data":"0"}
+< {"description": "Request was successful.", "status": 200, "data": "", "message": "OK"}
 ```
 
 ## On failure

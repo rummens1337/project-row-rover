@@ -5,6 +5,7 @@ from src.hardware.audio import Audio
 import time, subprocess, signal
 import sys
 import atexit
+import src.hardware.battery as bat
 
 
 def main():
@@ -20,6 +21,8 @@ def main():
     speak.play("/app/jams/Startup.mp3", 0)
     server = Server()
     server.start()
+    bat.start()
+    log.debug(bat.get_batteryStatus())
     while True:
         loop()
 

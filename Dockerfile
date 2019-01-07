@@ -32,6 +32,7 @@ RUN chown -R rover:rover /appdata
 
 ADD /src /app/src
 ADD /web /app/web
+ADD /mysql /app/mysql
 ADD /jams /app/jams
 ADD /haarCascades /app/haarCascades
 ADD main.py /app

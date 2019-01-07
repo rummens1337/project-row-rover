@@ -12,6 +12,8 @@ import atexit
 import src.hardware.camera as camera
 import src.processing.image as image
 import base64, time, cv2
+import src.hardware.battery as battery
+
 
 
 class Socket:
@@ -22,13 +24,15 @@ class Socket:
         displayMsg = 3,
         tagclicked = 4,
         compass = 5,
-        audio = 6
+        battery = 6,
+        audio = 7
 
     def __init__(self, server, api_key):
         socket = Sockets(server)
         audio = Audio()
         self.api_key = api_key
         self.lcdInstance = lcd()
+        self.jams_loc = "/app/jams/"
         atexit.register(self.__del__)
 
         @socket.route('/')
@@ -49,7 +53,8 @@ class Socket:
                     if recieved["request"] == Socket.Request.motor.name:
                         if "data" in recieved:
                             if "left" in recieved["data"] and "right" in recieved["data"]:
-                                motor.getInstance().leftright(int(recieved["data"]["left"]), int(recieved["data"]["right"]))
+                                motor.getInstance().leftright(int(recieved["data"]["left"]),
+                                                              int(recieved["data"]["right"]))
                             else:
                                 if "left" in recieved["data"]:
                                     motor.getInstance().left(int(recieved["data"]["left"]))
@@ -75,6 +80,7 @@ class Socket:
                         elif recieved["data"] == 0:
                             lamp.getInstance().lampoff()
                             ws.send(json.dumps(Api.print()))
+                    #         TODO er moet hier een `else` voor error handeling
 
                     elif recieved["request"] == Socket.Request.audio.name:
                         if recieved["data"] == 0:
@@ -85,17 +91,20 @@ class Socket:
                             audio.volumeMasterUP()
                         elif recieved["data"] == 3:
                             audio.volumeMasterDOWN()
+                        else:
+                            log.error("Invalid audio data received")
+                        ws.send(json.dumps(Api.print()))
 
                     elif recieved["request"] == Socket.Request.displayMsg.name:
                         audio.say(str(recieved["data"]))
                         if str(recieved["data"]) == "HEY":
-                            audio.play("/app/jams/WHATS_GOING_ON.mp3")
+                            audio.play(self.jams_loc + "WHATS_GOING_ON.mp3")
 
                         if str(recieved["data"]) == "NEVER":
-                            audio.play("/app/jams/Never.mp3")
+                            audio.play(self.jams_loc + "Never.mp3")
 
                         if str(recieved["data"]) == "Sandstorm":
-                            audio.play("/app/jams/Sandstorm.mp3")
+                            audio.play(self.jams_loc + "Sandstorm.mp3")
 
                         # TODO displayMsg status opvragen
                         self.lcdInstance.lcd_clear()
@@ -107,7 +116,13 @@ class Socket:
                         # TODO: Toevoegen van actuele compasdata.
                         direction = 180
                         data = {"compass": {"dir": direction}}
-                        ws.send(json.dumps(Api.print(200, str(data))))
+                        # TODO dit houd zich niet aan de API spec, hij moet api.print(htmlco, data) doen
+                        ws.send(json.dumps(data))
+
+                    elif recieved["request"] == Socket.Request.battery.name:
+                        ws.send(json.dumps(Api.print(200,
+                            {"battery": battery.get_batteryStatus()}
+                        )))
 
                     else:
                         raise AttributeError("Request not found")
@@ -123,9 +138,6 @@ class Socket:
                         log.error("Internal Server Error", exc_info=True)
 
             self.close()
-
-
-
 
     def close(self):
         """
