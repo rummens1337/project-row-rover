@@ -34,7 +34,7 @@ push: build
 
 # TODO bestanden moeten niet als sudo worden aangemaakt.
 clear-appdata:
-	sudo rm appdata -rf
+	sudo rm -rf appdata
 
 # TODO build documentation
 

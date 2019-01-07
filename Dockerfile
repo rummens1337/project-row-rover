@@ -44,5 +44,5 @@ EXPOSE 8080
 ENV NAME rover
 
 # Run main.py and /src/video_stream.py via supervisord when the container launches
-# CMD ["sh", "-c", "python3 init.py && service mysql start && supervisord"]
-CMD ["sh", "-c", "python3 init.py && supervisord"]
+CMD ["sh", "-c", "python3 init.py && service mysql start && supervisord"]
+# CMD ["sh", "-c", "python3 init.py && supervisord"]
