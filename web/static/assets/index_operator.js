@@ -38,7 +38,7 @@ var inputObject = {
     }
 };
 
-// What controller to lisen to
+// What controller to listen to
 var controllerIndex = 0;
 var topSpeed = 255;
 
@@ -49,7 +49,7 @@ var left = new Input.Input(inputObject.left, controllerIndex);
 var right = new Input.Input(inputObject.right, controllerIndex);
 var flashLight = new Input.Input(inputObject.flashlight, controllerIndex, flashlightDOM);
 
-// Websocket verbinding
+// Websocket connection
 var webSocket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
 
 
@@ -161,18 +161,22 @@ function getCompassData() {
 webSocket.onmessage = function (event) {
     // TODO deze event handler is best wel vies, moet gewoon met een callback kunnen.
     // TODO want nu controleerd hij ook al het andre verkeer.
-    var obj = JSON.parse(event.data);
-    if (!(obj.battery === undefined)){
-            updateBatteryStatus(obj["data"]["battery"]);
-        //    TODO deze elseif is te ingewikkeld, kan 1000x simpeler.
-        } else if (!(obj.compass === undefined)) {
-            if (!(obj.compass.dir === undefined)) {
-                setCompass(parseInt(obj.compass.dir));
-                document.getElementById("time").innerHTML = new Date().toLocaleTimeString();
-            } else {
-                log.error("Compass wel gedefinieerd, maar geen direction meegegeven.");
-            }
+    let data = JSON.parse(event.data);
+    if (data == null) {
+        return;
+    }
+    if (data.battery !== undefined) {
+        updateBatteryStatus(data.battery);
+    }
+    //    TODO deze elseif is te ingewikkeld, kan 1000x simpeler.
+    if (data.compass !== undefined) {
+        if (data.compass.dir !== undefined) {
+            setCompass(parseInt(data.compass.dir));
+            document.getElementById("time").innerHTML = new Date().toLocaleTimeString();
+        } else {
+            log.error("Compass defined, but no direction found");
         }
+    }
 };
 
 /**
