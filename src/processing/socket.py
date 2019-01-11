@@ -93,6 +93,7 @@ class Socket:
                             audio.volumeMasterDOWN()
                         else:
                             log.error("Invalid audio data received")
+                            ws.send(json.dumps(Api.print(400, "Invalid audio data received")))
                         ws.send(json.dumps(Api.print()))
 
                     elif recieved["request"] == Socket.Request.displayMsg.name:
