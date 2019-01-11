@@ -144,7 +144,7 @@ Example:
 ```
 
 #### Set Display message on display
-Display a 16*2(32) set of characters on the display of the rover.
+Display a 16*2(32) set of characters on the display of the rover. Speaks the text out loud with the audio class.
 
 * Request: `displayMsg`
 * Data: string of text (max 32 characters)
