@@ -219,8 +219,6 @@ function callLoop() {
  */
 
 function updateRL() {
-	// $("#l")[0].innerHTML = l.toFixed(1);
-    //$("#r")[0].innerHTML = r.toFixed(1);
     callLoop();
 }
 
