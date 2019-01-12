@@ -155,7 +155,7 @@ webSocket.onerror = function () {
 function getCompassData() {
     //TODO: Goede conditie maken zodat deze alleen utigevoerd wordt bij een open connectie.
     if (webSocket.OPEN) {
-        setTimeout(getCompassData, 1000);
+        //setTimeout(getCompassData, 1000);
         send("compass", {
             dir: "request"
         });
@@ -166,16 +166,17 @@ function getCompassData() {
  * Handelt alle inkomende berichten op de webSocket verbinding (LET OP: Geen "W" maar w, de variabele dus).
  * @param event WebSocket event welke meegegeven wordt door de WebSocket eventhandler telkens als er een bericht binnenkomt.
  */
-
+//let datadinges;
 webSocket.onmessage = function (event) {
     // TODO deze event handler is best wel vies, moet gewoon met een callback kunnen.
     // TODO want nu controleerd hij ook al het andre verkeer.
     let data = JSON.parse(event.data);
+    //datadinges = data;
     if (data == null) {
         return;
     }
-    if (data.battery !== undefined) {
-        updateBatteryStatus(data.battery);
+    if (data.data.battery !== undefined) {
+        updateBatteryStatus(data.data.battery);
     }
     //    TODO deze elseif is te ingewikkeld, kan 1000x simpeler.
     if (data.compass !== undefined) {
@@ -218,8 +219,8 @@ function callLoop() {
  */
 
 function updateRL() {
-    $("#l")[0].innerHTML = l.toFixed(1);
-    $("#r")[0].innerHTML = r.toFixed(1);
+	// $("#l")[0].innerHTML = l.toFixed(1);
+    //$("#r")[0].innerHTML = r.toFixed(1);
     callLoop();
 }
 
