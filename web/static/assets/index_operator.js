@@ -61,45 +61,53 @@ var webSocket = new WebSocket("ws://" + window.location.hostname + ":" + window.
 up.press = function () {
     l = topSpeed * this.value;
     r = topSpeed * this.value;
+    updateRL();
 
 };
 up.release = function () {
     if (down.isUp) {
         l = 0;
         r = 0;
+        updateRL();
     } else down.press();
 };
 // down
 down.press = function () {
     l = -topSpeed * this.value;
     r = -topSpeed * this.value;
+    updateRL();
 };
 down.release = function () {
     if (down.isUp) {
         l = 0;
         r = 0;
+        updateRL();
     } else down.press();
 };
 // left
 left.press = function () {
     l = -topSpeed * this.value;
     r = topSpeed * this.value;
+    updateRL();
 };
 left.release = function () {
     if (down.isUp) {
         l = 0;
         r = 0;
+        updateRL();
     } else down.press();
 };
 // right
 right.press = function () {
     l = topSpeed * this.value;
     r = -topSpeed * this.value;
+    updateRL();
 };
 right.release = function () {
     if (down.isUp) {
         l = 0;
         r = 0;
+        updateRL();
     } else down.press();
 };
 
@@ -128,6 +136,7 @@ flashLight.release = function () {
  */
 
 webSocket.onopen = function () {
+    callLoop();
     getCompassData();
     console.log("Called onopen Function!!!");
 };
@@ -191,6 +200,30 @@ function setCompass(dir) {
 }
 
 /**
+ * Verstuurd waarden naar de motor toe als een bepaalde knop wordt ingedrukt.
+ * TODO: Verstuur alleen waarden als de waarde niet gelijk is aan de oude verstuurde data.
+ */
+
+function callLoop() {
+    var le = l.toFixed(0);
+    var ri = r.toFixed(0);
+    send("motor", {
+        left: le,
+        right: ri
+    });
+}
+
+/**
+ * Print de ingevoerde motor waarden zodat deze tentoon gesteld wordt in de interface
+ */
+
+function updateRL() {
+    $("#l")[0].innerHTML = l.toFixed(1);
+    $("#r")[0].innerHTML = r.toFixed(1);
+    callLoop();
+}
+
+/**
  * Kijkt of
  * @param num Het nummer dat je wilt checken
  * @param min Het minimum
@@ -223,6 +256,8 @@ function move(movedX, movedY) {
 
     r = clamp(r, -255, 255);
     l = clamp(l, -255, 255);
+
+    updateRL();
 }
 
 // TODO ondersteuning voor muis, of het moet weg op desktop.
