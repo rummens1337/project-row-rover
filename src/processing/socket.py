@@ -6,12 +6,14 @@ from src.processing.api import Api
 from enum import Enum
 from src.hardware.motor import motor
 from src.hardware.display import lcd
+from src.hardware.audio import Audio
 from src.hardware.lamp import lamp
 import atexit
 import src.hardware.camera as camera
 import src.processing.image as image
 import base64, time, cv2
 import src.hardware.battery as battery
+
 
 
 class Socket:
@@ -22,11 +24,15 @@ class Socket:
         displayMsg = 3,
         tagclicked = 4,
         compass = 5,
-        battery = 6
+        battery = 6,
+        audio = 7
 
     def __init__(self, server, api_key):
         socket = Sockets(server)
+        audio = Audio()
         self.api_key = api_key
+        self.lcdInstance = lcd()
+        self.jams_loc = "/app/jams/"
         atexit.register(self.__del__)
 
         @socket.route('/')
@@ -76,7 +82,31 @@ class Socket:
                             ws.send(json.dumps(Api.print()))
                     #         TODO er moet hier een `else` voor error handeling
 
+                    elif recieved["request"] == Socket.Request.audio.name:
+                        if recieved["data"] == 0:
+                            audio.pause()
+                        elif recieved["data"] == 1:
+                            audio.unpause()
+                        elif recieved["data"] == 2:
+                            audio.volumeMasterUP()
+                        elif recieved["data"] == 3:
+                            audio.volumeMasterDOWN()
+                        else:
+                            log.error("Invalid audio data received")
+                            ws.send(json.dumps(Api.print(400, "Invalid audio data received")))
+                        ws.send(json.dumps(Api.print()))
+
                     elif recieved["request"] == Socket.Request.displayMsg.name:
+                        audio.say(str(recieved["data"]))
+                        if str(recieved["data"]) == "HEY":
+                            audio.play(self.jams_loc + "WHATS_GOING_ON.mp3")
+
+                        if str(recieved["data"]) == "NEVER":
+                            audio.play(self.jams_loc + "Never.mp3")
+
+                        if str(recieved["data"]) == "Sandstorm":
+                            audio.play(self.jams_loc + "Sandstorm.mp3")
+
                         # TODO displayMsg status opvragen
                         self.lcdInstance.lcd_clear()
                         self.lcdInstance.lcd_display_string(str(recieved["data"][0:16]), 1)

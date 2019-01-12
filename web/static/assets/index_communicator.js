@@ -37,19 +37,54 @@ $(".buttonMic").click(function () {
         // send disable
     }
 });
+// Button pause audio
+$(".buttonMusic").click(function () {
+    if($(this).hasClass("active")){
+        send("audio",0);
+        document.getElementById("buttonMusic").src="/static/assets/img/play.png";
+    }else{
+        send("audio",1);
+        document.getElementById("buttonMusic").src="/static/assets/img/pause.png";
+    }
+});
+// Button increase audio
+$(".buttonIncreaseAudio").click(function () {
+    send("audio",2);
+});
+// Button decrease audio
+$(".buttonDecreaseAudio").click(function () {
+    send("audio",3);
+});
+/**
+ * Stuurt data naar het display op de rover toe, wanneer er tekst ingevoerd wordt
+ */
+$(".buttonDisplaySend").click(function () {
+    var rovertext = document.getElementById("screenText").value;
+    send("displayMsg", rovertext)
+});
+
+
+
 
 /**
- * Stuurt data naar het display op de rover toe, wanneer er tekst ingevoerd wordt en de tekstbar gedeselecteerd wordt.
+ * Send Websocket data
+ * @param request Het onderdeel wat je wilt aansturen, bijvoorbeeld "motor".
+ * @param data De array aan data die je naar dit onderdeel wilt sturen, in JSON notatie.
  */
-$("#screenText").on('blur', function () {
-    var rovertext = $(this).val();
-    var msg = {
-        "key": "1234",
-        "request": "displayMsg",
-        "data": rovertext.toString()
-    };
-    webSocket.send(JSON.stringify(msg));
-});
+
+function send(request, data) {
+    // TODO documentatie
+    let key = "1234";
+    webSocket.send(JSON.stringify(
+        {
+            "key": key,
+            "request": request,
+            // TODO data moet optioneel zijn
+            "data": data
+        }
+    ));
+//    TODO callback.
+}
 
 /**
  * VideoWebSocket
@@ -60,7 +95,7 @@ function videoWebsocketStart() {
 // TODO wiens idee was het om een functie van index_operator.js te copieeren naar index_communicator?
 // TODO het is omgeveer 10⁹⁹⁹⁹ keer beter om gewoon die functie daar aan te roepen ipv 2x precies dezelfde functie in twee bestanden te hebben!
     if ("WebSocket" in window) {
-        var ws_path = 'ws://' + window.location.host + window.location.pathname + 'video';
+        var ws_path = 'ws://' + window.location.host + ":8080";
         //alert(ws_path);
         var ws = new WebSocket(ws_path);
         //alert(ws);
@@ -72,7 +107,6 @@ function videoWebsocketStart() {
             ws.send(1);
         };
         ws.onerror = function (e) {
-            console.log(e);
             ws.send(1);
         };
     } else {

@@ -38,7 +38,7 @@ var inputObject = {
     }
 };
 
-// What controller to lisen to
+// What controller to listen to
 var controllerIndex = 0;
 var topSpeed = 255;
 
@@ -49,7 +49,7 @@ var left = new Input.Input(inputObject.left, controllerIndex);
 var right = new Input.Input(inputObject.right, controllerIndex);
 var flashLight = new Input.Input(inputObject.flashlight, controllerIndex, flashlightDOM);
 
-// Websocket verbinding
+// Websocket connection
 var webSocket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
 
 
@@ -155,7 +155,7 @@ webSocket.onerror = function () {
 function getCompassData() {
     //TODO: Goede conditie maken zodat deze alleen utigevoerd wordt bij een open connectie.
     if (webSocket.OPEN) {
-        setTimeout(getCompassData, 1000);
+        //setTimeout(getCompassData, 1000);
         send("compass", {
             dir: "request"
         });
@@ -166,22 +166,27 @@ function getCompassData() {
  * Handelt alle inkomende berichten op de webSocket verbinding (LET OP: Geen "W" maar w, de variabele dus).
  * @param event WebSocket event welke meegegeven wordt door de WebSocket eventhandler telkens als er een bericht binnenkomt.
  */
-
+//let datadinges;
 webSocket.onmessage = function (event) {
     // TODO deze event handler is best wel vies, moet gewoon met een callback kunnen.
     // TODO want nu controleerd hij ook al het andre verkeer.
-    var obj = JSON.parse(event.data);
-        if (obj["data"]["battery"]) {
-            updateBatteryStatus(obj["data"]["battery"]);
-        //    TODO deze elseif is te ingewikkeld, kan 1000x simpeler.
-        } else if (!(obj.compass === undefined)) {
-            if (!(obj.compass.dir === undefined)) {
-                setCompass(parseInt(obj.compass.dir));
-                document.getElementById("time").innerHTML = new Date().toLocaleTimeString();
-            } else {
-                log.error("Compass wel gedefinieerd, maar geen direction meegegeven.");
-            }
+    let data = JSON.parse(event.data);
+    //datadinges = data;
+    if (data == null) {
+        return;
+    }
+    if (data.data.battery !== undefined) {
+        updateBatteryStatus(data.data.battery);
+    }
+    //    TODO deze elseif is te ingewikkeld, kan 1000x simpeler.
+    if (data.compass !== undefined) {
+        if (data.compass.dir !== undefined) {
+            setCompass(parseInt(data.compass.dir));
+            document.getElementById("time").innerHTML = new Date().toLocaleTimeString();
+        } else {
+            log.error("Compass defined, but no direction found");
         }
+    }
 };
 
 /**
@@ -214,8 +219,6 @@ function callLoop() {
  */
 
 function updateRL() {
-    $("#l")[0].innerHTML = l.toFixed(1);
-    $("#r")[0].innerHTML = r.toFixed(1);
     callLoop();
 }
 

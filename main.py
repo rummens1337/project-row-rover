@@ -1,6 +1,7 @@
 from src.common.log import *
 from src.processing.server import Server
 import src.hardware.camera as camera
+from src.hardware.audio import Audio
 import time, subprocess, signal
 import sys
 import atexit
@@ -16,6 +17,8 @@ def main():
     log.info("Container running on %s cores and %s", cores, mem)
     signal.signal(signal.SIGINT, close)
     signal.signal(signal.SIGTERM, close)
+    speak = Audio()
+    speak.play("/app/jams/Startup.mp3", 0)
     server = Server()
     server.start()
     bat.start()
