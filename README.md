@@ -11,7 +11,7 @@ Robot On Wheels (ROW) rover, geschreven in Python door Noeël Moeskops, Robin de
 
 2) Run `docker pull noeel/rover:latest` om de image te downloaden/updaten.
 
-3) Run `docker run --device /dev/i2c-1 --device /dev/gpiomem --device /dev/vchiq -p 80:80 noeel/rover --restart always` om hem uittevoeren en bij reboot/crash opnieuw optestarten.
+3) Run `docker run --privileged -v appdata:/appdata --device /dev/i2c-1 --device /dev/gpiomem --device /dev/vchiq --device /dev/snd -p 80:80 -p 8080:8080 --name rover --restart unless-stopped -d noeel/rover` om hem uittevoeren en bij reboot/crash opnieuw optestarten.
 
 # Make dev-env
 Omdat dit project is gemaakt voor een raspberry Pi 3 met een ARM processor en GPIO pins moeten deze worden geemuleerd worden in een x86 architectuur.
