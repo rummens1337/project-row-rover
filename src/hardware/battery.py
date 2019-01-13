@@ -5,7 +5,7 @@ if config["Battery"].getboolean("simulate_battery") is False:
 else:
     import src.dummy.smbus2dummy as smbus
 
-
+battery_value = 0
 def start():
     """
     Join the I²C bus as master
@@ -19,12 +19,9 @@ def get_batteryStatus():
     get the battery percentage.
     @return: int 0-100
     """
-    global bus
-    data = None
+    global bus, battery_value
     try:
-        data = bus.read_byte_data(int(config["Battery"]["I2C_slave_address"], 16), 0)
+        battery_value = bus.read_byte_data(int(config["Battery"]["I2C_slave_address"], 16), 0)
     except IOError as err:
-        msg = ("IOError while reading battery status: %s", str(err))
-        log.error(msg)
-        raise IOError(msg)
-    return data
+        log.error("IOError while reading battery status: %s", str(err))
+    return battery_value
